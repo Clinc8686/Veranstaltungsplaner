@@ -4,7 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf node_modules && rm -rf build",
+    "debug": "npm run clean && npm run lint && npm run css && npm run js && npm run html",
+    "build": "npm run clean && npm run debug && npm run minify",
+    "html": "cp client/index.html build/index.html",
+    "css": "mkdir build && lessc client/styles/main.less build/styles.css",
+    "minify": "npm run minify:css && npm run minify:js",
+    "minify:css": "lessc --clean-css build/styles.css build/styles.css",
+    "minify:js": "terser client/scripts/test.js --compress --mangle --comments=false -o build/client.js",
+    "js": "esbuild client/scripts/test.js --log-level=warning --bundle --platform=node --outfile=build/client.js",
+    "lint": "semistandard server/**/*.js --verbose | snazzy && semistandard client/**/*.js --verbose | snazzy",
+    "start": "node server/src/index.js"
   },
   "repository": {
     "type": "git",
