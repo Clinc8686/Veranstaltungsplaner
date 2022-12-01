@@ -15,7 +15,8 @@
     "minify:js": "terser client/scripts/script.js --compress --mangle --comments=false -o build/script.js",
     "js": "esbuild client/scripts/script.js --log-level=warning --bundle --platform=node --outfile=build/script.js",
     "lint": "semistandard server/**/*.js --verbose | snazzy && semistandard client/**/*.js --verbose | snazzy",
-    "start": "node server/src/index.js"
+    "start": "node server/src/index.js",
+    "start:nodemon": "nodemon server/src/index.js"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
     "esbuild": "^0.15.16",
     "express": "^4.18.2",
     "less": "^4.1.3",
+    "mongodb": "^4.12.1",
     "semistandard": "^16.0.1",
     "snazzy": "^9.0.0",
     "sqlite3": "^5.1.2",
