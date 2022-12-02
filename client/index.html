@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de-de">
 <head>
     <meta charset="UTF-8">
     <title>Startseite</title>
@@ -9,5 +9,22 @@
 </head>
 <body>
 Hello World!
+<form action="/" method="POST">
+    <label>Name:
+        <input type="text" placeholder="Name" name="name">
+    </label><br>
+    <label>Children:
+        <input type="number" placeholder="0" name="children" min="0">
+    </label><br>
+    <label>Invitationstatus:
+        <select name="invitationstatus">
+            <option value="unbekannt">unbekannt</option>
+            <option value="eingeladen">eingeladen</option>
+            <option value="zugesagt">zugesagt</option>
+            <option value="abgesagt">abgesagt</option>
+        </select>
+    </label><br>
+    <button type="submit">Submit</button>
+</form>
 </body>
 </html>
