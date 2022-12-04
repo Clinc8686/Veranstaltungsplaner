@@ -46,4 +46,16 @@ router.post('/guests/update', urlencodedParser, function (req, res, next) {
   res.redirect('/');
 });
 
+router.post('/guests/select', urlencodedParser, function (req, res, next) {
+  // Insert Guest from Form into database
+  const statement = 'SELECT * FROM Guests';
+  database.run(statement, function (err, result) {
+    if (err) throw err;
+    console.log('User was selected successfully');
+  });
+
+  // Redirect to index.html
+  res.redirect('/');
+});
+
 module.exports = router;
