@@ -5,7 +5,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static('build'));
 
-//link receiver
+// link receiver
 app.use(require('./guests'));
 
 database.serialize();
