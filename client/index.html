@@ -29,5 +29,30 @@ Hello World!
 <form action="/guests/select" method="POST">
     <button type="submit">Select All</button>
 </form>
+<pre id="json"></pre>
+<script type="text/javascript">
+  var opts = {
+    url: 'http://localhost:8080/guests/select'
+  };
+
+  fetch(opts)
+    .then((res) => {
+      if (res.ok) {
+        // document.getElementById("json").innerHTML = JSON.stringify(res.json()[0], undefined, 2);
+        // return res.json();
+      }
+    })
+    .then((rows) => {
+      /* for (let row of rows) {
+        // row will be a mysql row -- you can loop over these and do what you want with them
+        row.Name;
+      } */
+      rows.forEach((rows) => {
+        // console.log(rows.Name);
+        // document.getElementById("json").innerHTML = rows.Name + '<br>';
+      });
+    })
+    .catch(console.log);
+</script>
 </body>
 </html>

@@ -49,13 +49,19 @@ router.post('/guests/update', urlencodedParser, function (req, res, next) {
 router.post('/guests/select', urlencodedParser, function (req, res, next) {
   // Insert Guest from Form into database
   const statement = 'SELECT * FROM Guests';
-  database.run(statement, function (err, result) {
+  database.all(statement, function (err, rows) {
     if (err) throw err;
     console.log('User was selected successfully');
+    rows.forEach((row) => {
+      console.log(row.Name);
+    });
+    // console.log(`${result.ID} ${result.Name} ${result.Children}`)
+    // res.json(rows);
+    res.send({id: row.ID})
   });
 
   // Redirect to index.html
-  res.redirect('/');
+  // res.redirect('/');
 });
 
 module.exports = router;
