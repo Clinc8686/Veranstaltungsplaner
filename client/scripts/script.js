@@ -26,7 +26,7 @@ window.onload = function () {
         }
         li.textContent = str + '\n' + JSON.stringify(response);
       } catch (error) {
-        console.log(error);
+        console.log('script.js error: ' + error);
       }
     };
 
