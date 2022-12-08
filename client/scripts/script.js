@@ -1,35 +1,44 @@
 window.onload = function () {
-  document.querySelector('button').addEventListener('click', (e) => {
+  document.getElementById('selectAll').addEventListener('click', (e) => {
     e.preventDefault();
 
-    // const username = document.getElementById('username').value;
-    // const email = document.getElementById('email').value;
-    const li = document.querySelector('li');
-
-    // const data = { username, email };
-
     const handleFormData = async () => {
-      const sent = await fetch('/guests/select', {
+      const sent = await fetch('/guests/select/2', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
         }
       });
 
+      const tableBody = document.getElementById('tableBody');
       try {
         const response = await sent.json();
-        let str = '';
         for (const key in response.persons) {
+          const newRow = tableBody.insertRow();
+
           const person = response.persons[key];
-          console.log(key + ': ' + person);
-          str = str + person.ID + ' ' + person.Name + ' ' + person.Children + ' ' + person.Invitationstatus + ' ';
+          for (const personRow in person) {
+            const newCell = newRow.insertCell();
+            const newText = document.createTextNode(person[personRow]);
+            newCell.appendChild(newText);
+          }
         }
-        li.textContent = str + '\n' + JSON.stringify(response);
       } catch (error) {
         console.log('script.js error: ' + error);
       }
     };
 
     handleFormData();
+  });
+
+  document.getElementById('child').addEventListener('change', function (e) {
+    const childNum = document.getElementById('childrenNumber');
+    if (e.target.checked) {
+      childNum.style.display = 'block';
+      console.log('checked!');
+    } else {
+      childNum.style.display = 'none';
+      console.log('not checked');
+    }
   });
 };

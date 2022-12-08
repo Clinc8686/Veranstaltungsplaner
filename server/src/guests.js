@@ -46,8 +46,9 @@ router.post('/guests/update', urlencodedParser, function (req, res, next) {
   res.redirect('/');
 });
 
-router.get('/guests/select', urlencodedParser, function (req, res, next) {
+router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
   // Insert Guest from Form into database
+  console.log(req.body);
   const statement = 'SELECT * FROM Guests';
   database.all(statement, function (err, rows) {
     if (err) throw err;

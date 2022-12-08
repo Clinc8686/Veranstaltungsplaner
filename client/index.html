@@ -13,8 +13,11 @@ Hello World!
         <input type="text" placeholder="Name" name="name">
     </label><br>
     <label>Children:
-        <input type="number" placeholder="0" name="children" min="0">
+        <input type="checkbox" id="child">
     </label><br>
+    <label id="childrenNumber" style="display: none;">Wie viele?
+        <input type="number" value="0" placeholder="0" name="children" min="0">
+    </label>
     <label>Invitationstatus:
         <select name="invitationstatus">
             <option value="unbekannt">unbekannt</option>
@@ -23,15 +26,33 @@ Hello World!
             <option value="abgesagt">abgesagt</option>
         </select>
     </label><br>
-    <!-- <button type="submit">Submit</button> -->
+    <button type="submit" id="submit">Submit</button>
 </form>
 <form>
-    <button>Select All</button>
+    <button id="selectAll">Select All</button>
 </form>
 <div>
-    <ul>
-        <li>None</li>
-    </ul>
+    <table>
+        <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Children
+            </th>
+            <th>
+                Invitationstatus
+            </th>
+        </tr>
+        </thead>
+        <tbody id="tableBody">
+
+        </tbody>
+    </table>
 </div>
 
 </body>
