@@ -46,9 +46,9 @@ router.post('/guests/update', urlencodedParser, function (req, res, next) {
   res.redirect('/');
 });
 
+// Select all persons and send to client
 router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
   // Insert Guest from Form into database
-  console.log(req.body);
   const statement = 'SELECT * FROM Guests';
   database.all(statement, function (err, rows) {
     if (err) throw err;
@@ -56,6 +56,8 @@ router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
     /* rows.forEach((row) => {
       console.log(row.Name);
     }); */
+
+    // send persons as json data to client
     res.status(200).json({ persons: rows });
   });
 });

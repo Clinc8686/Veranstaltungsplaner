@@ -5,10 +5,13 @@ const app = express();
 app.use(express.json());
 app.use(express.static('build'));
 
-// link receiver
+// link of server scripts
 app.use(require('./guests'));
 
+// create database if not exists
 database.serialize();
+
+// set port of server
 const host = '127.0.0.1';
 const port = process.argv[2] || '8080';
 
