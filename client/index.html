@@ -2,11 +2,49 @@
 <html lang="de-de">
 <head>
     <meta charset="UTF-8">
-    <title>Startseite</title>
+    <title>Veranstaltungsplaner</title>
     <link href="styles.css" rel="stylesheet"/>
     <script src="script.js" rel="script"></script>
 </head>
 <body>
+    <header>
+        <h1>Veranstaltungsplaner</h1>
+    </header>
+    <main>
+        <div class="container">
+            <div class="events-page">
+                <h2>Bestehende Veranstaltungen:</h2>
+                <h3>Kategorie1 aus DB</h3>
+                <!-- maybe load with js -->
+                <div class="events-categorys">
+                    <ul>
+                        <li><a>Veranstaltung aus DB</a></li>
+                    </ul>
+                </div>
+                <h3>Kategorie2 aus DB</h3>
+                <div class="events-categorys">
+                    <ul>
+                        <li><a>Veranstaltung aus DB</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="events-page">
+                <h3>Kategorie3 aus DB</h3>
+                <!-- maybe load with js -->
+                <div class="events-categorys">
+                    <ul>
+                        <li><a>Veranstaltung aus DB</a></li>
+                    </ul>
+                </div>
+                <h3>Kategorie4 aus DB</h3>
+                <div class="events-categorys">
+                    <ul>
+                        <li><a>Veranstaltung aus DB</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
 Hello World!
 <!-- Insert of new Guests -->
 <form action="/guests/insert" method="POST">

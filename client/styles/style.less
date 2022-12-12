@@ -4,8 +4,37 @@
 @bg-color-box2: #A8DCE3;
 @btn-color: #E1FFBD;
 @btn-font-color: #374A38;
-
+@font-size: 4rem;
+@border-radius: 2rem;
 body {
   background-color: @bg-color;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   color: @font;
+}
+
+header{
+  text-align: center;
+}
+
+h1{
+  font-weight: normal;
+  font-size: @font-size+3;
+}
+
+.container{
+  display: flex;
+}
+
+.events-page{
+  background-color: @bg-color-box1;
+  margin: 2rem;
+  padding: 1rem;
+  border-radius: @border-radius;
+}
+
+.events-categorys{
+  background-color: @bg-color-box2;
+  flex-grow: 2;
+  border-radius: @border-radius;
+  padding-right: 2rem;
 }
