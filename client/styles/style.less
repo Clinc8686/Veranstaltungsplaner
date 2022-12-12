@@ -2,32 +2,57 @@
 @bg-color: #FFF;
 @bg-color-box1: #C5FAE5;
 @bg-color-box2: #A8DCE3;
-@btn-color: #E1FFBD;
+@btn-bg-color: #E1FFBD;
 @btn-font-color: #374A38;
-@font-size: 4rem;
+@font-size: 1.5em;
 @border-radius: 2rem;
+
 body {
   background-color: @bg-color;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  font-size: @font-size;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   color: @font;
 }
 
 header{
   text-align: center;
+  margin-top: 0;
 }
 
 h1{
   font-weight: normal;
-  font-size: @font-size+3;
+  font-size: @font-size + 2;
+}
+
+h2{
+  margin: 0;
+}
+
+h3{
+  font-weight: normal;
+  margin: 0;
+}
+
+.site-button{
+  background-color: @btn-bg-color;
+  color: @btn-font-color;
+  font-size: @font-size - 0.5;
+  height: 3rem;
+  align-self: flex-end;
+  border-radius: @border-radius - 1;
 }
 
 .container{
   display: flex;
+  justify-content: space-around;
 }
 
 .events-page{
   background-color: @bg-color-box1;
-  margin: 2rem;
+  width: 40%;
+  margin-bottom: 2rem;
   padding: 1rem;
   border-radius: @border-radius;
 }
@@ -37,4 +62,8 @@ h1{
   flex-grow: 2;
   border-radius: @border-radius;
   padding-right: 2rem;
+}
+
+#guests{
+  display: none;
 }

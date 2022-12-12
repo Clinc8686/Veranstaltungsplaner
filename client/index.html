@@ -11,89 +11,101 @@
         <h1>Veranstaltungsplaner</h1>
     </header>
     <main>
-        <div class="container">
-            <div class="events-page">
-                <h2>Bestehende Veranstaltungen:</h2>
-                <h3>Kategorie1 aus DB</h3>
-                <!-- maybe load with js -->
-                <div class="events-categorys">
-                    <ul>
-                        <li><a>Veranstaltung aus DB</a></li>
-                    </ul>
+        <section id="home">
+            <div class="container">
+                <div class="events-page">
+                    <h2>Bestehende Veranstaltungen:</h2>
+                    <h3>Kategorie1 aus DB</h3>
+                    <!-- maybe load with js -->
+                    <div class="events-categorys">
+                        <ul>
+                            <li><a>Veranstaltung aus DB</a></li>
+                        </ul>
+                    </div>
+                    <h3>Kategorie2 aus DB</h3>
+                    <div class="events-categorys">
+                        <ul>
+                            <li><a>Veranstaltung aus DB</a></li>
+                        </ul>
+                    </div>
                 </div>
-                <h3>Kategorie2 aus DB</h3>
-                <div class="events-categorys">
-                    <ul>
-                        <li><a>Veranstaltung aus DB</a></li>
-                    </ul>
+                <div class="events-page">
+                    <h3>Kategorie3 aus DB</h3>
+                    <!-- maybe load with js -->
+                    <div class="events-categorys">
+                        <ul>
+                            <li><a>Veranstaltung aus DB</a></li>
+                        </ul>
+                    </div>
+                    <h3>Kategorie4 aus DB</h3>
+                    <div class="events-categorys">
+                        <ul>
+                            <li><a>Veranstaltung aus DB</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="events-page">
-                <h3>Kategorie3 aus DB</h3>
-                <!-- maybe load with js -->
-                <div class="events-categorys">
-                    <ul>
-                        <li><a>Veranstaltung aus DB</a></li>
-                    </ul>
-                </div>
-                <h3>Kategorie4 aus DB</h3>
-                <div class="events-categorys">
-                    <ul>
-                        <li><a>Veranstaltung aus DB</a></li>
-                    </ul>
-                </div>
+            <div class="container">
+                <!-- need to be changed -->
+                <button class="site-button" id="backButton">vorherige Seite</button>
+                <button class="site-button" id="newGuestsButton">Neue Gäste</button>
+                <button class="site-button" id="forwardButton">nächste Seite</button>
             </div>
-        </div>
-    </main>
-Hello World!
-<!-- Insert of new Guests -->
-<form action="/guests/insert" method="POST">
-    <label>Name:
-        <input type="text" placeholder="Name" name="name">
-    </label><br>
-    <label>Children:
-        <input type="checkbox" id="child">
-    </label><br>
-    <label id="childrenNumber" style="display: none;">Wie viele?
-        <input type="number" value="0" placeholder="0" name="children" min="0">
-    </label>
-    <label>Invitationstatus:
-        <select name="invitationstatus">
-            <option value="unbekannt">unbekannt</option>
-            <option value="eingeladen">eingeladen</option>
-            <option value="zugesagt">zugesagt</option>
-            <option value="abgesagt">abgesagt</option>
-        </select>
-    </label><br>
-    <button type="submit" id="submit">Submit</button>
-</form>
+        </section>
+        <section id="guests">
+            Hello World!
+            <!-- Insert of new Guests -->
+            <form action="/guests/insert" method="POST">
+                <label>Name:
+                    <input type="text" placeholder="Name" name="name">
+                </label><br>
+                <label>Children:
+                    <input type="checkbox" id="child">
+                </label><br>
+                <label id="childrenNumber" style="display: none;">Wie viele?
+                    <input type="number" value="0" placeholder="0" name="children" min="0">
+                </label>
+                <label>Invitationstatus:
+                    <select name="invitationstatus">
+                        <option value="unbekannt">unbekannt</option>
+                        <option value="eingeladen">eingeladen</option>
+                        <option value="zugesagt">zugesagt</option>
+                        <option value="abgesagt">abgesagt</option>
+                    </select>
+                </label><br>
+                <button type="submit" id="submit">Submit</button>
+            </form>
 
-<!-- Select of all Guests with print -->
-<form>
-    <button id="selectAll">Select All</button>
-</form>
-<div>
-    <table>
-        <thead>
-        <tr>
-            <th>
-                ID
-            </th>
-            <th>
-                Name
-            </th>
-            <th>
-                Children
-            </th>
-            <th>
-                Invitationstatus
-            </th>
-        </tr>
-        </thead>
-        <tbody id="tableBody">
-        </tbody>
-    </table>
-</div>
+            <!-- Select of all Guests with print -->
+            <form>
+                <button id="selectAll">Select All</button>
+            </form>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Children
+                        </th>
+                        <th>
+                            Invitationstatus
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+            <button class="site-button" id="homeButton">Startseite</button>
+        </section>
+    </main>
+
 
 </body>
 </html>
