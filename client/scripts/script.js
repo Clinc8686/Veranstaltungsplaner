@@ -1,4 +1,5 @@
 window.onload = function () {
+  // Button listener for guests select
   document.getElementById('selectAll').addEventListener('click', (e) => {
     e.preventDefault();
 
@@ -35,6 +36,7 @@ window.onload = function () {
     document.getElementById('guests').style.display = 'none';
   };
 
+  // Button listener for insert guests
   document.getElementById('insertGuest').addEventListener('click', (e) => {
     // prevent forwarding
     e.preventDefault();
@@ -67,11 +69,18 @@ window.onload = function () {
   });
 };
 
+// Print all guests
 function printTable (response) {
-  const tableBody = document.getElementById('tableBody');
-  for (const key in response.persons) {
-    const newRow = tableBody.insertRow();
+  const oldTableBody = document.getElementById('tableBody');
 
+  // remove all old printed guests
+  while (oldTableBody.rows.length > 0) {
+    oldTableBody.deleteRow(0);
+  }
+
+  // print actual new guests
+  for (const key in response.persons) {
+    const newRow = oldTableBody.insertRow();
     const person = response.persons[key];
     for (const personRow in person) {
       const newCell = newRow.insertCell();
@@ -81,6 +90,7 @@ function printTable (response) {
   }
 }
 
+// Print error message
 function printError () {
   const errorDiv = document.createElement('div');
   errorDiv.id = 'error';
