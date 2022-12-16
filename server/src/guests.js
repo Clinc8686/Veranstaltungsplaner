@@ -7,22 +7,24 @@ const router = express.Router();
 // Receive Post-Requests from index.html
 router.post('/guests/insert', urlencodedParser, function (req, res, next) {
   // Insert Guest from Form into database
-  console.log('guests!');
   const requestBody = req.body;
   if (requestBody.children == null) {
     requestBody.children = 0;
   } else if (requestBody.children === 'on') {
     requestBody.children = 1;
   }
-  console.log(requestBody.children);
+
   const statement = 'INSERT INTO Guests (Name, Children, Invitationstatus) VALUES (?,?,?)';
   database.run(statement, [requestBody.name, requestBody.children, requestBody.invitationstatus], function (err, result) {
-    if (err) throw err;
-    console.log('User was inserted successfully');
+    if (err) {
+      console.log('handle wrong insert!');
+      res.json({ success: false });
+    } else {
+      console.log('User was inserted successfully');
+      // Redirect to index.html
+      res.redirect('/');
+    }
   });
-
-  // Redirect to index.html
-  res.redirect('/');
 });
 
 router.post('/guests/delete', urlencodedParser, function (req, res, next) {
@@ -57,14 +59,17 @@ router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
   // Insert Guest from Form into database
   const statement = 'SELECT * FROM Guests';
   database.all(statement, function (err, rows) {
-    if (err) throw err;
-    console.log('User was selected successfully');
-    /* rows.forEach((row) => {
-      console.log(row.Name);
-    }); */
+    if (err) {
+      res.status(200).json({ error: 'true' });
+    } else {
+      console.log('User was selected successfully');
+      /* rows.forEach((row) => {
+        console.log(row.Name);
+      }); */
 
-    // send persons as json data to client
-    res.status(200).json({ persons: rows });
+      // send persons as json data to client
+      res.status(200).json({ persons: rows });
+    }
   });
 });
 

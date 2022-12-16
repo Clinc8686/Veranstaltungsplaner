@@ -55,22 +55,22 @@
         <section id="guests">
             Hello World!
             <!-- Insert of new Guests -->
-            <form action="/guests/insert" method="POST">
+            <form>
                 <label>Name:
-                    <input type="text" placeholder="Name" name="name">
+                    <input type="text" id="name" placeholder="Name" name="name">
                 </label><br>
                 <label>Children:
                     <input type="checkbox" id="child" name="children" value="1">
                 </label><br>
                 <label>Invitationstatus:
-                    <select name="invitationstatus">
+                    <select name="invitationstatus" id="invitationstatus">
                         <option value="unbekannt">unbekannt</option>
                         <option value="eingeladen">eingeladen</option>
                         <option value="zugesagt">zugesagt</option>
                         <option value="abgesagt">abgesagt</option>
                     </select>
                 </label><br>
-                <button type="submit" id="submit">Submit</button>
+                <button id="insertGuest">Submit</button>
             </form>
 
             <!-- Select of all Guests with print -->

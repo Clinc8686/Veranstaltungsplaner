@@ -2,7 +2,7 @@ window.onload = function () {
   document.getElementById('selectAll').addEventListener('click', (e) => {
     e.preventDefault();
 
-    const handleFormData = async () => {
+    const handleSelect = async () => {
       const sent = await fetch('/guests/select/2', {
         method: 'GET',
         headers: {
@@ -10,25 +10,19 @@ window.onload = function () {
         }
       });
 
-      const tableBody = document.getElementById('tableBody');
       try {
         const response = await sent.json();
-        for (const key in response.persons) {
-          const newRow = tableBody.insertRow();
-
-          const person = response.persons[key];
-          for (const personRow in person) {
-            const newCell = newRow.insertCell();
-            const newText = document.createTextNode(person[personRow]);
-            newCell.appendChild(newText);
-          }
+        if (response.persons) {
+          printTable(response);
+        } else {
+          printError();
         }
       } catch (error) {
-        console.log('script.js error: ' + error);
+        console.log('response error: ' + error);
       }
     };
 
-    handleFormData();
+    handleSelect();
   });
 
   // Testing dynamic site load
@@ -40,4 +34,68 @@ window.onload = function () {
     document.getElementById('home').style.display = 'block';
     document.getElementById('guests').style.display = 'none';
   };
+
+  document.getElementById('insertGuest').addEventListener('click', (e) => {
+    // prevent forwarding
+    e.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const children = document.getElementById('child').value;
+    const invitationstatus = document.getElementById('invitationstatus').value;
+    const data = { name, children, invitationstatus };
+
+    const handleInsert = async () => {
+      const sent = await fetch('/guests/insert/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      try {
+        const response = await sent.json();
+        if (response.success === false) {
+          printError();
+        }
+      } catch (error) {
+        console.log('response error: ' + error);
+      }
+    };
+
+    handleInsert();
+  });
 };
+
+function printTable (response) {
+  const tableBody = document.getElementById('tableBody');
+  for (const key in response.persons) {
+    const newRow = tableBody.insertRow();
+
+    const person = response.persons[key];
+    for (const personRow in person) {
+      const newCell = newRow.insertCell();
+      const newText = document.createTextNode(person[personRow]);
+      newCell.appendChild(newText);
+    }
+  }
+}
+
+function printError () {
+  const errorDiv = document.createElement('div');
+  errorDiv.id = 'error';
+  const errorSpan = document.createElement('span');
+  errorSpan.className = 'closebtn';
+  errorSpan.innerHTML = '&times';
+  errorDiv.appendChild(errorSpan);
+  const errorText = document.createTextNode('Da hat etwas nicht geklappt!');
+  errorDiv.appendChild(errorText);
+
+  const header = document.getElementsByTagName('header')[0];
+  document.body.insertBefore(errorDiv, header);
+
+  errorSpan.addEventListener('click', (e) => {
+    const error = document.getElementById('error');
+    error.remove();
+  });
+}
