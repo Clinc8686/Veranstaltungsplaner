@@ -31,16 +31,6 @@ window.onload = function () {
     handleFormData();
   });
 
-  document.getElementById('child').addEventListener('change', function (e) {
-    const childNum = document.getElementById('childrenNumber');
-    if (e.target.checked) {
-      childNum.style.display = 'block';
-      console.log('checked!');
-    } else {
-      childNum.style.display = 'none';
-      console.log('not checked');
-    }
-  });
   // Testing dynamic site load
   document.getElementById('newGuestsButton').onclick = function () {
     document.getElementById('home').style.display = 'none';

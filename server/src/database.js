@@ -31,7 +31,7 @@ db.serialize(function () {
   db.run('CREATE TABLE IF NOT EXISTS `Guests` (' +
     '`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE CHECK(length(ID) > 0),' +
     '`Name` TEXT NOT NULL UNIQUE CHECK(length(Name) > 0),' +
-    '`Children` INTEGER NOT NULL CHECK(length(Children) > 0),' +
+    '`Children` INTEGER NOT NULL CHECK(Children >= 0 AND Children <= 1),' +
     '`Invitationstatus` VARCHAR(10) NOT NULL CHECK(length(Invitationstatus) > 0),' +
     'CONSTRAINT `Guests` FOREIGN KEY (`ID`) REFERENCES `Guestlist` (`Guests`) ON DELETE CASCADE ON UPDATE CASCADE' +
     ')', (err) => {

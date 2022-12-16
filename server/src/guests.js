@@ -9,6 +9,12 @@ router.post('/guests/insert', urlencodedParser, function (req, res, next) {
   // Insert Guest from Form into database
   console.log('guests!');
   const requestBody = req.body;
+  if (requestBody.children == null) {
+    requestBody.children = 0;
+  } else if (requestBody.children === 'on') {
+    requestBody.children = 1;
+  }
+  console.log(requestBody.children);
   const statement = 'INSERT INTO Guests (Name, Children, Invitationstatus) VALUES (?,?,?)';
   database.run(statement, [requestBody.name, requestBody.children, requestBody.invitationstatus], function (err, result) {
     if (err) throw err;

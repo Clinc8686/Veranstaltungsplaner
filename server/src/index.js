@@ -7,6 +7,7 @@ app.use(express.static('build'));
 
 // link of server scripts
 app.use(require('./guests'));
+app.use(require('./events'));
 
 // create database if not exists
 database.serialize();
