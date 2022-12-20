@@ -57,7 +57,7 @@ router.post('/guests/update', urlencodedParser, function (req, res, next) {
 
 // Select all persons and send to client
 router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
-  // Insert Guest from Form into database
+  // Select Guest from Form into database
   const statement = 'SELECT * FROM Guests';
   database.all(statement, function (err, rows) {
     if (err) {
