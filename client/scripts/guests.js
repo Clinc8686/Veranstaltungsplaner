@@ -31,7 +31,12 @@ document.getElementById('insertGuest').addEventListener('click', (e) => {
   e.preventDefault();
 
   const name = document.getElementById('name').value;
-  const children = document.getElementById('child').value;
+  let children = 0;
+  if (document.getElementById('child').checked) {
+    children = 1;
+  }
+
+  console.log(children);
   const invitationstatus = document.getElementById('invitationstatus').value;
   const data = { name, children, invitationstatus };
 
@@ -50,7 +55,12 @@ document.getElementById('insertGuest').addEventListener('click', (e) => {
         printError();
       }
     } catch (error) {
-      console.log('response error: ' + error);
+      if (error instanceof SyntaxError) {
+        fireSelect();
+      } else {
+        printError();
+        console.log('response error: \n' + error);
+      }
     }
   };
 
@@ -96,4 +106,9 @@ function printError () {
     const error = document.getElementById('error');
     error.remove();
   });
+}
+
+// Simulates Click on selectAll Button
+function fireSelect () {
+  document.getElementById('selectAll').click();
 }

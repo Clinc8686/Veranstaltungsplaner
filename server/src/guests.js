@@ -8,10 +8,11 @@ const router = express.Router();
 router.post('/guests/insert', urlencodedParser, function (req, res, next) {
   // Insert Guest from Form into database
   const requestBody = req.body;
-  if (requestBody.children == null) {
-    requestBody.children = 0;
-  } else if (requestBody.children === 'on') {
+  console.log(requestBody.children);
+  if (requestBody.children === 'on' || requestBody.children === 1) {
     requestBody.children = 1;
+  } else {
+    requestBody.children = 0;
   }
 
   const statement = 'INSERT INTO Guests (Name, Children, Invitationstatus) VALUES (?,?,?)';

@@ -1,4 +1,5 @@
 require('./guests');
+require('./events');
 
 window.onload = function () {
   // Testing dynamic site load
