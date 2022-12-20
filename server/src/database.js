@@ -11,6 +11,7 @@ db.serialize(function () {
   db.run('CREATE TABLE IF NOT EXISTS `Events` (' +
     '`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE CHECK(length(ID) > 0),' +
     '`Name` TEXT NOT NULL CHECK(length(Name) > 0),' +
+    '`Category` TEXT NOT NULL CHECK(length(Name) > 0),' +
     '`Datetime` DATETIME NOT NULL CHECK(length(Datetime) > 0),' +
     '`Guestlist` INTEGER NOT NULL CHECK(length(Guestlist) > 0),' +
     '`Seatingplan` INTEGER NOT NULL CHECK(length(Seatingplan) > 0)' +
