@@ -1,6 +1,5 @@
 // Receives on page load all events
 window.addEventListener('load', function () {
-  console.log('test2');
   const handleSelect = async () => {
     const sent = await fetch('/events/select/2', {
       method: 'GET',
