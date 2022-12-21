@@ -1,5 +1,10 @@
-// Receives on page load all events
+// Fires on Page load
 window.addEventListener('load', function () {
+  loadEvents();
+});
+
+// Receives on page load all events
+function loadEvents () {
   const handleSelect = async () => {
     const sent = await fetch('/events/select/2', {
       method: 'GET',
@@ -21,7 +26,7 @@ window.addEventListener('load', function () {
   };
 
   handleSelect();
-});
+}
 
 // Button listener for insert guests
 document.getElementById('insertEvent').addEventListener('click', (e) => {
@@ -49,7 +54,7 @@ document.getElementById('insertEvent').addEventListener('click', (e) => {
       }
     } catch (error) {
       if (error instanceof SyntaxError) {
-        console.log('event created');
+        loadEvents();
       } else {
         printError();
         console.log('response error: \n' + error);
@@ -88,15 +93,34 @@ function printEvents (response) {
   const eventCategories = document.getElementsByClassName('events-categories');
   const categories = ['Geburtstag', 'Hochzeit', 'Kirchlich', 'Sonstiges'];
 
+  // Removes all ul and li tags
   let i = 0;
   for (const categoriesKey in categories) {
+    for (const responseKey in response.events) {
+      if (eventCategories[i].children.length > 0) {
+        if (categories[categoriesKey] === response.events[responseKey].Category) {
+          while (eventCategories[i].firstElementChild.firstElementChild) {
+            eventCategories[i].firstElementChild.firstElementChild.remove();
+          }
+        }
+        eventCategories[i].firstElementChild.remove();
+      }
+    }
+    i++;
+  }
+
+  // Prints all ul and li tags new with eventnames
+  i = 0;
+  for (const categoriesKey in categories) {
+    const ul = document.createElement('ul');
     for (const responseKey in response.events) {
       if (categories[categoriesKey] === response.events[responseKey].Category) {
         const li = document.createElement('li');
         li.innerHTML = response.events[responseKey].Name;
-        eventCategories[i].firstElementChild.appendChild(li);
+        ul.appendChild(li);
       }
     }
+    eventCategories[i].appendChild(ul);
     i++;
   }
 }
