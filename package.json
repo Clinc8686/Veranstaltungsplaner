@@ -13,7 +13,7 @@
     "minify": "npm run minify:css && npm run minify:js",
     "minify:css": "lessc --clean-css build/styles.css build/styles.css",
     "minify:js": "terser build/script.js --compress --mangle --comments=false -o build/script.js",
-    "js": "esbuild client/scripts/script.js --log-level=warning --bundle --platform=node --outfile=build/script.js && esbuild client/scripts/buildingHTML.js --log-level=warning --bundle --platform=node --outfile=build/buildingHTML.js",
+    "js": "esbuild client/scripts/script.js --log-level=warning --bundle --platform=node --outfile=build/script.js",
     "lint": "semistandard server/**/*.js --verbose | snazzy && semistandard client/**/*.js --verbose | snazzy",
     "start": "node server/src/index.js",
     "start:nodemon": "nodemon server/src/index.js"

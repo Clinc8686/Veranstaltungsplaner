@@ -1,6 +1,3 @@
-require('./guests');
-require('./events');
-
 window.onload = function () {
   // Testing dynamic site load
   document.getElementById('newGuestsButton').onclick = function () {
