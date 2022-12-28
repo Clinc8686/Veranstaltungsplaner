@@ -109,7 +109,22 @@
                 <label>Datum und Uhrzeit:
                     <input type="datetime-local" id="datetime" name="datetime">
                 </label><br>
-                <button id="insertEvent">Einf&uuml;gen</button>
+                <button id="insertEvent">Weiter</button>
+            </form>
+        </section>
+        <section id="tables">
+            <form>
+                <label>Anzahl Tische:
+                    <input type="number" id="numberOfTables" name="numberOfTables" min="0">
+                </label><br>
+                <label>Anzahl St&uuml;hle pro Tisch:
+                    <input type="number" id="seatsPerTable" name="seatsPerTable" min="0">
+                </label><br>
+                <label>Zweiseitige Belegung:
+                    <!--<input type="number" id="twoSides" name="twoSides" min="0">-->
+                    <input type="checkbox" id="twoSides" name="twoSides">
+                </label><br>
+                <button id="insertTables">Sitzplan erstellen</button>
             </form>
         </section>
     </main>

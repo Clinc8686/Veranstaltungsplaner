@@ -1,3 +1,4 @@
+import { printError } from './global';
 // Button listener for select guests
 document.getElementById('selectAll').addEventListener('click', (e) => {
   // prevent forwarding
@@ -36,7 +37,6 @@ document.getElementById('insertGuest').addEventListener('click', (e) => {
     children = 1;
   }
 
-  console.log(children);
   const invitationstatus = document.getElementById('invitationstatus').value;
   const data = { name, children, invitationstatus };
 
@@ -86,26 +86,6 @@ function printTable (response) {
       newCell.appendChild(newText);
     }
   }
-}
-
-// Print error message
-function printError () {
-  const errorDiv = document.createElement('div');
-  errorDiv.id = 'error';
-  const errorSpan = document.createElement('span');
-  errorSpan.className = 'closebtn';
-  errorSpan.innerHTML = '&times';
-  errorDiv.appendChild(errorSpan);
-  const errorText = document.createTextNode('Da hat etwas nicht geklappt!');
-  errorDiv.appendChild(errorText);
-
-  const header = document.getElementsByTagName('header')[0];
-  document.body.insertBefore(errorDiv, header);
-
-  errorSpan.addEventListener('click', (e) => {
-    const error = document.getElementById('error');
-    error.remove();
-  });
 }
 
 // Simulates Click on selectAll Button

@@ -1,3 +1,4 @@
+import { printError } from './global';
 // Fires on Page load
 window.addEventListener('load', function () {
   loadEvents();
@@ -64,26 +65,6 @@ document.getElementById('insertEvent').addEventListener('click', (e) => {
 
   handleInsert();
 });
-
-// Print error message
-function printError () {
-  const errorDiv = document.createElement('div');
-  errorDiv.id = 'error';
-  const errorSpan = document.createElement('span');
-  errorSpan.className = 'closebtn';
-  errorSpan.innerHTML = '&times';
-  errorDiv.appendChild(errorSpan);
-  const errorText = document.createTextNode('Da hat etwas nicht geklappt!');
-  errorDiv.appendChild(errorText);
-
-  const header = document.getElementsByTagName('header')[0];
-  document.body.insertBefore(errorDiv, header);
-
-  errorSpan.addEventListener('click', (e) => {
-    const error = document.getElementById('error');
-    error.remove();
-  });
-}
 
 // Allow only future dates on datetime form
 document.getElementById('datetime').min = new Date().toISOString().slice(0, new Date().toISOString().lastIndexOf(':'));
