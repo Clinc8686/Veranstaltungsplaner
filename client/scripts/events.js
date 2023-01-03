@@ -71,11 +71,76 @@ document.getElementById('datetime').min = new Date().toISOString().slice(0, new 
 
 // Prints Events on Landing Page
 function printEvents (response) {
-  const eventCategories = document.getElementsByClassName('events-categories');
+  // const eventCategories = document.getElementsByClassName('events-categories');
   const categories = ['Geburtstag', 'Hochzeit', 'Kirchlich', 'Sonstiges'];
 
-  // Removes all ul and li tags
+  // Adding Headline
+  const home = document.getElementById('home');
+  const homeH2 = document.createElement('h2');
+  homeH2.innerHTML = 'Bestehende Veranstaltungen:';
+  home.appendChild(homeH2);
+
+  // Adding divs
+  const container = document.createElement('div');
+  container.className = 'container';
+  const page1 = document.createElement('div');
+  page1.className = 'events-page';
+  const page2 = document.createElement('div');
+  page2.className = 'events-page';
+  home.appendChild(container);
+  container.appendChild(page1);
+  container.appendChild(page2);
+
+  // Adding events
+  // Prints all ul and li tags new with eventnames
   let i = 0;
+  for (const categoriesKey in categories) {
+    const ul = document.createElement('ul');
+    const eventCategory = document.createElement('div');
+    const categoryName = document.createElement('h3');
+    eventCategory.className = 'events-categories';
+    const eventCategories = document.getElementsByClassName('events-categories');
+    page1.appendChild(categoryName);
+    page1.appendChild(eventCategory);
+    for (const responseKey in response.events) {
+      if (categories[categoriesKey] === response.events[responseKey].Category) {
+        categoryName.innerHTML = response.events[responseKey].Category;
+        const li = document.createElement('li');
+        li.innerHTML = response.events[responseKey].Name;
+        ul.appendChild(li);
+      }
+    }
+    eventCategories[i].appendChild(ul);
+    i++;
+  }
+
+  // Next Page, Prevoius Page and New Event Buttons
+  const buttonContainer = document.createElement('div');
+  buttonContainer.className = 'container';
+  home.appendChild(buttonContainer);
+  const nextButton = document.createElement('button');
+  const previousButton = document.createElement('button');
+  const newEventButton = document.createElement('button');
+  nextButton.className = 'site-button';
+  previousButton.className = 'site-button';
+  newEventButton.className = 'site-button';
+  nextButton.id = 'next-button';
+  previousButton.id = 'prev-button';
+  nextButton.title = 'Nächste Seite';
+  previousButton.title = 'Vorherige Seite';
+  newEventButton.title = 'Neue Veranstaltung';
+  nextButton.ariaLabel = 'Nächste Seite';
+  previousButton.ariaLabel = 'Vorherige Seite';
+  newEventButton.ariaLabel = 'Neue Veranstaltung';
+  nextButton.innerHTML = 'Nächste Seite';
+  previousButton.innerHTML = 'Vorherige Seite';
+  newEventButton.innerHTML = 'Neue Veranstaltung';
+  buttonContainer.appendChild(previousButton);
+  buttonContainer.appendChild(newEventButton);
+  buttonContainer.appendChild(nextButton);
+
+  // Removes all ul and li tags
+  /* let i = 0;
   for (const categoriesKey in categories) {
     for (const responseKey in response.events) {
       if (eventCategories[i].children.length > 0) {
@@ -88,20 +153,5 @@ function printEvents (response) {
       }
     }
     i++;
-  }
-
-  // Prints all ul and li tags new with eventnames
-  i = 0;
-  for (const categoriesKey in categories) {
-    const ul = document.createElement('ul');
-    for (const responseKey in response.events) {
-      if (categories[categoriesKey] === response.events[responseKey].Category) {
-        const li = document.createElement('li');
-        li.innerHTML = response.events[responseKey].Name;
-        ul.appendChild(li);
-      }
-    }
-    eventCategories[i].appendChild(ul);
-    i++;
-  }
+  } */
 }
