@@ -71,8 +71,7 @@ document.getElementById('datetime').min = new Date().toISOString().slice(0, new 
 
 // Prints Events on Landing Page
 function printEvents (response) {
-  // const eventCategories = document.getElementsByClassName('events-categories');
-  const categories = ['Geburtstag', 'Hochzeit', 'Kirchlich', 'Sonstiges'];
+  // const categories = ['Geburtstag', 'Hochzeit', 'Kirchlich', 'Sonstiges'];
 
   // Adding Headline
   const home = document.getElementById('home');
@@ -91,6 +90,52 @@ function printEvents (response) {
   container.appendChild(page1);
   container.appendChild(page2);
 
+  // Adding events with pagination
+  const listItems = {};
+  const categories = [];
+  for (const resKey in response.events) {
+    for (const key in listItems) {
+      categories.push(key);
+      if (response.events[resKey].Category === key) {
+        listItems[key].push(response.events[resKey].Name);
+      } else {
+        listItems[response.events[resKey].Category] = [].push(response.events[resKey].Name);
+      }
+    }
+  }
+
+  // const listSize = listItems.length;
+  let currentPage = 0;
+  const paginationLimit = 3; // muss let werden, sobald die Höheneinstellungen gemacht sind
+  // const pageCount = Math.ceil(listSize / paginationLimit); wird später noch benötigt fürs disablen der Buttons
+
+  const setCurrentPage = (page) => {
+    currentPage = currentPage + 1;
+    const prevRange = (currentPage - 1) * paginationLimit;
+    const currentRange = currentPage * paginationLimit;
+    let k = 0;
+    // const nextRange = (currentPage + 1) * paginationLimit; später noch benötigt
+    for (let j = prevRange; j <= currentRange; j++) {
+      const ul = document.createElement('ul');
+      const eventCategory = document.createElement('div');
+      eventCategory.className = 'events-categories';
+      const categoryName = document.createElement('h3');
+      categoryName.innerHTML = categories[k];
+      page.appendChild(categoryName);
+      page.appendChild(eventCategory);
+      for (const li in listItems[categories[k]]) {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = li;
+        eventCategory.appendChild(ul);
+        ul.appendChild(listItem);
+      }
+      k++;
+    }
+  };
+
+  setCurrentPage(page1);
+  setCurrentPage(page2);
+  /*
   // Adding events
   // Prints all ul and li tags new with eventnames
   let i = 0;
@@ -113,7 +158,7 @@ function printEvents (response) {
     eventCategories[i].appendChild(ul);
     i++;
   }
-
+  */
   // Next Page, Prevoius Page and New Event Buttons
   const buttonContainer = document.createElement('div');
   buttonContainer.className = 'container';
