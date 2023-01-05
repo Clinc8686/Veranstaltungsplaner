@@ -96,7 +96,7 @@ function printEvents (response) {
   for (const resKey in response.events) {
     if (!categories.includes(response.events[resKey].Category)) {
       categories.push(response.events[resKey].Category);
-    } 
+    }
   }
   for (const resKey in response.events) {
     if (response.events[resKey].Category in listItems) {
