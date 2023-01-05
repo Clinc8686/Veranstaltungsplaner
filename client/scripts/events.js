@@ -94,19 +94,25 @@ function printEvents (response) {
   const listItems = {};
   const categories = [];
   for (const resKey in response.events) {
-    for (const key in listItems) {
-      categories.push(key);
-      if (response.events[resKey].Category === key) {
-        listItems[key].push(response.events[resKey].Name);
-      } else {
-        listItems[response.events[resKey].Category] = [].push(response.events[resKey].Name);
+    if (!categories.includes(response.events[resKey].Category)) {
+      categories.push(response.events[resKey].Category);
+    } 
+  }
+  for (const resKey in response.events) {
+    if (response.events[resKey].Category in listItems) {
+      for (const category in listItems) {
+        if (category === response.events[resKey].Category) {
+          listItems[category].push(response.events[resKey].Name);
+        }
       }
+    } else {
+      listItems[response.events[resKey].Category] = [response.events[resKey].Name];
     }
   }
 
   // const listSize = listItems.length;
   let currentPage = 0;
-  const paginationLimit = 3; // muss let werden, sobald die Höheneinstellungen gemacht sind
+  const paginationLimit = 4; // muss let werden, sobald die Höheneinstellungen gemacht sind
   // const pageCount = Math.ceil(listSize / paginationLimit); wird später noch benötigt fürs disablen der Buttons
 
   const setCurrentPage = (page) => {
@@ -116,23 +122,32 @@ function printEvents (response) {
     let k = 0;
     // const nextRange = (currentPage + 1) * paginationLimit; später noch benötigt
     for (let j = prevRange; j <= currentRange; j++) {
-      const ul = document.createElement('ul');
-      const eventCategory = document.createElement('div');
-      eventCategory.className = 'events-categories';
-      const categoryName = document.createElement('h3');
-      categoryName.innerHTML = categories[k];
-      page.appendChild(categoryName);
-      page.appendChild(eventCategory);
-      for (const li in listItems[categories[k]]) {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = li;
-        eventCategory.appendChild(ul);
-        ul.appendChild(listItem);
+      if (j <= currentRange - 2) {
+        const ul = document.createElement('ul');
+        const eventCategory = document.createElement('div');
+        eventCategory.className = 'events-categories';
+        const categoryName = document.createElement('h3');
+        categoryName.innerHTML = categories[k];
+        page.appendChild(categoryName);
+        j++;
+        page.appendChild(eventCategory);
+        for (let i = 0; i < listItems[categories[k]].length; i++) {
+          if (j <= currentRange - 1) {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = listItems[categories[k]][i];
+            eventCategory.appendChild(ul);
+            ul.appendChild(listItem);
+            j++;
+          } else {
+            break;
+          }
+        }
+      } else {
+        break;
       }
       k++;
     }
   };
-
   setCurrentPage(page1);
   setCurrentPage(page2);
   /*
