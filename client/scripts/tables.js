@@ -25,7 +25,11 @@ document.getElementById('insertTables').addEventListener('click', (e) => {
       const response = await sent.json();
 
       if (response.success === false) {
-        printError();
+        if (response.errorMessage === 'notNull') {
+          printError('Es müssen alle Felder ausgefüllt werden!');
+        } else {
+          printError();
+        }
       }
     } catch (error) {
       if (error instanceof SyntaxError) {

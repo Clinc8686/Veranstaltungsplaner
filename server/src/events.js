@@ -26,8 +26,12 @@ router.post('/events/insert', urlencodedParser, function (req, res, next) {
   const statement = 'INSERT INTO Events (Name, Category, Datetime) VALUES (?,?,?)';
   database.run(statement, [requestBody.name, requestBody.category, requestBody.datetime], function (err, result) {
     if (err) {
-      console.log('handle wrong insert! \n' + err.message);
-      res.json({ success: false });
+      const check = 'CHECK constraint failed';
+      if (err.message.includes(check)) {
+        res.json({ success: false, errorMessage: 'notNull' });
+      } else {
+        res.json({ success: false });
+      }
     } else {
       console.log('Event was inserted successfully');
       // Redirect to index.html

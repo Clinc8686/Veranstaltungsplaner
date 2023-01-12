@@ -12,8 +12,13 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
   const statement = 'INSERT INTO Seatingplan (Tables, Seats, Onesided) VALUES (?,?,?)';
   database.run(statement, [requestBody.numberOfTables, requestBody.seatsPerTable, requestBody.twoSides], function (err, result) {
     if (err) {
+      const check = 'CHECK constraint failed';
+      if (err.message.includes(check)) {
+        res.json({ success: false, errorMessage: 'notNull' });
+      } else {
+        res.json({ success: false });
+      }
       console.log('handle wrong insert! \n' + err.message);
-      res.json({ success: false });
     } else {
       console.log('Table was inserted successfully');
       // Redirect to index.html

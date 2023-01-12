@@ -18,8 +18,12 @@ router.post('/guests/insert', urlencodedParser, function (req, res, next) {
   const statement = 'INSERT INTO Guests (Name, Children, Invitationstatus) VALUES (?,?,?)';
   database.run(statement, [requestBody.name, requestBody.children, requestBody.invitationstatus], function (err, result) {
     if (err) {
-      console.log('handle wrong insert!');
-      res.json({ success: false });
+      const check = 'CHECK constraint failed';
+      if (err.message.includes(check)) {
+        res.json({ success: false, errorMessage: 'notNull' });
+      } else {
+        res.json({ success: false });
+      }
     } else {
       console.log('User was inserted successfully');
       // Redirect to index.html
@@ -28,7 +32,7 @@ router.post('/guests/insert', urlencodedParser, function (req, res, next) {
   });
 });
 
-router.post('/guests/delete', urlencodedParser, function (req, res, next) {
+router.post('/guests/delete/:id', urlencodedParser, function (req, res, next) {
   // Insert Guest from Form into database
   console.log('guests!');
   const requestBody = req.body;
