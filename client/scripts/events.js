@@ -109,34 +109,38 @@ function printEvents (response) {
       listItems[response.events[resKey].Category] = [response.events[resKey].Name];
     }
   }
-
   // const listSize = listItems.length;
   let currentPage = 0;
-  const paginationLimit = 4; // muss let werden, sobald die Höheneinstellungen gemacht sind
+  const paginationLimit = 6; // muss let werden, sobald die Höheneinstellungen gemacht sind
   // const pageCount = Math.ceil(listSize / paginationLimit); wird später noch benötigt fürs disablen der Buttons
-
-  const setCurrentPage = (page) => {
+  const alreadyOnPage = [];
+  const setForwardPage = (page) => {
     currentPage = currentPage + 1;
     const prevRange = (currentPage - 1) * paginationLimit;
     const currentRange = currentPage * paginationLimit;
     let k = 0;
     // const nextRange = (currentPage + 1) * paginationLimit; später noch benötigt
     for (let j = prevRange; j <= currentRange; j++) {
-      if (j <= currentRange - 2) {
+      if (j <= currentRange - 1) {
+        const currentCategory = categories[k];
         const ul = document.createElement('ul');
         const eventCategory = document.createElement('div');
         eventCategory.className = 'events-categories';
         const categoryName = document.createElement('h3');
-        categoryName.innerHTML = categories[k];
-        page.appendChild(categoryName);
-        j++;
-        page.appendChild(eventCategory);
-        for (let i = 0; i < listItems[categories[k]].length; i++) {
-          if (j <= currentRange - 1) {
+        categoryName.innerHTML = currentCategory;
+        if (!alreadyOnPage.includes(currentCategory)) {
+          page.appendChild(categoryName);
+          page.appendChild(eventCategory);
+          alreadyOnPage.push(currentCategory);
+          j++;
+        }
+        for (let i = 0; i < listItems[currentCategory].length; i++) {
+          if (j <= currentRange && !alreadyOnPage.includes(listItems[currentCategory][i])) {
             const listItem = document.createElement('li');
-            listItem.innerHTML = listItems[categories[k]][i];
+            listItem.innerHTML = listItems[currentCategory][i];
             eventCategory.appendChild(ul);
             ul.appendChild(listItem);
+            alreadyOnPage.push(listItems[currentCategory][i]);
             j++;
           } else {
             break;
@@ -148,8 +152,10 @@ function printEvents (response) {
       k++;
     }
   };
-  setCurrentPage(page1);
-  setCurrentPage(page2);
+  setForwardPage(page1);
+  setForwardPage(page2);
+  console.log(listItems);
+  console.log(alreadyOnPage);
   /*
   // Adding events
   // Prints all ul and li tags new with eventnames
@@ -199,6 +205,25 @@ function printEvents (response) {
   buttonContainer.appendChild(newEventButton);
   buttonContainer.appendChild(nextButton);
 
+  document.getElementById('next-button').addEventListener('click', function () {
+    deletePageContent(page1);
+    deletePageContent(page2);
+    setForwardPage(page1);
+    setForwardPage(page2);
+  });
+  const deletePageContent = (page) => {
+    if (page.hasChildNodes()) {
+      const e = document.querySelector('ul');
+      const h = document.querySelector('h3');
+      let first = e.firstElementChild;
+      while (first) {
+        first.remove();
+        first = e.firstElementChild;
+      }
+      e.remove();
+      h.remove();
+    }
+  };
   // Removes all ul and li tags
   /* let i = 0;
   for (const categoriesKey in categories) {
