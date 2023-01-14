@@ -70,28 +70,27 @@ document.getElementById('insertEvent').addEventListener('click', (e) => {
 document.getElementById('datetime').min = new Date().toISOString().slice(0, new Date().toISOString().lastIndexOf(':'));
 
 // Prints Events on Landing Page
-function printEvents (response) {
-  // const categories = ['Geburtstag', 'Hochzeit', 'Kirchlich', 'Sonstiges'];
-  const currentPage = 0; // vorerst const
+function printEvents (events) {
+  let currentPage = 0;
 
   // Adding Headline
   const home = document.getElementById('home');
   const homeH2 = document.createElement('h2');
   homeH2.innerHTML = 'Bestehende Veranstaltungen:';
   home.appendChild(homeH2);
-
-  // Adding divs
-  const container = document.createElement('div');
-  container.className = 'container';
-  const page1 = document.createElement('div');
-  page1.id = 'page'.concat(currentPage);
-  page1.className = 'events-page';
-  const page2 = document.createElement('div');
-  page2.id = 'page'.concat(currentPage + 1); // ggf. mit Funktion currentPage hochzählen..
-  page2.className = 'events-page';
-  home.appendChild(container);
-  container.appendChild(page1);
-  container.appendChild(page2);
+  const displayPages = () => {
+    const container = document.createElement('div');
+    container.className = 'container';
+    const page1 = document.createElement('div');
+    page1.id = 'page'.concat(currentPage);
+    page1.className = 'events-page';
+    const page2 = document.createElement('div');
+    page2.id = 'page'.concat(currentPage + 1);
+    page2.className = 'events-page';
+    home.appendChild(container);
+    container.appendChild(page1);
+    container.appendChild(page2);
+  };
 
   // Adding events with pagination
   const listItems = {};
