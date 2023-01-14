@@ -72,6 +72,7 @@ document.getElementById('datetime').min = new Date().toISOString().slice(0, new 
 // Prints Events on Landing Page
 function printEvents (response) {
   // const categories = ['Geburtstag', 'Hochzeit', 'Kirchlich', 'Sonstiges'];
+  const currentPage = 0; // vorerst const
 
   // Adding Headline
   const home = document.getElementById('home');
@@ -83,8 +84,10 @@ function printEvents (response) {
   const container = document.createElement('div');
   container.className = 'container';
   const page1 = document.createElement('div');
+  page1.id = 'page'.concat(currentPage);
   page1.className = 'events-page';
   const page2 = document.createElement('div');
+  page2.id = 'page'.concat(currentPage + 1); // ggf. mit Funktion currentPage hochzählen..
   page2.className = 'events-page';
   home.appendChild(container);
   container.appendChild(page1);
@@ -208,10 +211,14 @@ function printEvents (response) {
   document.getElementById('next-button').addEventListener('click', function () {
     deletePageContent(page1);
     deletePageContent(page2);
-    setForwardPage(page1);
-    setForwardPage(page2);
+    // setForwardPage(page1);
+    // setForwardPage(page2);
   });
   const deletePageContent = (page) => {
+    for (const child in page.children) {
+      console.log(child);
+    }
+    /*
     if (page.hasChildNodes()) {
       const e = document.querySelector('ul');
       const h = document.querySelector('h3');
@@ -222,7 +229,7 @@ function printEvents (response) {
       }
       e.remove();
       h.remove();
-    }
+    } */
   };
   // Removes all ul and li tags
   /* let i = 0;
