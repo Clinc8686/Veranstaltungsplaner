@@ -17,7 +17,7 @@ function loadEvents () {
     try {
       const response = await sent.json();
       if (response.events) {
-        printEvents(response);
+        printEvents(response.events);
       } else {
         printError();
       }
@@ -150,83 +150,103 @@ function printEvents (events) {
       if (!pages[currentPage - 1]) {
         document.getElementById('prev-button').disabled = true;
       }
-    } else {
-      listItems[response.events[resKey].Category] = [response.events[resKey].Name];
-    }
-  }
-  // const listSize = listItems.length;
-  let currentPage = 0;
-  const paginationLimit = 6; // muss let werden, sobald die Höheneinstellungen gemacht sind
-  // const pageCount = Math.ceil(listSize / paginationLimit); wird später noch benötigt fürs disablen der Buttons
-  const alreadyOnPage = [];
-  const setForwardPage = (page) => {
-    currentPage = currentPage + 1;
-    const prevRange = (currentPage - 1) * paginationLimit;
-    const currentRange = currentPage * paginationLimit;
-    let k = 0;
-    // const nextRange = (currentPage + 1) * paginationLimit; später noch benötigt
-    for (let j = prevRange; j <= currentRange; j++) {
-      if (j <= currentRange - 1) {
-        const currentCategory = categories[k];
-        const ul = document.createElement('ul');
-        const eventCategory = document.createElement('div');
-        eventCategory.className = 'events-categories';
-        const categoryName = document.createElement('h3');
-        categoryName.innerHTML = currentCategory;
-        if (!alreadyOnPage.includes(currentCategory)) {
-          page.appendChild(categoryName);
-          page.appendChild(eventCategory);
-          alreadyOnPage.push(currentCategory);
-          j++;
-        }
-        for (let i = 0; i < listItems[currentCategory].length; i++) {
-          if (j <= currentRange && !alreadyOnPage.includes(listItems[currentCategory][i])) {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = listItems[currentCategory][i];
-            eventCategory.appendChild(ul);
-            ul.appendChild(listItem);
-            alreadyOnPage.push(listItems[currentCategory][i]);
-            j++;
-          } else {
-            break;
-          }
-        }
-      } else {
-        break;
-      }
-      k++;
-    }
+      buttonClick();
+    });
   };
-  setForwardPage(page1);
-  setForwardPage(page2);
-  console.log(listItems);
-  console.log(alreadyOnPage);
-  /*
-  // Adding events
-  // Prints all ul and li tags new with eventnames
-  let i = 0;
-  for (const categoriesKey in categories) {
-    const ul = document.createElement('ul');
-    const eventCategory = document.createElement('div');
-    const categoryName = document.createElement('h3');
-    eventCategory.className = 'events-categories';
-    const eventCategories = document.getElementsByClassName('events-categories');
-    page1.appendChild(categoryName);
-    page1.appendChild(eventCategory);
-    for (const responseKey in response.events) {
-      if (categories[categoriesKey] === response.events[responseKey].Category) {
-        categoryName.innerHTML = response.events[responseKey].Category;
-        const li = document.createElement('li');
-        li.innerHTML = response.events[responseKey].Name;
-        ul.appendChild(li);
-      }
-    }
-    eventCategories[i].appendChild(ul);
-    i++;
+
+  displayPages();
+  displayEvents(currentPage, pages);
+  displayEvents(currentPage + 1, pages);
+  displayButtons();
+  buttonClick();
+  document.getElementById('prev-button').disabled = true;
+  if (!pages[currentPage + 2]) {
+    document.getElementById('next-button').disabled = true;
   }
-  */
-  // Next Page, Prevoius Page and New Event Buttons
+  const deletePageContent = (page) => {
+    while (page.lastChild) {
+      page.removeChild(page.lastChild);
+    }
+    page.remove();
+  };
+}
+
+function getPageContent (events, rowLimit) {
+  const pages = [];
+
+  let elements = [];
+  let categories = [];
+  let pageCount = 0;
+  let countEvents = 0;
+  if (events.length < rowLimit) {
+    rowLimit = events.length;
+  }
+
+  for (let index = 0; index < events.length; index++) {
+    let element;
+    if (!categories.includes(events[index].Category) && elements.length < rowLimit - 1) {
+      categories.push(events[index].Category);
+      element = {
+        type: 'Category',
+        content: events[index].Category
+      };
+      elements.push(element);
+      element = {
+        type: 'item',
+        content: events[index].Name
+      };
+      countEvents++;
+      elements.push(element);
+    } else if (categories.includes(events[index].Category) && elements.length < rowLimit) {
+      element = {
+        type: 'item',
+        content: events[index].Name
+      };
+      countEvents++;
+      elements.push(element);
+    } else if (!elements.length < rowLimit) {
+      pages[pageCount] = elements;
+      pageCount++;
+      elements = [];
+      categories = [];
+      index--;
+    }
+    if (countEvents === events.length) {
+      pages[pageCount] = elements;
+    }
+  }
+  return pages;
+}
+
+function displayEvents (pageNum, pages) {
+  const page = document.getElementById('page'.concat(pageNum));
+  let category;
+  for (const element of pages[pageNum]) {
+    if (element.type === 'Category') {
+      category = element.content;
+      const headline = document.createElement('h3');
+      const displayedCategory = document.createElement('div');
+      const ul = document.createElement('ul');
+      ul.id = 'ul-'.concat(category).concat(pageNum);
+      displayedCategory.className = 'events-categories';
+      headline.innerHTML = element.content;
+      page.appendChild(headline);
+      page.appendChild(displayedCategory);
+      displayedCategory.appendChild(ul);
+    } else if (element.type === 'item') {
+      const ul = document.getElementById('ul-'.concat(category).concat(pageNum));
+      const li = document.createElement('li');
+      li.innerHTML = element.content;
+      ul.appendChild(li);
+    }
+  }
+}
+
+function displayButtons () {
+  // Adding Buttons
+  const home = document.getElementById('home');
   const buttonContainer = document.createElement('div');
+  buttonContainer.id = 'button-container';
   buttonContainer.className = 'container';
   home.appendChild(buttonContainer);
   const nextButton = document.createElement('button');
@@ -249,43 +269,12 @@ function printEvents (events) {
   buttonContainer.appendChild(previousButton);
   buttonContainer.appendChild(newEventButton);
   buttonContainer.appendChild(nextButton);
+}
 
-  document.getElementById('next-button').addEventListener('click', function () {
-    deletePageContent(page1);
-    deletePageContent(page2);
-    // setForwardPage(page1);
-    // setForwardPage(page2);
-  });
-  const deletePageContent = (page) => {
-    for (const child in page.children) {
-      console.log(child);
-    }
-    /*
-    if (page.hasChildNodes()) {
-      const e = document.querySelector('ul');
-      const h = document.querySelector('h3');
-      let first = e.firstElementChild;
-      while (first) {
-        first.remove();
-        first = e.firstElementChild;
-      }
-      e.remove();
-      h.remove();
-    } */
-  };
-  // Removes all ul and li tags
-  /* let i = 0;
-  for (const categoriesKey in categories) {
-    for (const responseKey in response.events) {
-      if (eventCategories[i].children.length > 0) {
-        if (categories[categoriesKey] === response.events[responseKey].Category) {
-          while (eventCategories[i].firstElementChild.firstElementChild) {
-            eventCategories[i].firstElementChild.firstElementChild.remove();
-          }
-        }
-        eventCategories[i].firstElementChild.remove();
-      }
-    }
-    i++;
-  } */
+function deleteButtons () {
+  const buttoncontainer = document.getElementById('button-container');
+  while (buttoncontainer.lastChild) {
+    buttoncontainer.removeChild(buttoncontainer.lastChild);
+  }
+  buttoncontainer.remove();
 }
