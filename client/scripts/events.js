@@ -92,20 +92,63 @@ function printEvents (events) {
     container.appendChild(page2);
   };
 
-  // Adding events with pagination
-  const listItems = {};
-  const categories = [];
-  for (const resKey in response.events) {
-    if (!categories.includes(response.events[resKey].Category)) {
-      categories.push(response.events[resKey].Category);
+  const determineRowLimit = () => {
+    const height = window.innerHeight;
+    let limit;
+    if (height > 3000) {
+      limit = 25;
+    } else if (height > 2000) {
+      limit = 18;
+    } else if (height > 1000) {
+      limit = 15;
+    } else if (height > 700) {
+      limit = 10;
+    } else {
+      limit = 6;
     }
-  }
-  for (const resKey in response.events) {
-    if (response.events[resKey].Category in listItems) {
-      for (const category in listItems) {
-        if (category === response.events[resKey].Category) {
-          listItems[category].push(response.events[resKey].Name);
-        }
+    return limit;
+  };
+
+  // Adding events with pagination
+  // Limit for the number of rows we display per page
+  const eventsSorted = events.sort((a, b) => a.Category.localeCompare(b.Category));
+  const rowLimit = determineRowLimit();
+  const pages = getPageContent(eventsSorted, rowLimit);
+
+  const buttonClick = () => {
+    document.getElementById('next-button').addEventListener('click', function () {
+      const page1 = document.getElementById('page'.concat(currentPage));
+      const page2 = document.getElementById('page'.concat(currentPage + 1));
+      deletePageContent(page1);
+      deletePageContent(page2);
+      deleteButtons();
+      currentPage += 2;
+      displayPages();
+      displayEvents(currentPage, pages);
+      if (pages[currentPage + 1]) {
+        displayEvents(currentPage + 1, pages);
+      }
+      displayButtons();
+      if (!pages[currentPage + 3]) {
+        document.getElementById('prev-button').disabled = false;
+        document.getElementById('next-button').disabled = true;
+      }
+      buttonClick();
+    });
+
+    document.getElementById('prev-button').addEventListener('click', function () {
+      const page1 = document.getElementById('page'.concat(currentPage));
+      const page2 = document.getElementById('page'.concat(currentPage + 1));
+      deletePageContent(page1);
+      deletePageContent(page2);
+      deleteButtons();
+      currentPage -= 2;
+      displayPages();
+      displayEvents(currentPage, pages);
+      displayEvents(currentPage + 1, pages);
+      displayButtons();
+      if (!pages[currentPage - 1]) {
+        document.getElementById('prev-button').disabled = true;
       }
     } else {
       listItems[response.events[resKey].Category] = [response.events[resKey].Name];
