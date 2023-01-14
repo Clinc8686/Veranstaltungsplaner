@@ -257,6 +257,7 @@ function displayButtons () {
   newEventButton.className = 'site-button';
   nextButton.id = 'next-button';
   previousButton.id = 'prev-button';
+  newEventButton.id = 'newEvent-button';
   nextButton.title = 'Nächste Seite';
   previousButton.title = 'Vorherige Seite';
   newEventButton.title = 'Neue Veranstaltung';
