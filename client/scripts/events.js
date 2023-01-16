@@ -29,46 +29,6 @@ function loadEvents () {
   handleSelect();
 }
 
-// Button listener for insert guests
-document.getElementById('insertEvent').addEventListener('click', (e) => {
-  // prevent forwarding
-  e.preventDefault();
-
-  const name = document.getElementById('eventName').value;
-  const category = document.getElementById('category').value;
-  const datetime = document.getElementById('datetime').value;
-  const data = { name, category, datetime };
-
-  const handleInsert = async () => {
-    const sent = await fetch('/events/insert/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-
-    try {
-      const response = await sent.json();
-      if (response.success === false) {
-        printError();
-      }
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        loadEvents();
-      } else {
-        printError();
-        console.log('response error: \n' + error);
-      }
-    }
-  };
-
-  handleInsert();
-});
-
-// Allow only future dates on datetime form
-document.getElementById('datetime').min = new Date().toISOString().slice(0, new Date().toISOString().lastIndexOf(':'));
-
 // Prints Events on Landing Page
 function printEvents (events) {
   let currentPage = 0;
@@ -264,6 +224,47 @@ function displayButtons () {
   buttonContainer.appendChild(newEventButton);
   buttonContainer.appendChild(nextButton);
 }
+
+// Button listener for insert guests
+document.getElementById('insertEvent').addEventListener('click', (e) => {
+  // prevent forwarding
+  e.preventDefault();
+
+  const name = document.getElementById('eventName').value;
+  const category = document.getElementById('category').value;
+  const datetime = document.getElementById('datetime').value;
+  const data = { name, category, datetime };
+
+  const handleInsert = async () => {
+    const sent = await fetch('/events/insert/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    try {
+      const response = await sent.json();
+      if (response.success === false) {
+        printError();
+      }
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        loadEvents();
+      } else {
+        printError();
+        console.log('response error: \n' + error);
+      }
+    }
+  };
+
+  handleInsert();
+});
+
+// Allow only future dates on datetime form
+document.getElementById('datetime').min = new Date().toISOString().slice(0, new Date().toISOString().lastIndexOf(':'));
+
 
 function deleteContent (parent) {
   while (parent.lastChild) {
