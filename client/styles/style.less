@@ -4,14 +4,15 @@
 @bg-color-box2: #A8DCE3;
 @btn-bg-color: #E1FFBD;
 @btn-font-color: #374A38;
-@font-size: 1.5em;
+@font-size: 1.5rem;
 @border-radius: 2rem;
 @margin-1: 1rem;
+@padding-2: 2rem;
 
 body {
   background-color: @bg-color;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding-left: @padding-2;
+  padding-right: @padding-2;
   font-size: @font-size;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   color: @font;
@@ -69,10 +70,33 @@ h3{
   margin: -1rem 0;
 }
 
+form{
+  width: 100%;
+}
+
+input[type=text], input[type=datetime-local], select{
+  padding: 0.6rem;
+  margin-left: 0.5rem;
+  margin-bottom: @margin-1;
+  display: inline-block;
+  border: 0;
+  border-radius: @border-radius;
+  box-sizing: border-box;
+  font-size: @font-size - 0.2;
+}
+
+#selectCategory{
+  width: 72%;
+}
+
+#datetime{
+  width: 54%;
+}
+
 .site-button{
   background-color: @btn-bg-color;
   color: @btn-font-color;
-  font-size: @font-size - 0.5;
+  font-size: @font-size;
   height: 3rem;
   align-self: flex-end;
   border-radius: @border-radius - 1;
@@ -94,23 +118,24 @@ h3{
 .container{
   display: flex;
   justify-content: space-around;
+  margin: auto;
+}
+
+.box{
+  background-color: @bg-color-box1;
+  width: 60%;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem 1rem 1rem 1rem;
+  border-radius: @border-radius;
 }
 
 .events-page{
-  background-color: @bg-color-box1;
   width: 40%;
-  margin-bottom: 2rem;
-  padding: 1.5rem 1rem 1rem 1rem;
-  border-radius: @border-radius;
 }
 
 .events-categories{
   background-color: @bg-color-box2;
   flex-grow: 2;
   border-radius: @border-radius;
-  padding-right: 2rem;
-}
-
-#guests{
-  display: none;
+  padding-right: @padding-2;
 }
