@@ -81,6 +81,7 @@ function printEvents (events) {
   const displayPages = () => {
     const container = document.createElement('div');
     container.className = 'container';
+    container.id = 'page-container';
     const page1 = document.createElement('div');
     page1.id = 'page'.concat(currentPage);
     page1.className = 'events-page';
@@ -117,11 +118,10 @@ function printEvents (events) {
 
   const buttonClick = () => {
     document.getElementById('next-button').addEventListener('click', function () {
-      const page1 = document.getElementById('page'.concat(currentPage));
-      const page2 = document.getElementById('page'.concat(currentPage + 1));
-      deletePageContent(page1);
-      deletePageContent(page2);
-      deleteButtons();
+      const pagecontainer = document.getElementById('page-container');
+      const buttoncontainer = document.getElementById('button-container');
+      deleteContent(pagecontainer);
+      deleteContent(buttoncontainer);
       currentPage += 2;
       displayPages();
       displayEvents(currentPage, pages);
@@ -137,11 +137,10 @@ function printEvents (events) {
     });
 
     document.getElementById('prev-button').addEventListener('click', function () {
-      const page1 = document.getElementById('page'.concat(currentPage));
-      const page2 = document.getElementById('page'.concat(currentPage + 1));
-      deletePageContent(page1);
-      deletePageContent(page2);
-      deleteButtons();
+      const pagecontainer = document.getElementById('page-container');
+      const buttoncontainer = document.getElementById('button-container');
+      deleteContent(pagecontainer);
+      deleteContent(buttoncontainer);
       currentPage -= 2;
       displayPages();
       displayEvents(currentPage, pages);
@@ -163,12 +162,6 @@ function printEvents (events) {
   if (!pages[currentPage + 2]) {
     document.getElementById('next-button').disabled = true;
   }
-  const deletePageContent = (page) => {
-    while (page.lastChild) {
-      page.removeChild(page.lastChild);
-    }
-    page.remove();
-  };
 }
 
 function getPageContent (events, rowLimit) {
@@ -272,10 +265,9 @@ function displayButtons () {
   buttonContainer.appendChild(nextButton);
 }
 
-function deleteButtons () {
-  const buttoncontainer = document.getElementById('button-container');
-  while (buttoncontainer.lastChild) {
-    buttoncontainer.removeChild(buttoncontainer.lastChild);
+function deleteContent (parent) {
+  while (parent.lastChild) {
+    parent.removeChild(parent.lastChild);
   }
-  buttoncontainer.remove();
+  parent.remove();
 }
