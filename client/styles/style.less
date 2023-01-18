@@ -98,6 +98,7 @@ input[type=text], input[type=datetime-local], select{
   border-radius: @border-radius;
   box-sizing: border-box;
   font-size: @font-size - 0.2;
+  background: @bg-color;
 }
 
 .site-button{
@@ -115,6 +116,7 @@ input[type=text], input[type=datetime-local], select{
   background-color: @bg-color;
   border-color: @bg-color;
   display: contents;
+  cursor: default;
 }
 
 .site-button:hover,
@@ -139,6 +141,8 @@ input[type=text], input[type=datetime-local], select{
   margin-bottom: 1.5rem;
   padding: 1.5rem 1rem 1rem 1rem;
   border-radius: @border-radius;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .events-page{
@@ -150,4 +154,11 @@ input[type=text], input[type=datetime-local], select{
   flex-grow: 2;
   border-radius: @border-radius;
   padding-right: @padding-2;
+}
+
+#insertGuestsSection{
+  h3{
+    margin-top: -@margin-1;
+    margin-bottom: @margin-1;
+  }
 }

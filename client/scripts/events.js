@@ -350,7 +350,8 @@ function insertNewEvent () {
         }
       } catch (error) {
         if (error instanceof SyntaxError) {
-          loadEvents();
+          deleteContent(section);
+          insertNewGuests();
         } else {
           printError();
           console.log('response error: \n' + error);
@@ -358,7 +359,5 @@ function insertNewEvent () {
       }
     };
     handleInsert();
-    deleteContent(section);
-    insertNewGuests();
   });
 }

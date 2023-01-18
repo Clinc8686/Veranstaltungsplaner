@@ -1,58 +1,30 @@
 import { printError } from './global';
-import { createInput } from './events';
-/*
-const button = document.getElementById('insertEvent');
-button.addEventListener('click', function () {
-  insertGuestsPage();
-});
+import { createInput, createOptions } from './events';
 
-function insertGuestsPage () {
-  const main = document.getElementById('main');
-  const section = document.createElement('section');
-  const h2 = document.createElement('h2');
-  const div = document.createElement('div');
-  const h3 = document.createElement('h3');
-  const form = document.createElement('form');
-  const inputFirstName1 = createInputRow('inputFirstName1', 'text', 'Max', 'inputFirstName1');
-  const inputName1 = createInputRow('inputName1', 'text', 'Mustermann', 'inputName1');
-  // const selectInvitation1 = createSelectRow('selectInvitation1', ['unbekannt', 'eingeladen', 'zugesagt', 'abgesagt']);
-  h2.innerHTML = 'Gästeliste:';
-  h3.innerHTML = 'Neue Gäste eintragen';
-  main.appendChild(section);
-  section.appendChild(h2);
-  section.appendChild(div);
-  div.appendChild(h3);
-  div.appendChild(form);
-  form.appendChild(inputFirstName1);
-  form.appendChild(inputName1);
-  // form.appendChild(selectInvitation1);
-}
-*/
-
-function createInputRow (id, type, placeholder, name) {
+function createInputRow (id, type, placeholder, name, labelText) {
   const div = document.createElement('div');
   const label = document.createElement('label');
   const input = createInput(id, type, placeholder, name);
-  label.id = 'name'.concat('Label');
+  label.id = name.concat('Label');
+  label.innerHTML = labelText;
   div.appendChild(label);
-  label.appendChild(input);
+  div.appendChild(input);
   return div;
 }
-/*
-function createSelectRow (id, options) {
-  const opts = [];
+
+function createSelectRow (id, labelText) {
+  const div = document.createElement('div');
+  const label = document.createElement('label');
   const select = document.createElement('select');
-  for (const option of options) {
-    opts.push(createOptions(option));
-  }
+  label.id = id.concat('Label');
+  label.innerHTML = labelText;
   select.id = id;
   select.name = id;
-  for (const opt in opts) {
-    select.appendChild(opt);
-  }
-  return select;
+  div.appendChild(label);
+  div.appendChild(select);
+  return div;
 }
-*/
+
 export function insertNewGuests () {
   const main = document.getElementById('main');
   const section = document.createElement('section');
@@ -60,12 +32,21 @@ export function insertNewGuests () {
   const div = document.createElement('div');
   const h3 = document.createElement('h3');
   const form = document.createElement('form');
-  const inputFirstName1 = createInputRow('inputFirstName1', 'text', 'Max', 'inputFirstName1');
-  const inputName1 = createInputRow('inputName1', 'text', 'Mustermann', 'inputName1');
-  // const selectInvitation1 = createSelectRow('selectInvitation1', ['unbekannt', 'eingeladen', 'zugesagt', 'abgesagt']);
+  const inputFirstName1 = createInputRow('inputFirstName1', 'text', 'Max', 'inputFirstName1', 'Vorname:');
+  const inputName1 = createInputRow('inputName1', 'text', 'Mustermann', 'inputName1', 'Nachname:');
+  const selectInvitation1 = createSelectRow('selectInvitation1', 'Einladungsstatus:');
+  const optUnknown = createOptions('unbekannt');
+  const optInvited = createOptions('eingeladen');
+  const optAccepted = createOptions('zugesagt');
+  const optCanceled = createOptions('abgesagt');
+  selectInvitation1.lastChild.appendChild(optUnknown);
+  selectInvitation1.lastChild.appendChild(optInvited);
+  selectInvitation1.lastChild.appendChild(optAccepted);
+  selectInvitation1.lastChild.appendChild(optCanceled);
   h2.innerHTML = 'Gästeliste:';
-  div.className = 'container box';
+  div.className = 'box';
   h3.innerHTML = 'Neue Gäste eintragen';
+  section.id = 'insertGuestsSection';
   main.appendChild(section);
   section.appendChild(h2);
   section.appendChild(div);
@@ -73,7 +54,7 @@ export function insertNewGuests () {
   div.appendChild(form);
   form.appendChild(inputFirstName1);
   form.appendChild(inputName1);
-  // form.appendChild(selectInvitation1);
+  form.appendChild(selectInvitation1);
 }
 
 // Button listener for select guests
