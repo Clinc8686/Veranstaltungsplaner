@@ -2,4 +2,3 @@
 require('./guests');
 require('./events');
 require('./tables');
-require('./buildingHTML');
