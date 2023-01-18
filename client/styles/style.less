@@ -9,6 +9,8 @@
 @margin-1: 1rem;
 @padding-2: 2rem;
 
+@max1023: (max-width: 1023px);
+
 body {
   background-color: @bg-color;
   padding-left: @padding-2;
@@ -70,7 +72,21 @@ h3{
 }
 
 form{
+  display: flex;
   width: 100%;
+  flex-direction: column;
+  div {
+    display: flex;
+    @media @max1023 {
+      flex-direction: column;
+    }
+    label{
+      flex-grow: 1;
+    }
+    input, select {
+      flex-grow: 2;
+    }
+  }
 }
 
 input[type=text], input[type=datetime-local], select{
@@ -82,14 +98,6 @@ input[type=text], input[type=datetime-local], select{
   border-radius: @border-radius;
   box-sizing: border-box;
   font-size: @font-size - 0.2;
-}
-
-#selectCategory{
-  width: 72%;
-}
-
-#datetime{
-  width: 54%;
 }
 
 .site-button{
@@ -112,6 +120,11 @@ input[type=text], input[type=datetime-local], select{
 .site-button:hover,
 .site-button:not(.disabled):hover{
   background-color: @bg-color-box1;
+}
+
+#divInsertEventButton{
+  display: flex;
+  justify-content: space-around;
 }
 
 .container{
