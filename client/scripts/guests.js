@@ -1,7 +1,8 @@
 import { printError } from './global';
-import { createInput, createOptions } from './events';
+import { createInput, createOptions, deleteContent } from './events';
+import { displayTableConfiguration } from './tables';
 
-function createInputRow (id, type, placeholder, name, labelText) {
+export function createInputRow (id, type, placeholder, name, labelText) {
   const div = document.createElement('div');
   const label = document.createElement('label');
   const input = createInput(id, type, placeholder, name);
@@ -31,29 +32,19 @@ export function insertNewGuests () {
   const h2 = document.createElement('h2');
   const div = document.createElement('div');
   const h3 = document.createElement('h3');
-  const form1 = document.createElement('form');
-  const inputFirstName1 = createInputRow('inputFirstName1', 'text', 'Max', 'inputFirstName1', 'Vorname:');
-  const inputName1 = createInputRow('inputName1', 'text', 'Mustermann', 'inputName1', 'Nachname:');
-  const selectInvitation1 = createSelectRow('selectInvitation1', 'Einladungsstatus:');
+  const form = document.createElement('form');
+  const inputFirstName = createInputRow('inputName', 'text', 'Max Mustermann', 'inputName', 'Name:');
+  const selectInvitation = createSelectRow('selectInvitation', 'Einladungsstatus:');
   const optUnknown = createOptions('unbekannt');
   const optInvited = createOptions('eingeladen');
   const optAccepted = createOptions('zugesagt');
   const optCanceled = createOptions('abgesagt');
   const childCheckbox = createInputRow('checkboxChild', 'checkbox', 'Nein', 'checkboxChild', 'Ist die Person ein Kind?:');
-  const partnerCheckbox = createInputRow('checkboxPartner', 'checkbox', 'Nein', 'checkboxPartner', 'Kommt die Person mit Partner?:');
-  const form2 = document.createElement('form');
-  const inputFirstName2 = createInputRow('inputFirstName2', 'text', 'Max', 'inputFirstName2', 'Vorname:');
-  const inputName2 = createInputRow('inputName2', 'text', 'Mustermann', 'inputName2', 'Nachname:');
-  const selectInvitation2 = createSelectRow('selectInvitation2', 'Einladungsstatus:');
   const addButton = document.createElement('button');
-  selectInvitation1.lastChild.appendChild(optUnknown);
-  selectInvitation1.lastChild.appendChild(optInvited);
-  selectInvitation1.lastChild.appendChild(optAccepted);
-  selectInvitation1.lastChild.appendChild(optCanceled);
-  selectInvitation2.lastChild.appendChild(optUnknown);
-  selectInvitation2.lastChild.appendChild(optInvited);
-  selectInvitation2.lastChild.appendChild(optAccepted);
-  selectInvitation2.lastChild.appendChild(optCanceled);
+  selectInvitation.lastChild.appendChild(optUnknown);
+  selectInvitation.lastChild.appendChild(optInvited);
+  selectInvitation.lastChild.appendChild(optAccepted);
+  selectInvitation.lastChild.appendChild(optCanceled);
   h2.innerHTML = 'Gästeliste:';
   div.className = 'box';
   h3.innerHTML = 'Neue Gäste eintragen';
@@ -66,17 +57,12 @@ export function insertNewGuests () {
   section.appendChild(h2);
   section.appendChild(div);
   div.appendChild(h3);
-  div.appendChild(form1);
-  form1.appendChild(inputFirstName1);
-  form1.appendChild(inputName1);
-  form1.appendChild(selectInvitation1);
-  form1.appendChild(childCheckbox);
-  form1.appendChild(partnerCheckbox);
-  div.appendChild(form2);
-  form2.appendChild(inputFirstName2);
-  form2.appendChild(inputName2);
-  form2.appendChild(selectInvitation2);
+  div.appendChild(form);
+  form.appendChild(inputFirstName);
+  form.appendChild(selectInvitation);
+  form.appendChild(childCheckbox);
   div.appendChild(addButton);
+  buttonListener();
   selectGuests();
 }
 
@@ -108,49 +94,53 @@ function selectGuests () {
 }
 
 // Button listener for insert guests
-document.getElementById('insertGuest').addEventListener('click', (e) => {
-  // prevent forwarding
-  e.preventDefault();
+function buttonListener () {
+  document.getElementById('insertGuestsButton').addEventListener('click', (e) => {
+    // prevent forwarding
+    e.preventDefault();
 
-  const name = document.getElementById('name').value;
-  let children = 0;
-  if (document.getElementById('child').checked) {
-    children = 1;
-  }
+    const name = document.getElementById('inputName').value;
+    const section = document.getElementById('insertGuestsSection');
+    let children = 0;
+    if (document.getElementById('checkboxChild').checked) {
+      children = 1;
+    }
 
-  const invitationstatus = document.getElementById('invitationstatus').value;
-  const data = { name, children, invitationstatus };
+    const invitationStatus = document.getElementById('selectInvitation').value;
+    const data = { name, children, invitationStatus };
 
-  const handleInsert = async () => {
-    const sent = await fetch('/guests/insert/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
+    const handleInsert = async () => {
+      const sent = await fetch('/guests/insert/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
 
-    try {
-      const response = await sent.json();
-      if (response.success === false) {
-        if (response.errorMessage === 'notNull') {
-          printError('Es müssen alle Felder ausgefüllt werden!');
+      try {
+        const response = await sent.json();
+        if (response.success === false) {
+          if (response.errorMessage === 'notNull') {
+            printError('Es müssen alle Felder ausgefüllt werden!');
+          } else {
+            printError();
+          }
+        }
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          deleteContent(section);
+          displayTableConfiguration();
+          console.log('funktioniert');
         } else {
           printError();
+          console.log('response error: \n' + error);
         }
       }
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        fireSelect();
-      } else {
-        printError();
-        console.log('response error: \n' + error);
-      }
-    }
-  };
-
-  handleInsert();
-});
+    };
+    handleInsert();
+  });
+}
 
 /* Print all guests
 function printTable (response) {
@@ -172,9 +162,9 @@ function printTable (response) {
     }
   }
 }
-*/
 
 // Simulates Click on selectAll Button
 function fireSelect () {
   document.getElementById('selectAll').click();
 }
+*/

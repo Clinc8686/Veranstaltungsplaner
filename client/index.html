@@ -12,67 +12,9 @@
     </header>
     <main id="main">
         <section id="guests">
-            <!-- Insert of new Guests -->
-            <form>
-                <label>Name:
-                    <input type="text" id="name" placeholder="Name" name="name">
-                </label><br>
-                <label>Kind:
-                    <input type="checkbox" id="child" name="children">
-                </label><br>
-                <label>Einladungsstatus:
-                    <select name="invitationstatus" id="invitationstatus">
-                        <option value="unbekannt">unbekannt</option>
-                        <option value="eingeladen">eingeladen</option>
-                        <option value="zugesagt">zugesagt</option>
-                        <option value="abgesagt">abgesagt</option>
-                    </select>
-                </label><br>
-                <button id="insertGuest">Einf&uuml;gen</button>
-            </form>
-
             <!-- Select of all Guests with print -->
             <form>
                 <button id="selectAll">Select All</button>
-            </form>
-            <div>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>
-                            ID
-                        </th>
-                        <th>
-                            Name
-                        </th>
-                        <th>
-                            Kind
-                        </th>
-                        <th>
-                            Einladungsstatus
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                    </tbody>
-                </table>
-            </div>
-            <button class="site-button" id="homeButton">Startseite</button>
-            <button class="site-guests" id="goToGuests">Weiter</button>
-        </section>
-        <section id="tables">
-            <form>
-                <label>Anzahl Tische:
-                    <input type="number" id="numberOfTables" name="numberOfTables" min="0">
-                </label><br>
-                <label>Anzahl St&uuml;hle pro Tisch:
-                    <input type="number" id="seatsPerTable" name="seatsPerTable" min="0">
-                </label><br>
-                <label>Zweiseitige Belegung:
-                    <!--<input type="number" id="twoSides" name="twoSides" min="0">-->
-                    <input type="checkbox" id="twoSides" name="twoSides">
-                </label><br>
-                <button id="insertTables">Weiter und Sitzplan erstellen</button>
             </form>
         </section>
     </main>

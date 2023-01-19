@@ -8,7 +8,6 @@ const router = express.Router();
 router.post('/guests/insert', urlencodedParser, function (req, res, next) {
   // Insert Guest from Form into database
   const requestBody = req.body;
-  console.log(requestBody.children);
   if (requestBody.children === 'on' || requestBody.children === 1) {
     requestBody.children = 1;
   } else {
@@ -16,7 +15,7 @@ router.post('/guests/insert', urlencodedParser, function (req, res, next) {
   }
 
   const statement = 'INSERT INTO Guests (Name, Children, Invitationstatus) VALUES (?,?,?)';
-  database.run(statement, [requestBody.name, requestBody.children, requestBody.invitationstatus], function (err, result) {
+  database.run(statement, [requestBody.name, requestBody.children, requestBody.invitationStatus], function (err, result) {
     if (err) {
       const check = 'CHECK constraint failed';
       if (err.message.includes(check)) {
