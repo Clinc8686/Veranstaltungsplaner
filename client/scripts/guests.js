@@ -46,6 +46,7 @@ export function insertNewGuests () {
   selectInvitation.lastChild.appendChild(optAccepted);
   selectInvitation.lastChild.appendChild(optCanceled);
   h2.innerHTML = 'Gästeliste:';
+  div.id = 'insertGuestsDiv';
   div.className = 'box';
   h3.innerHTML = 'Neue Gäste eintragen';
   section.id = 'insertGuestsSection';
@@ -68,6 +69,85 @@ export function insertNewGuests () {
 
 function displayGuests (guests) {
   console.log(guests);
+  let currPage = 0;
+  // Adding Headline
+  const div = document.getElementById('insertGuestsDiv');
+  const h3 = document.createElement('h3');
+  h3.innerHTML = 'Eingetragene Gäste';
+  const displayPage = () => {
+    const page = document.createElement('div');
+    const ul = document.createElement('ul');
+    page.id = 'page'.concat(currPage);
+    page.className = 'box guests-page';
+    ul.id = 'ul'.concat(currPage);
+    div.appendChild(page);
+    page.appendChild(h3);
+    page.appendChild(ul);
+  };
+
+  const determineRowLimit = () => {
+    const height = window.innerHeight;
+    let limit;
+    if (height > 3000) {
+      limit = 18;
+    } else if (height > 2000) {
+      limit = 15;
+    } else if (height > 1000) {
+      limit = 10;
+    } else if (height > 700) {
+      limit = 6;
+    } else {
+      limit = 3;
+    }
+    return limit;
+  };
+
+  // Adding guests with pagination
+  // Limit for the number of rows we display per page
+  const rowLimit = determineRowLimit();
+  const pages = getPageContent(guests, rowLimit);
+  const buttonClick = () => {
+    document.getElementById('next-button').addEventListener('click', function () {
+      const pageContainer = document.getElementById('page-container');
+      const buttonContainer = document.getElementById('button-container');
+      deleteContent(pageContainer);
+      deleteContent(buttonContainer);
+      currPage += 1;
+      displayPage();
+      displayGuestsPage(currPage, pages);
+      displayPaginationButtons();
+      if (!pages[currPage + 1]) {
+        document.getElementById('prev-button').disabled = false;
+        document.getElementById('next-button').disabled = true;
+      }
+      buttonClick();
+    });
+
+    document.getElementById('prev-button').addEventListener('click', function () {
+      const pageContainer = document.getElementById('page-container');
+      const buttonContainer = document.getElementById('button-container');
+      deleteContent(pageContainer);
+      deleteContent(buttonContainer);
+      currPage -= 1;
+      displayPage();
+      displayGuestsPage(currPage, pages);
+      displayPaginationButtons();
+      if (!pages[currPage - 1]) {
+        document.getElementById('prev-button').disabled = true;
+      }
+      buttonClick();
+    });
+  };
+
+  displayPage();
+  console.log(currPage);
+  displayGuestsPage(currPage, pages);
+  displayPaginationButtons();
+  buttonClick();
+  document.getElementById('prev-button').disabled = true;
+  if (!pages[currPage + 1]) {
+    document.getElementById('next-button').disabled = true;
+  }
 }
 
 function selectGuests () {
@@ -82,7 +162,7 @@ function selectGuests () {
     try {
       const response = await sent.json();
       if (response.persons) {
-        displayGuests(response);
+        displayGuests(response.persons);
       } else {
         printError();
       }
@@ -91,6 +171,68 @@ function selectGuests () {
     }
   };
   handleSelect();
+}
+
+function displayPaginationButtons () {
+  // Adding Buttons
+  const section = document.getElementById('insertGuestsSection');
+  const container = document.createElement('div');
+  container.id = 'button-container';
+  container.className = 'container';
+  section.appendChild(container);
+  const nButton = document.createElement('button');
+  const pButton = document.createElement('button');
+  nButton.className = 'site-button';
+  pButton.className = 'site-button';
+  nButton.id = 'next-button';
+  pButton.id = 'prev-button';
+  nButton.title = 'Nächste Seite';
+  pButton.title = 'Vorherige Seite';
+  nButton.ariaLabel = 'Nächste Seite';
+  pButton.ariaLabel = 'Vorherige Seite';
+  nButton.innerHTML = 'Nächste Seite';
+  pButton.innerHTML = 'Vorherige Seite';
+  nButton.type = 'button';
+  pButton.type = 'button';
+  container.appendChild(pButton);
+  container.appendChild(nButton);
+}
+
+function getPageContent (guests, rowLimit) {
+  const p = [];
+  let items = [];
+  let pageCount = 0;
+  let countGuests = 0;
+  if (guests.length < rowLimit) {
+    rowLimit = guests.length;
+  }
+
+  for (let index = 0; index < guests.length; index++) {
+    if (items.length < rowLimit) {
+      countGuests++;
+      items.push(guests[index].Name);
+    } else {
+      p[pageCount] = items;
+      pageCount++;
+      items = [];
+      index--;
+    }
+    if (countGuests === guests.length) {
+      p[pageCount] = items;
+    }
+  }
+  return p;
+}
+
+function displayGuestsPage (pageNum, pages) {
+  const p = document.getElementById('page'.concat(pageNum));
+  const ul = document.getElementById('ul'.concat(pageNum));
+  p.appendChild(ul);
+  for (let i = 0; i < pages[pageNum].length; i++) {
+    const li = document.createElement('li');
+    li.innerHTML = pages[pageNum][i];
+    ul.appendChild(li);
+  }
 }
 
 // Button listener for insert guests
