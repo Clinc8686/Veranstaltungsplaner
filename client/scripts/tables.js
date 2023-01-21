@@ -10,12 +10,14 @@ export function displayTableConfiguration () {
   const amountTables = createInputRow('inputAmountTables', 'number', '1', 'inputAmountTable', 'Anzahl Tische:');
   const amountChairs = createInputRow('inputAmountChairs', 'number', '1', 'inputAmountChairs', 'Anzahl Stühle pro Tisch:');
   const oneSidedCheckbox = createInputRow('checkboxOneSided', 'checkbox', 'Nein', 'checkboxOneSided', 'Einseitig bestuhlt?:');
+  const divButton = document.createElement('div');
   const submitButton = document.createElement('button');
   section.id = 'sectionTableConfigurations';
   h2.innerHTML = 'Tischbelegung:';
   div.className = 'box container';
   amountTables.min = 1;
   amountChairs.min = 1;
+  divButton.id = 'divTableConfigurationsButton';
   submitButton.type = 'button';
   submitButton.className = 'site-button';
   submitButton.id = 'tableConfigurationsButton';
@@ -27,7 +29,8 @@ export function displayTableConfiguration () {
   form.appendChild(amountTables);
   form.appendChild(amountChairs);
   form.appendChild(oneSidedCheckbox);
-  div.appendChild(submitButton);
+  section.appendChild(divButton);
+  divButton.appendChild(submitButton);
   buttonListener(submitButton);
 }
 

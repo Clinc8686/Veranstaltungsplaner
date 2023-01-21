@@ -41,6 +41,7 @@ export function insertNewGuests () {
   const optCanceled = createOptions('abgesagt');
   const childCheckbox = createInputRow('checkboxChild', 'checkbox', 'Nein', 'checkboxChild', 'Ist die Person ein Kind?:');
   const addButton = document.createElement('button');
+  form.id = 'insertGuestsForm';
   selectInvitation.lastChild.appendChild(optUnknown);
   selectInvitation.lastChild.appendChild(optInvited);
   selectInvitation.lastChild.appendChild(optAccepted);
@@ -63,24 +64,43 @@ export function insertNewGuests () {
   form.appendChild(selectInvitation);
   form.appendChild(childCheckbox);
   div.appendChild(addButton);
-  buttonListener();
+  buttonListenerInsert();
   selectGuests();
+  nextButton();
+}
+
+function nextButton () {
+  const section = document.getElementById('insertGuestsSection');
+  const buttonDiv = document.createElement('div');
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'site-button';
+  button.innerHTML = 'weiter';
+  buttonDiv.id = 'divToTableConfigurationsButton';
+  section.appendChild(buttonDiv);
+  buttonDiv.appendChild(button);
+  button.addEventListener('click', function () {
+    deleteContent(section);
+    displayTableConfiguration();
+  });
 }
 
 function displayGuests (guests) {
-  console.log(guests);
   let currPage = 0;
   // Adding Headline
   const div = document.getElementById('insertGuestsDiv');
   const h3 = document.createElement('h3');
   h3.innerHTML = 'Eingetragene Gäste';
+  const divSelect = document.createElement('div');
+  divSelect.id = 'selectGuestsDiv';
   const displayPage = () => {
     const page = document.createElement('div');
     const ul = document.createElement('ul');
     page.id = 'page'.concat(currPage);
-    page.className = 'box guests-page';
+    page.className = 'guests-page';
     ul.id = 'ul'.concat(currPage);
-    div.appendChild(page);
+    div.appendChild(divSelect);
+    divSelect.appendChild(page);
     page.appendChild(h3);
     page.appendChild(ul);
   };
@@ -108,14 +128,12 @@ function displayGuests (guests) {
   const pages = getPageContent(guests, rowLimit);
   const buttonClick = () => {
     document.getElementById('next-button').addEventListener('click', function () {
-      const pageContainer = document.getElementById('page-container');
-      const buttonContainer = document.getElementById('button-container');
+      const pageContainer = document.getElementById('page'.concat(currPage));
       deleteContent(pageContainer);
-      deleteContent(buttonContainer);
       currPage += 1;
       displayPage();
       displayGuestsPage(currPage, pages);
-      displayPaginationButtons();
+      displayPaginationButtons(currPage);
       if (!pages[currPage + 1]) {
         document.getElementById('prev-button').disabled = false;
         document.getElementById('next-button').disabled = true;
@@ -124,14 +142,12 @@ function displayGuests (guests) {
     });
 
     document.getElementById('prev-button').addEventListener('click', function () {
-      const pageContainer = document.getElementById('page-container');
-      const buttonContainer = document.getElementById('button-container');
+      const pageContainer = document.getElementById('page'.concat(currPage));
       deleteContent(pageContainer);
-      deleteContent(buttonContainer);
       currPage -= 1;
       displayPage();
       displayGuestsPage(currPage, pages);
-      displayPaginationButtons();
+      displayPaginationButtons(currPage);
       if (!pages[currPage - 1]) {
         document.getElementById('prev-button').disabled = true;
       }
@@ -140,9 +156,8 @@ function displayGuests (guests) {
   };
 
   displayPage();
-  console.log(currPage);
   displayGuestsPage(currPage, pages);
-  displayPaginationButtons();
+  displayPaginationButtons(currPage);
   buttonClick();
   document.getElementById('prev-button').disabled = true;
   if (!pages[currPage + 1]) {
@@ -173,13 +188,12 @@ function selectGuests () {
   handleSelect();
 }
 
-function displayPaginationButtons () {
+function displayPaginationButtons (currPage) {
   // Adding Buttons
-  const section = document.getElementById('insertGuestsSection');
-  const container = document.createElement('div');
-  container.id = 'button-container';
-  container.className = 'container';
-  section.appendChild(container);
+  const div = document.getElementById('page'.concat(currPage));
+  const buttonContainer = document.createElement('div');
+  buttonContainer.id = 'button-container';
+  buttonContainer.className = 'container';
   const nButton = document.createElement('button');
   const pButton = document.createElement('button');
   nButton.className = 'site-button';
@@ -194,8 +208,9 @@ function displayPaginationButtons () {
   pButton.innerHTML = 'Vorherige Seite';
   nButton.type = 'button';
   pButton.type = 'button';
-  container.appendChild(pButton);
-  container.appendChild(nButton);
+  div.appendChild(buttonContainer);
+  buttonContainer.appendChild(pButton);
+  buttonContainer.appendChild(nButton);
 }
 
 function getPageContent (guests, rowLimit) {
@@ -236,13 +251,13 @@ function displayGuestsPage (pageNum, pages) {
 }
 
 // Button listener for insert guests
-function buttonListener () {
+function buttonListenerInsert () {
   document.getElementById('insertGuestsButton').addEventListener('click', (e) => {
     // prevent forwarding
     e.preventDefault();
 
+    const page = document.getElementById('selectGuestsDiv');
     const name = document.getElementById('inputName').value;
-    const section = document.getElementById('insertGuestsSection');
     let children = 0;
     if (document.getElementById('checkboxChild').checked) {
       children = 1;
@@ -250,7 +265,7 @@ function buttonListener () {
 
     const invitationStatus = document.getElementById('selectInvitation').value;
     const data = { name, children, invitationStatus };
-
+    const form = document.getElementById('insertGuestsForm');
     const handleInsert = async () => {
       const sent = await fetch('/guests/insert/', {
         method: 'POST',
@@ -271,9 +286,9 @@ function buttonListener () {
         }
       } catch (error) {
         if (error instanceof SyntaxError) {
-          deleteContent(section);
-          displayTableConfiguration();
-          console.log('funktioniert');
+          form.reset();
+          deleteContent(page);
+          selectGuests();
         } else {
           printError();
           console.log('response error: \n' + error);
