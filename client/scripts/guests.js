@@ -1,6 +1,5 @@
 import { printError } from './global';
 import { createInput, createOptions, deleteContent } from './events';
-import { displayTableConfiguration } from './tables';
 
 export function createInputRow (id, type, placeholder, name, labelText) {
   const div = document.createElement('div');
@@ -26,7 +25,8 @@ function createSelectRow (id, labelText) {
   return div;
 }
 
-export function insertNewGuests () {
+export function insertNewGuests (id) {
+  console.log('Gäste der Veranstaltung '.concat(id).concat(' sollen geändert werden.'));
   const main = document.getElementById('main');
   const section = document.createElement('section');
   const h2 = document.createElement('h2');
@@ -80,8 +80,8 @@ function nextButton () {
   section.appendChild(buttonDiv);
   buttonDiv.appendChild(button);
   button.addEventListener('click', function () {
-    deleteContent(section);
-    displayTableConfiguration();
+    // deleteContent(section);
+    console.log('SItzplan laden');
   });
 }
 

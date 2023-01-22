@@ -1,5 +1,6 @@
 import { printError } from './global';
-import { insertNewGuests } from './guests';
+// import { insertNewGuests } from './guests';
+import { displayTableConfiguration } from './tables';
 // Fires on Page load
 window.addEventListener('load', function () {
   loadEvents();
@@ -37,7 +38,6 @@ export function deleteContent (parent) {
 // Prints Events on Landing Page
 function printEvents (events) {
   let currentPage = 0;
-
   // Adding Headline
   const main = document.getElementById('main');
   const home = document.createElement('section');
@@ -105,10 +105,10 @@ function printEvents (events) {
     });
 
     document.getElementById('prev-button').addEventListener('click', function () {
-      const pagecontainer = document.getElementById('page-container');
-      const buttoncontainer = document.getElementById('button-container');
-      deleteContent(pagecontainer);
-      deleteContent(buttoncontainer);
+      const pageContainer = document.getElementById('page-container');
+      const buttonContainer = document.getElementById('button-container');
+      deleteContent(pageContainer);
+      deleteContent(buttonContainer);
       currentPage -= 2;
       displayPages();
       displayEvents(currentPage, pages);
@@ -149,19 +149,22 @@ function getPageContent (events, rowLimit) {
       categories.push(events[index].Category);
       element = {
         type: 'Category',
-        content: events[index].Category
+        content: events[index].Category,
+        id: ''
       };
       elements.push(element);
       element = {
         type: 'item',
-        content: events[index].Name
+        content: events[index].Name,
+        id: events[index].ID
       };
       countEvents++;
       elements.push(element);
     } else if (categories.includes(events[index].Category) && elements.length < rowLimit) {
       element = {
         type: 'item',
-        content: events[index].Name
+        content: events[index].Name,
+        id: events[index].ID
       };
       countEvents++;
       elements.push(element);
@@ -197,10 +200,67 @@ function displayEvents (pageNum, pages) {
     } else if (element.type === 'item') {
       const ul = document.getElementById('ul-'.concat(category).concat(pageNum));
       const li = document.createElement('li');
+      li.id = element.id;
       li.innerHTML = element.content;
       ul.appendChild(li);
+
+      // Buttons
+      const buttonContainer = document.createElement('div');
+      buttonContainer.id = 'button-container-deleteEdit'.concat(element.id);
+      buttonContainer.className = 'container';
+      const deleteButton = document.createElement('button');
+      const editButton = document.createElement('button');
+      deleteButton.className = 'site-button';
+      editButton.className = 'site-button';
+      deleteButton.id = 'delete-button'.concat(element.id);
+      editButton.id = 'edit-button'.concat(element.id);
+      deleteButton.title = 'loeschen';
+      editButton.title = 'bearbeiten';
+      deleteButton.ariaLabel = 'Veranstaltung löschen';
+      editButton.ariaLabel = 'Veranstaltung bearbeiten';
+      deleteButton.innerHTML = 'löschen';
+      editButton.innerHTML = 'bearbeiten';
+      deleteButton.type = 'button';
+      editButton.type = 'button';
+      li.appendChild(buttonContainer);
+      buttonContainer.appendChild(deleteButton);
+      buttonContainer.appendChild(editButton);
+      buttonContainer.style.display = 'none';
+      li.addEventListener('click', function () {
+        deleteAndEditButton(element.id);
+      });
+      deleteListener(element.id);
+      editListener(element.id);
     }
   }
+}
+
+function deleteAndEditButton (id) {
+  const buttonContainer = document.getElementById('button-container-deleteEdit'.concat(id));
+  if (buttonContainer) {
+    if (buttonContainer.style.display === 'none') {
+      buttonContainer.style.display = 'flex';
+    } else {
+      buttonContainer.style.display = 'none';
+    }
+  }
+}
+
+function deleteListener (id) {
+  const button = document.getElementById('delete-button'.concat(id));
+  button.addEventListener('click', function () {
+    // final function has to be programmed!!!
+    console.log('Veranstaltung '.concat(id).concat(' soll gelöscht werden'));
+  });
+}
+
+function editListener (id) {
+  const button = document.getElementById('edit-button'.concat(id));
+  button.addEventListener('click', function () {
+    const home = document.getElementById('home');
+    deleteContent(home);
+    displayTableConfiguration(id);
+  });
 }
 
 function displayPaginationButtons () {
@@ -335,6 +395,7 @@ function insertNewEvent () {
     const data = { name, category, datetime };
 
     const handleInsert = async () => {
+      let id;
       const sent = await fetch('/events/insert/', {
         method: 'POST',
         headers: {
@@ -342,7 +403,6 @@ function insertNewEvent () {
         },
         body: JSON.stringify(data)
       });
-
       try {
         const response = await sent.json();
         if (response.success === false) {
@@ -350,8 +410,32 @@ function insertNewEvent () {
         }
       } catch (error) {
         if (error instanceof SyntaxError) {
-          deleteContent(section);
-          insertNewGuests();
+          const handleSelect = async () => {
+            const sent = await fetch('/events/select/2', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            try {
+              const response = await sent.json();
+              if (response.events) {
+                const events = response.events;
+                const ids = events.map(event => {
+                  return event.ID;
+                });
+                id = Math.max(...ids);
+                deleteContent(section);
+                displayTableConfiguration(id);
+              } else {
+                printError();
+              }
+            } catch (error) {
+              console.log('response error: ' + error);
+            }
+          };
+          handleSelect();
         } else {
           printError();
           console.log('response error: \n' + error);

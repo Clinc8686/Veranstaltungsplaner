@@ -1,7 +1,9 @@
 import { printError } from './global';
-import { createInputRow } from './guests.js';
+import { createInputRow, insertNewGuests } from './guests.js';
+import { deleteContent } from './events';
 
-export function displayTableConfiguration () {
+export function displayTableConfiguration (id) {
+  console.log('Die Tischkonfiguration der Veranstaltung '.concat(id).concat(' soll geändert werden.'));
   const main = document.getElementById('main');
   const section = document.createElement('section');
   const h2 = document.createElement('h2');
@@ -67,6 +69,10 @@ function buttonListener (button) {
         }
       } catch (error) {
         if (error instanceof SyntaxError) {
+          const section = document.getElementById('sectionTableConfigurations');
+          const id = 'dummy2';
+          deleteContent(section);
+          insertNewGuests(id);
           // loadEvents();
         } else {
           printError();

@@ -7,7 +7,7 @@ const router = express.Router();
 // Select all Events and send to client
 router.get('/events/select/:id', urlencodedParser, function (req, res, next) {
   // Select Events from database
-  const statement = 'SELECT Name, Category, Datetime FROM Events';
+  const statement = 'SELECT ID, Name, Category, Datetime FROM Events';
   database.all(statement, function (err, rows) {
     if (err) {
       res.status(200).json({ error: 'true' });
