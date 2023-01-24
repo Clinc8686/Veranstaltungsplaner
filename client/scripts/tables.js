@@ -33,10 +33,10 @@ export function displayTableConfiguration (id) {
   form.appendChild(oneSidedCheckbox);
   section.appendChild(divButton);
   divButton.appendChild(submitButton);
-  buttonListener(submitButton);
+  buttonListener(submitButton, id);
 }
 
-function buttonListener (button) {
+function buttonListener (button, id) {
   button.addEventListener('click', (e) => {
     e.preventDefault();
 
@@ -70,10 +70,8 @@ function buttonListener (button) {
       } catch (error) {
         if (error instanceof SyntaxError) {
           const section = document.getElementById('sectionTableConfigurations');
-          const id = 'dummy2';
           deleteContent(section);
           insertNewGuests(id);
-          // loadEvents();
         } else {
           printError();
           console.log('response error: \n' + error);
@@ -83,4 +81,18 @@ function buttonListener (button) {
 
     handleInsert();
   });
+}
+
+export function displaySeatinplan (id) {
+  console.log('Sitzplan von Veranstaltung '.concat(id).concat(' soll angezeigt werden.'));
+  const main = document.getElementById('main');
+  const section = document.createElement('section');
+  const h2 = document.createElement('h2');
+  const div = document.createElement('div');
+  section.id = 'sectionSeatingplan';
+  h2.innerHTML = 'Sitzplan:';
+  div.className = 'box container';
+  main.appendChild(section);
+  section.appendChild(h2);
+  section.appendChild(div);
 }

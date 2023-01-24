@@ -1,5 +1,6 @@
 import { printError } from './global';
 import { createInput, createOptions, deleteContent } from './events';
+import { displaySeatinplan } from './tables';
 
 export function createInputRow (id, type, placeholder, name, labelText) {
   const div = document.createElement('div');
@@ -66,10 +67,10 @@ export function insertNewGuests (id) {
   div.appendChild(addButton);
   buttonListenerInsert();
   selectGuests();
-  nextButton();
+  nextButton(id);
 }
 
-function nextButton () {
+function nextButton (id) {
   const section = document.getElementById('insertGuestsSection');
   const buttonDiv = document.createElement('div');
   const button = document.createElement('button');
@@ -80,8 +81,8 @@ function nextButton () {
   section.appendChild(buttonDiv);
   buttonDiv.appendChild(button);
   button.addEventListener('click', function () {
-    // deleteContent(section);
-    console.log('SItzplan laden');
+    deleteContent(section);
+    displaySeatinplan(id);
   });
 }
 
