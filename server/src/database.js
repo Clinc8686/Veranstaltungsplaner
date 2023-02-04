@@ -13,7 +13,6 @@ db.serialize(function () {
     '`Name` TEXT NOT NULL CHECK(length(Name) > 0),' +
     '`Category` TEXT NOT NULL CHECK(length(Name) > 0),' +
     '`Datetime` DATETIME NOT NULL CHECK(length(Datetime) > 0),' +
-    '`Guestlist` INTEGER CHECK(length(Guestlist) > 0),' +
     '`Seatingplan` INTEGER CHECK(length(Seatingplan) > 0)' +
     ')', (err) => {
     if (err) return console.log('Events: ' + err.message);
@@ -23,7 +22,10 @@ db.serialize(function () {
   db.run('CREATE TABLE IF NOT EXISTS `Guestlist` (' +
     '`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE CHECK(length(ID) > 0),' +
     '`Guests` INTEGER NOT NULL CHECK(length(Guests) > 0),' +
-    'CONSTRAINT `Guestlist` FOREIGN KEY (`ID`) REFERENCES `Events` (`Guestlist`) ON DELETE CASCADE ON UPDATE CASCADE' +
+    '`Events` INTEGER NOT NULL CHECK(length(Events) > 0),' +
+    '`Seat`   INTEGER NOT NULL CHECK(length(Events) > 0),' +
+    '`Table`  INTEGER NOT NULL CHECK(length(Events) > 0),' +
+    'CONSTRAINT `Guestlist` FOREIGN KEY (`Events`) REFERENCES `Events` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE' +
     ')', (err) => {
     if (err) return console.log('Guestlist: ' + err.message);
     console.log('Table Guestlist created or exists');
