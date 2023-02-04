@@ -1,4 +1,4 @@
-import { printError, currentEventID } from './global';
+import { printError, currentEvent } from './global';
 // import { insertNewGuests } from './guests';
 import { displayTableConfiguration } from './tables';
 // Fires on Page load
@@ -229,10 +229,9 @@ function displayEvents (pageNum, pages) {
       li.addEventListener('click', function () {
         deleteAndEditButton(element.id);
       });
-      currentEventID = element.id;
-      deleteListener(currentEventID);
-      editListener(currentEventID);
-
+      currentEvent.id = element.id;
+      deleteListener(currentEvent.id);
+      editListener(currentEvent.id);
     }
   }
 }
@@ -281,7 +280,7 @@ function deleteListener (id) {
 }
 
 function editListener () {
-  const button = document.getElementById('edit-button'.concat(currentEventID));
+  const button = document.getElementById('edit-button'.concat(currentEvent.id));
   button.addEventListener('click', function () {
     const home = document.getElementById('home');
     deleteContent(home);
@@ -450,9 +449,9 @@ function insertNewEvent () {
                 const ids = events.map(event => {
                   return event.ID;
                 });
-                currentEventID = Math.max(...ids);
+                currentEvent.id = Math.max(...ids);
                 deleteContent(section);
-                displayTableConfiguration(currentEventID);
+                displayTableConfiguration(currentEvent.id);
               } else {
                 printError();
               }

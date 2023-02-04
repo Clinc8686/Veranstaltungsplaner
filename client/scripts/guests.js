@@ -1,4 +1,4 @@
-import { currentEventID, printError } from './global';
+import { currentEvent, printError } from './global';
 import { createInput, createOptions, deleteContent } from './events';
 import { displaySeatinplan } from './tables';
 
@@ -27,7 +27,7 @@ function createSelectRow (id, labelText) {
 }
 
 export function insertNewGuests () {
-  console.log('Gäste der Veranstaltung '.concat(currentEventID).concat(' sollen geändert werden.'));
+  console.log('Gäste der Veranstaltung '.concat(currentEvent.id).concat(' sollen geändert werden.'));
   const main = document.getElementById('main');
   const section = document.createElement('section');
   const h2 = document.createElement('h2');

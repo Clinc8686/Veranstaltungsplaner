@@ -23,6 +23,6 @@ function printError (errorMessage) {
 }
 
 // EventID which will be created and/or edited
-let currentEventID;
+const currentEvent = { id: 0 };
 
-export { printError, currentEventID };
+export { printError, currentEvent };

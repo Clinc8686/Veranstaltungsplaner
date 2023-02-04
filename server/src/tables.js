@@ -4,6 +4,14 @@ const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const router = express.Router();
 
+function updateEvent (SeatingplanID, eventID) {
+  const statement = 'UPDATE Events SET Seatingplan = ? WHERE ID = ?';
+  database.run(statement, [SeatingplanID, eventID], function (err, result) {
+    if (err) throw err;
+    console.log('Event was updated successfully with Seatingplan');
+  });
+}
+
 // Receive Post-Requests from index.html
 router.post('/tables/insert', urlencodedParser, function (req, res, next) {
   // Insert Tables from Form into database
@@ -20,7 +28,13 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
       }
       console.log('handle wrong insert! \n' + err.message);
     } else {
-      console.log('Table was inserted successfully');
+      try {
+        updateEvent(this.lastID, requestBody.eventID);
+        console.log('Table was inserted successfully');
+      } catch (e) {
+        res.json({ success: false });
+      }
+
       // Redirect to index.html
       res.redirect('/');
     }
