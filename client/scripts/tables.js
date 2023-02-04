@@ -3,7 +3,7 @@ import { createInputRow, insertNewGuests } from './guests.js';
 import { deleteContent } from './events';
 
 export function displayTableConfiguration () {
-  console.log('Die Tischkonfiguration der Veranstaltung '.concat(id).concat(' soll geändert werden.'));
+  console.log('Die Tischkonfiguration der Veranstaltung '.concat(currentEventID).concat(' soll geändert werden.'));
   const main = document.getElementById('main');
   const section = document.createElement('section');
   const h2 = document.createElement('h2');
