@@ -168,7 +168,7 @@ function displayGuests (guests) {
 
 function selectGuests () {
   const handleSelect = async () => {
-    const sent = await fetch('/guests/select', {
+    const sent = await fetch('/guests/select/' + currentEvent.id, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -268,7 +268,7 @@ function buttonListenerInsert () {
     const data = { name, children, invitationStatus };
     const form = document.getElementById('insertGuestsForm');
     const handleInsert = async () => {
-      const sent = await fetch('/guests/insert/', {
+      const sent = await fetch('/guests/insert/' + currentEvent.id, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

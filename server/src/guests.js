@@ -4,10 +4,19 @@ const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const router = express.Router();
 
+function addGuestlist (lastID, eventID) {
+  const statement = 'INSERT INTO Guestlist (Guests, Events) VALUES (?,?)';
+  database.run(statement, [lastID, eventID], function (err, result) {
+    if (err) throw err;
+    console.log('Guestlist was inserted successfully');
+  });
+}
+
 // Receive Post-Requests from index.html
-router.post('/guests/insert', urlencodedParser, function (req, res, next) {
+router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
   // Insert Guest from Form into database
   const requestBody = req.body;
+  const eventID = req.params.id;
   if (requestBody.children === 'on' || requestBody.children === 1) {
     requestBody.children = 1;
   } else {
@@ -24,7 +33,13 @@ router.post('/guests/insert', urlencodedParser, function (req, res, next) {
         res.json({ success: false });
       }
     } else {
-      console.log('User was inserted successfully');
+      try {
+        addGuestlist(this.lastID, eventID);
+        console.log('User was inserted successfully');
+      } catch (e) {
+        res.json({ success: false });
+      }
+
       // Redirect to index.html
       res.redirect('/');
     }
@@ -50,10 +65,23 @@ router.delete('/guests/:id', urlencodedParser, function (req, res, next) {
 });
 
 router.post('/guests/update/:id', urlencodedParser, function (req, res, next) {
-  // Insert Guest from Form into database
+  // Update Guest from Form
   const requestBody = req.body;
   const statement = 'UPDATE Guests SET (Invitationstatus = ?) WHERE (ID = ?)';
   database.run(statement, [requestBody.invitationstatus, requestBody.id], function (err, result) {
+    if (err) throw err;
+    console.log('User was updated successfully');
+  });
+
+  // Redirect to index.html
+  res.redirect('/');
+});
+
+router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
+  // Get Guests with specific EventID
+  const eventID = req.params.id;
+  const statement = 'SELECT Guests.Name FROM `Guests` INNER JOIN Guestlist ON (Guestlist.Guests = Guests.ID) WHERE Guestlist.Events = ?;';
+  database.run(statement, [eventID], function (err, result) {
     if (err) throw err;
     console.log('User was updated successfully');
   });

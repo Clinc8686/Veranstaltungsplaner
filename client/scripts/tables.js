@@ -72,7 +72,7 @@ function buttonListener (button) {
         if (error instanceof SyntaxError) {
           const section = document.getElementById('sectionTableConfigurations');
           deleteContent(section);
-          insertNewGuests(currentEvent.id);
+          insertNewGuests();
         } else {
           printError();
           console.log('response error: \n' + error);
