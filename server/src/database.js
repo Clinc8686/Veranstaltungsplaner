@@ -23,8 +23,8 @@ db.serialize(function () {
     '`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE CHECK(length(ID) > 0),' +
     '`Guests` INTEGER NOT NULL CHECK(length(Guests) > 0),' +
     '`Events` INTEGER NOT NULL CHECK(length(Events) > 0),' +
-    '`Seat`   INTEGER NOT NULL CHECK(length(Events) > 0),' +
-    '`Table`  INTEGER NOT NULL CHECK(length(Events) > 0),' +
+    '`Seat`   INTEGER,' +
+    '`Bench`  INTEGER,' +
     'CONSTRAINT `Guestlist` FOREIGN KEY (`Events`) REFERENCES `Events` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE' +
     ')', (err) => {
     if (err) return console.log('Guestlist: ' + err.message);
