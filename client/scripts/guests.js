@@ -1,4 +1,4 @@
-import { printError } from './global';
+import { currentEventID, printError } from './global';
 import { createInput, createOptions, deleteContent } from './events';
 import { displaySeatinplan } from './tables';
 
@@ -26,8 +26,8 @@ function createSelectRow (id, labelText) {
   return div;
 }
 
-export function insertNewGuests (id) {
-  console.log('Gäste der Veranstaltung '.concat(id).concat(' sollen geändert werden.'));
+export function insertNewGuests () {
+  console.log('Gäste der Veranstaltung '.concat(currentEventID).concat(' sollen geändert werden.'));
   const main = document.getElementById('main');
   const section = document.createElement('section');
   const h2 = document.createElement('h2');
@@ -67,10 +67,10 @@ export function insertNewGuests (id) {
   div.appendChild(addButton);
   buttonListenerInsert();
   selectGuests();
-  nextButton(id);
+  nextButton();
 }
 
-function nextButton (id) {
+function nextButton () {
   const section = document.getElementById('insertGuestsSection');
   const buttonDiv = document.createElement('div');
   const button = document.createElement('button');
@@ -82,7 +82,7 @@ function nextButton (id) {
   buttonDiv.appendChild(button);
   button.addEventListener('click', function () {
     deleteContent(section);
-    displaySeatinplan(id);
+    displaySeatinplan();
   });
 }
 
@@ -168,7 +168,7 @@ function displayGuests (guests) {
 
 function selectGuests () {
   const handleSelect = async () => {
-    const sent = await fetch('/guests/select/2', {
+    const sent = await fetch('/guests/select', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

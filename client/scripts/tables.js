@@ -1,8 +1,8 @@
-import { printError } from './global';
+import {currentEventID, printError} from './global';
 import { createInputRow, insertNewGuests } from './guests.js';
 import { deleteContent } from './events';
 
-export function displayTableConfiguration (id) {
+export function displayTableConfiguration () {
   console.log('Die Tischkonfiguration der Veranstaltung '.concat(id).concat(' soll geändert werden.'));
   const main = document.getElementById('main');
   const section = document.createElement('section');
@@ -33,10 +33,10 @@ export function displayTableConfiguration (id) {
   form.appendChild(oneSidedCheckbox);
   section.appendChild(divButton);
   divButton.appendChild(submitButton);
-  buttonListener(submitButton, id);
+  buttonListener(submitButton);
 }
 
-function buttonListener (button, id) {
+function buttonListener (button) {
   button.addEventListener('click', (e) => {
     e.preventDefault();
 
@@ -71,7 +71,7 @@ function buttonListener (button, id) {
         if (error instanceof SyntaxError) {
           const section = document.getElementById('sectionTableConfigurations');
           deleteContent(section);
-          insertNewGuests(id);
+          insertNewGuests(currentEventID);
         } else {
           printError();
           console.log('response error: \n' + error);
@@ -83,8 +83,8 @@ function buttonListener (button, id) {
   });
 }
 
-export function displaySeatinplan (id) {
-  console.log('Sitzplan von Veranstaltung '.concat(id).concat(' soll angezeigt werden.'));
+export function displaySeatinplan () {
+  console.log('Sitzplan von Veranstaltung '.concat(currentEventID).concat(' soll angezeigt werden.'));
   const main = document.getElementById('main');
   const section = document.createElement('section');
   const h2 = document.createElement('h2');

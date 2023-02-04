@@ -31,21 +31,25 @@ router.post('/guests/insert', urlencodedParser, function (req, res, next) {
   });
 });
 
-router.post('/guests/delete/:id', urlencodedParser, function (req, res, next) {
-  // Insert Guest from Form into database
+router.delete('/guests/:id', urlencodedParser, function (req, res, next) {
+  // Delete Guest from Form into database
   console.log('guests!');
-  const requestBody = req.body;
+  const id = req.params.id;
   const statement = 'DELETE FROM Guests WHERE (ID = ?)';
-  database.run(statement, [requestBody.id], function (err, result) {
-    if (err) throw err;
-    console.log('User was deleted successfully');
+  database.run(statement, [id], function (err, result) {
+    if (err) {
+      throw err;
+    } else {
+      res.json({ success: true });
+      console.log('Guest with id ' + id + ' was deleted successfully');
+    }
   });
 
   // Redirect to index.html
   res.redirect('/');
 });
 
-router.post('/guests/update', urlencodedParser, function (req, res, next) {
+router.post('/guests/update/:id', urlencodedParser, function (req, res, next) {
   // Insert Guest from Form into database
   const requestBody = req.body;
   const statement = 'UPDATE Guests SET (Invitationstatus = ?) WHERE (ID = ?)';
@@ -59,7 +63,7 @@ router.post('/guests/update', urlencodedParser, function (req, res, next) {
 });
 
 // Select all persons and send to client
-router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
+router.get('/guests/select', urlencodedParser, function (req, res, next) {
   // Select Guest from Form into database
   const statement = 'SELECT * FROM Guests';
   database.all(statement, function (err, rows) {
@@ -67,9 +71,6 @@ router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
       res.status(200).json({ error: 'true' });
     } else {
       console.log('User was selected successfully');
-      /* rows.forEach((row) => {
-        console.log(row.Name);
-      }); */
 
       // send persons as json data to client
       res.status(200).json({ persons: rows });

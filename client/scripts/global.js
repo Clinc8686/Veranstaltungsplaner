@@ -1,5 +1,5 @@
 // Print error message
-export function printError (errorMessage) {
+function printError (errorMessage) {
   const errorDiv = document.createElement('div');
   errorDiv.id = 'error';
   const errorSpan = document.createElement('span');
@@ -21,3 +21,8 @@ export function printError (errorMessage) {
     error.remove();
   });
 }
+
+// EventID which will be created and/or edited
+let currentEventID;
+
+export { printError, currentEventID };

@@ -1,4 +1,4 @@
-import { printError } from './global';
+import { printError, currentEventID } from './global';
 // import { insertNewGuests } from './guests';
 import { displayTableConfiguration } from './tables';
 // Fires on Page load
@@ -9,7 +9,7 @@ window.addEventListener('load', function () {
 // Receives on page load all events
 function loadEvents () {
   const handleSelect = async () => {
-    const sent = await fetch('/events/select/2', {
+    const sent = await fetch('/events/select', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -229,8 +229,10 @@ function displayEvents (pageNum, pages) {
       li.addEventListener('click', function () {
         deleteAndEditButton(element.id);
       });
-      deleteListener(element.id);
-      editListener(element.id);
+      currentEventID = element.id;
+      deleteListener(currentEventID);
+      editListener(currentEventID);
+
     }
   }
 }
@@ -248,18 +250,42 @@ function deleteAndEditButton (id) {
 
 function deleteListener (id) {
   const button = document.getElementById('delete-button'.concat(id));
-  button.addEventListener('click', function () {
-    // final function has to be programmed!!!
-    console.log('Veranstaltung '.concat(id).concat(' soll gelöscht werden'));
+  button.addEventListener('click', (e) => {
+    // prevent forwarding
+    e.preventDefault();
+
+    const handleDelete = async () => {
+      const sent = await fetch('/events/' + id, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      try {
+        const response = await sent.json();
+        if (response.success === false) {
+          printError('Das Event konnte nicht gelöscht werden');
+        } else if (response.success === true) {
+          // Refresh Events or delete id with dom-manipulation
+          // Hier entweder ein refresh der webseite verursachen oder per dom-manipulation die id des gelöschten events raus löschen (2. variante würde ich empfehlen da besser & einfacher)
+          console.log('Erfolgreich gelöscht!');
+        }
+      } catch (error) {
+        printError('Das Event konnte nicht gelöscht werden');
+        console.log('response error: \n' + error);
+      }
+    };
+    handleDelete();
   });
 }
 
-function editListener (id) {
-  const button = document.getElementById('edit-button'.concat(id));
+function editListener () {
+  const button = document.getElementById('edit-button'.concat(currentEventID));
   button.addEventListener('click', function () {
     const home = document.getElementById('home');
     deleteContent(home);
-    displayTableConfiguration(id);
+    displayTableConfiguration();
   });
 }
 
@@ -395,7 +421,6 @@ function insertNewEvent () {
     const data = { name, category, datetime };
 
     const handleInsert = async () => {
-      let id;
       const sent = await fetch('/events/insert/', {
         method: 'POST',
         headers: {
@@ -411,7 +436,7 @@ function insertNewEvent () {
       } catch (error) {
         if (error instanceof SyntaxError) {
           const handleSelect = async () => {
-            const sent = await fetch('/events/select/2', {
+            const sent = await fetch('/events/select', {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json'
@@ -425,9 +450,9 @@ function insertNewEvent () {
                 const ids = events.map(event => {
                   return event.ID;
                 });
-                id = Math.max(...ids);
+                currentEventID = Math.max(...ids);
                 deleteContent(section);
-                displayTableConfiguration(id);
+                displayTableConfiguration(currentEventID);
               } else {
                 printError();
               }
