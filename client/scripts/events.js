@@ -227,12 +227,13 @@ function displayEvents (pageNum, pages) {
       buttonContainer.appendChild(editButton);
       buttonContainer.style.display = 'none';
       li.addEventListener('click', function () {
+        currentEvent.id = element.id;
         deleteAndEditButton(element.id);
-        console.log('deleteAndEditButton: ' + currentEvent.id);
+        console.log('deleteAndEditButton: ' + currentEvent.id + ' ' + element.id);
       });
       currentEvent.id = element.id;
-      deleteListener(currentEvent.id);
-      editListener(currentEvent.id);
+      deleteListener(element.id);
+      editListener(element.id);
     }
   }
 }
