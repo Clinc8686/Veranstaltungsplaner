@@ -81,13 +81,16 @@ router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
   // Get Guests with specific EventID
   const eventID = req.params.id;
   const statement = 'SELECT Guests.Name FROM `Guests` INNER JOIN Guestlist ON (Guestlist.Guests = Guests.ID) WHERE Guestlist.Events = ?;';
-  database.run(statement, [eventID], function (err, result) {
-    if (err) throw err;
-    console.log('User was updated successfully');
-  });
+  database.all(statement, [eventID], function (err, rows) {
+    if (err) {
+      res.status(200).json({ error: 'true' });
+    } else {
+      console.log('Users with EventID selected successfully');
 
-  // Redirect to index.html
-  res.redirect('/');
+      // send persons as json data to client
+      res.status(200).json({ persons: rows });
+    }
+  });
 });
 
 // Select all persons and send to client
@@ -98,7 +101,7 @@ router.get('/guests/select', urlencodedParser, function (req, res, next) {
     if (err) {
       res.status(200).json({ error: 'true' });
     } else {
-      console.log('User was selected successfully');
+      console.log('Users selected successfully');
 
       // send persons as json data to client
       res.status(200).json({ persons: rows });

@@ -167,6 +167,7 @@ function displayGuests (guests) {
 }
 
 function selectGuests () {
+  console.log('select' + currentEvent.id);
   const handleSelect = async () => {
     const sent = await fetch('/guests/select/' + currentEvent.id, {
       method: 'GET',
@@ -183,7 +184,11 @@ function selectGuests () {
         printError();
       }
     } catch (error) {
-      console.log('response error: ' + error);
+      if (error instanceof TypeError) {
+        // no users found
+      } else {
+        console.log('response error: ' + error);
+      }
     }
   };
   handleSelect();

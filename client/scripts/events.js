@@ -228,7 +228,7 @@ function displayEvents (pageNum, pages) {
       buttonContainer.style.display = 'none';
       li.addEventListener('click', function () {
         deleteAndEditButton(element.id);
-        console.log('deaed: ' + currentEvent.id);
+        console.log('deleteAndEditButton: ' + currentEvent.id);
       });
       currentEvent.id = element.id;
       deleteListener(currentEvent.id);
@@ -431,7 +431,9 @@ function insertNewEvent () {
       });
       try {
         const response = await sent.json();
-        if (response.success === false) {
+        if (response.success === false && response.errorMessage === 'notNull') {
+          printError('Es müssen alle Felder ausgefüllt werden!');
+        } else if (response.success === false) {
           printError();
         }
       } catch (error) {
