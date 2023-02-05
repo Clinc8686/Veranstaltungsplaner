@@ -25,7 +25,8 @@ db.serialize(function () {
     '`Events` INTEGER NOT NULL CHECK(length(Events) > 0),' +
     '`Seat`   INTEGER,' +
     '`Bench`  INTEGER,' +
-    'CONSTRAINT `Guestlist` FOREIGN KEY (`Events`) REFERENCES `Events` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE' +
+    'CONSTRAINT `Guestlist` FOREIGN KEY (`Events`) REFERENCES `Events` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE, ' +
+    'CONSTRAINT `Guestlist` FOREIGN KEY (`Guests`) REFERENCES `Guests` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE' +
     ')', (err) => {
     if (err) return console.log('Guestlist: ' + err.message);
     console.log('Table Guestlist created or exists');
@@ -35,8 +36,7 @@ db.serialize(function () {
     '`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE CHECK(length(ID) > 0),' +
     '`Name` TEXT NOT NULL UNIQUE CHECK(length(Name) > 0),' +
     '`Children` INTEGER NOT NULL CHECK(Children > -1 AND Children < 2),' +
-    '`Invitationstatus` VARCHAR(10) NOT NULL CHECK(length(Invitationstatus) > 0),' +
-    'CONSTRAINT `Guests` FOREIGN KEY (`ID`) REFERENCES `Guestlist` (`Guests`) ON DELETE CASCADE ON UPDATE CASCADE' +
+    '`Invitationstatus` VARCHAR(10) NOT NULL CHECK(length(Invitationstatus) > 0)' +
     ')', (err) => {
     if (err) return console.log('Guests: ' + err.message);
     console.log('Table Guests created or exists');
