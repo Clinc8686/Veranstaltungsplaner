@@ -19,11 +19,39 @@ export function displayTableConfiguration () {
   div.className = 'box container';
   amountTables.min = 1;
   amountChairs.min = 1;
+  amountChairs.value = 133;
   divButton.id = 'divTableConfigurationsButton';
   submitButton.type = 'button';
   submitButton.className = 'site-button';
   submitButton.id = 'tableConfigurationsButton';
   submitButton.innerHTML = 'weiter';
+
+  // Add Table values from database into form
+  const handleSelect = async () => {
+    const sent = await fetch('/tables/select/' + currentEvent.id, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    try {
+      const response = await sent.json();
+      if (response.data) {
+        return response.data[0];
+      }
+    } catch (error) {
+      console.log('tables.js, getTableInfo, response error: ' + error);
+    }
+  };
+  handleSelect().then((dataValue) => {
+    if (dataValue) {
+      document.getElementById('inputAmountTables').value = dataValue.Tables;
+      document.getElementById('inputAmountChairs').value = dataValue.Seats;
+      document.getElementById('checkboxOneSided').checked = dataValue.Onesided;
+    }
+  });
+
   main.appendChild(section);
   section.appendChild(h2);
   section.appendChild(div);

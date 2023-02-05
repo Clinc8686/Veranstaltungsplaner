@@ -454,7 +454,7 @@ function insertNewEvent () {
                 });
                 currentEvent.id = Math.max(...ids);
                 deleteContent(section);
-                displayTableConfiguration(currentEvent.id);
+                displayTableConfiguration();
               } else {
                 printError();
               }

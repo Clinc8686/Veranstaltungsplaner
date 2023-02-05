@@ -167,7 +167,6 @@ function displayGuests (guests) {
 }
 
 function selectGuests () {
-  console.log('select' + currentEvent.id);
   const handleSelect = async () => {
     const sent = await fetch('/guests/select/' + currentEvent.id, {
       method: 'GET',
@@ -306,30 +305,3 @@ function buttonListenerInsert () {
     handleInsert();
   });
 }
-
-/* Print all guests
-function printTable (response) {
-  const oldTableBody = document.getElementById('tableBody');
-
-  // remove all old printed guests
-  while (oldTableBody.rows.length > 0) {
-    oldTableBody.deleteRow(0);
-  }
-
-  // print actual new guests
-  for (const key in response.persons) {
-    const newRow = oldTableBody.insertRow();
-    const person = response.persons[key];
-    for (const personRow in person) {
-      const newCell = newRow.insertCell();
-      const newText = document.createTextNode(person[personRow]);
-      newCell.appendChild(newText);
-    }
-  }
-}
-
-// Simulates Click on selectAll Button
-function fireSelect () {
-  document.getElementById('selectAll').click();
-}
-*/

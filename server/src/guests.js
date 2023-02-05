@@ -8,7 +8,7 @@ function addGuestlist (lastID, eventID, res) {
   const statement = 'INSERT INTO Guestlist (Guests, Events) VALUES (?,?)';
   database.run(statement, [lastID, eventID], function (err, result) {
     const uniquetwo = 'UNIQUE constraint failed: Guestlist.Guests, Guestlist.Events';
-    if (err.message.includes(uniquetwo)) {
+    if (err && err.message.includes(uniquetwo)) {
       res.status(200).json({ success: false, errorMessage: 'exists' });
     } else if (err) {
       res.status(200).json({ success: false });

@@ -41,4 +41,19 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
   });
 });
 
+router.get('/tables/select/:id', urlencodedParser, function (req, res, next) {
+  // Get Tables from specific EventID
+  const eventID = req.params.id;
+  const statement = 'SELECT Seatingplan.Tables, Seatingplan.Seats, Seatingplan.Onesided FROM `Seatingplan` INNER JOIN Events ON (Seatingplan.ID = Events.Seatingplan) WHERE Events.ID = ?;';
+  database.all(statement, [eventID], function (err, rows) {
+    if (err) {
+      res.status(200).json({ error: 'true' });
+    } else {
+      console.log('Tables with EventID selected successfully');
+      // send persons as json data to client
+      res.status(200).json({ data: rows });
+    }
+  });
+});
+
 module.exports = router;
