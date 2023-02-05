@@ -2,6 +2,8 @@ import { currentEvent, printError } from './global';
 import { createInputRow, insertNewGuests } from './guests.js';
 import { deleteContent } from './events';
 
+let seatingTableID;
+
 export function displayTableConfiguration () {
   console.log('Die Tischkonfiguration der Veranstaltung '.concat(currentEvent.id).concat(' soll geändert werden.'));
   const main = document.getElementById('main');
@@ -49,6 +51,7 @@ export function displayTableConfiguration () {
       document.getElementById('inputAmountTables').value = dataValue.Tables;
       document.getElementById('inputAmountChairs').value = dataValue.Seats;
       document.getElementById('checkboxOneSided').checked = dataValue.Onesided;
+      seatingTableID = dataValue.ID;
     }
   });
 
@@ -78,23 +81,31 @@ function buttonListener (button) {
     const data = { numberOfTables, seatsPerTable, twoSides, eventID };
 
     const handleInsert = async () => {
-      const sent = await fetch('/tables/insert/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+      let sent;
+      if (seatingTableID) {
+        sent = await fetch('/tables/update/' + seatingTableID, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+      } else {
+        sent = await fetch('/tables/insert/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+      }
 
       try {
         const response = await sent.json();
-
         if (response.success === false) {
-          if (response.errorMessage === 'notNull') {
-            printError('Es müssen alle Felder ausgefüllt werden!');
-          } else {
-            printError();
-          }
+          printError();
+        } else if (response.success === true) {
+          // hier weiter bei erfolgreich
         }
       } catch (error) {
         if (error instanceof SyntaxError) {

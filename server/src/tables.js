@@ -44,7 +44,7 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
 router.get('/tables/select/:id', urlencodedParser, function (req, res, next) {
   // Get Tables from specific EventID
   const eventID = req.params.id;
-  const statement = 'SELECT Seatingplan.Tables, Seatingplan.Seats, Seatingplan.Onesided FROM `Seatingplan` INNER JOIN Events ON (Seatingplan.ID = Events.Seatingplan) WHERE Events.ID = ?;';
+  const statement = 'SELECT Seatingplan.ID, Seatingplan.Tables, Seatingplan.Seats, Seatingplan.Onesided FROM `Seatingplan` INNER JOIN Events ON (Seatingplan.ID = Events.Seatingplan) WHERE Events.ID = ?;';
   database.all(statement, [eventID], function (err, rows) {
     if (err) {
       res.status(200).json({ error: 'true' });
@@ -54,6 +54,22 @@ router.get('/tables/select/:id', urlencodedParser, function (req, res, next) {
       res.status(200).json({ data: rows });
     }
   });
+});
+
+router.post('/tables/update/:id', urlencodedParser, function (req, res, next) {
+  // Update Seatingplan with specific ID
+  const tableID = req.params.id;
+  const requestBody = req.body;
+  const statement = 'UPDATE Seatingplan SET Tables = ?, Seats = ?, Onesided = ? WHERE ID = ?';
+  database.run(statement, [requestBody.numberOfTables, requestBody.seatsPerTable, requestBody.twoSides, tableID], function (err, result) {
+    if (err) {
+      throw err;
+    }
+    console.log('Seatingplan was updated successfully');
+  });
+
+  // Redirect to index.html
+  res.redirect('/');
 });
 
 module.exports = router;
