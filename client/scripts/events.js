@@ -229,7 +229,6 @@ function displayEvents (pageNum, pages) {
       li.addEventListener('click', function () {
         currentEvent.id = element.id;
         deleteAndEditButton(element.id);
-        console.log('deleteAndEditButton: ' + currentEvent.id + ' ' + element.id);
       });
       currentEvent.id = element.id;
       deleteListener(element.id);
@@ -287,7 +286,6 @@ function editListener () {
     const home = document.getElementById('home');
     deleteContent(home);
     displayTableConfiguration();
-    console.log('edit: ' + currentEvent.id);
   });
 }
 

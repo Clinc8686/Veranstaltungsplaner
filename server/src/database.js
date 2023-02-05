@@ -14,6 +14,7 @@ db.serialize(function () {
     '`Category` TEXT NOT NULL CHECK(length(Name) > 0),' +
     '`Datetime` DATETIME NOT NULL CHECK(length(Datetime) > 0),' +
     '`Seatingplan` INTEGER CHECK(length(Seatingplan) > 0)' +
+    '`Place` TEXT CHECK(length(Place) > 0)' +
     ')', (err) => {
     if (err) return console.log('Events: ' + err.message);
     console.log('Table Events created or exists');
