@@ -187,7 +187,7 @@ function selectGuests () {
       if (error instanceof TypeError) {
         // no users found
       } else {
-        console.log('response error: ' + error);
+        console.log('guests.js, selectGuests, response error: ' + error);
       }
     }
   };
@@ -286,6 +286,8 @@ function buttonListenerInsert () {
         if (response.success === false) {
           if (response.errorMessage === 'notNull') {
             printError('Es müssen alle Felder ausgefüllt werden!');
+          } else if (response.errorMessage === 'exists') {
+            printError('Die Person ist schon in dem Event eingetragen!');
           } else {
             printError();
           }

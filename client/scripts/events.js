@@ -24,7 +24,7 @@ function loadEvents () {
         printError();
       }
     } catch (error) {
-      console.log('response error: ' + error);
+      console.log('events.js, loadEvents, response error: ' + error);
     }
   };
   handleSelect();
@@ -461,13 +461,13 @@ function insertNewEvent () {
                 printError();
               }
             } catch (error) {
-              console.log('response error: ' + error);
+              console.log('events.js, insertNewEvent(1), response error: ' + error);
             }
           };
           handleSelect();
         } else {
           printError();
-          console.log('response error: \n' + error);
+          console.log('events.js, insertNewEvent(2), response error: \n' + error);
         }
       }
     };

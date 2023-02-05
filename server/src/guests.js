@@ -4,11 +4,17 @@ const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const router = express.Router();
 
-function addGuestlist (lastID, eventID) {
+function addGuestlist (lastID, eventID, res) {
   const statement = 'INSERT INTO Guestlist (Guests, Events) VALUES (?,?)';
   database.run(statement, [lastID, eventID], function (err, result) {
-    if (err) throw err;
-    console.log('Guestlist was inserted successfully');
+    const uniquetwo = 'UNIQUE constraint failed: Guestlist.Guests, Guestlist.Events';
+    if (err.message.includes(uniquetwo)) {
+      res.status(200).json({ success: false, errorMessage: 'exists' });
+    } else if (err) {
+      res.status(200).json({ success: false });
+    } else {
+      console.log('Guestlist was inserted successfully');
+    }
   });
 }
 
@@ -27,17 +33,32 @@ router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
   database.run(statement, [requestBody.name, requestBody.children, requestBody.invitationStatus], function (err, result) {
     if (err) {
       const check = 'CHECK constraint failed';
+      const unique = 'UNIQUE constraint failed: Guests.Name';
       if (err.message.includes(check)) {
-        res.json({ success: false, errorMessage: 'notNull' });
+        res.status(200).json({ success: false, errorMessage: 'notNull' });
+      } else if (err.message.includes(unique)) {
+        try {
+          const statement = 'SELECT ID FROM Guests WHERE Name = ?';
+          database.get(statement, [requestBody.name], function (err, result) {
+            if (err) {
+              throw err;
+            }
+            addGuestlist(result.ID, eventID, res);
+          });
+        } catch (e) {
+          res.status(200).json({ success: false });
+        }
       } else {
-        res.json({ success: false });
+        res.status(200).json({ success: false });
+        console.log('check error ' + err.message);
       }
     } else {
       try {
-        addGuestlist(this.lastID, eventID);
+        addGuestlist(this.lastID, eventID, res);
         console.log('User was inserted successfully');
       } catch (e) {
-        res.json({ success: false });
+        res.status(200).json({ success: false });
+        console.log('addguest error');
       }
 
       // Redirect to index.html
@@ -55,7 +76,7 @@ router.delete('/guests/:id', urlencodedParser, function (req, res, next) {
     if (err) {
       throw err;
     } else {
-      res.json({ success: true });
+      res.status(200).json({ success: true });
       console.log('Guest with id ' + id + ' was deleted successfully');
     }
   });

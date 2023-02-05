@@ -75,7 +75,7 @@ function buttonListener (button) {
           insertNewGuests();
         } else {
           printError();
-          console.log('response error: \n' + error);
+          console.log('tables.js, buttonListener, response error: \n' + error);
         }
       }
     };
