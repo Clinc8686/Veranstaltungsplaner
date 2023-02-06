@@ -5,7 +5,7 @@ import { displayTableConfiguration } from './tables';
 window.addEventListener('load', function () {
   loadEvents();
 });
-
+displayInsertEventPage();
 // Receives on page load all events
 function loadEvents () {
   const handleSelect = async () => {

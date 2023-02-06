@@ -7,13 +7,16 @@ const db = new sqlite3.Database(path, (err) => {
 });
 
 db.serialize(function () {
+  // Enable support for foreign keys
+  db.run('PRAGMA foreign_keys=ON');
+
   // Create table
   db.run('CREATE TABLE IF NOT EXISTS `Events` (' +
     '`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE CHECK(length(ID) > 0),' +
     '`Name` TEXT NOT NULL CHECK(length(Name) > 0),' +
     '`Category` TEXT NOT NULL CHECK(length(Name) > 0),' +
     '`Datetime` DATETIME NOT NULL CHECK(length(Datetime) > 0),' +
-    '`Seatingplan` INTEGER CHECK(length(Seatingplan) > 0),' +
+    '`Seatingplan` INTEGER UNIQUE CHECK(length(Seatingplan) > 0),' +
     '`Place` TEXT CHECK(length(Place) > 0)' +
     ')', (err) => {
     if (err) return console.log('Events: ' + err.message);
@@ -26,8 +29,8 @@ db.serialize(function () {
     '`Events` INTEGER NOT NULL CHECK(length(Events) > 0),' +
     '`Seat`   INTEGER,' +
     '`Bench`  INTEGER,' +
-    'CONSTRAINT `Guestlist_Events` FOREIGN KEY (`Events`) REFERENCES `Events` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,' +
-    'CONSTRAINT `Guestlist_Guests` FOREIGN KEY (`Guests`) REFERENCES `Guests` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,' +
+    'FOREIGN KEY (`Events`) REFERENCES `Events` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,' +
+    'FOREIGN KEY (`Guests`) REFERENCES `Guests` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,' +
     'CONSTRAINT `Guestlist` UNIQUE(Guests, Events)' +
     ')', (err) => {
     if (err) return console.log('Guestlist: ' + err.message);
@@ -49,7 +52,7 @@ db.serialize(function () {
     '`Tables` INTEGER NOT NULL CHECK(length(Tables) > 0),' +
     '`Seats` INTEGER NOT NULL CHECK(length(Seats) > 0),' +
     '`Onesided` BOOLEAN NOT NULL CHECK(length(Onesided) > 0),' +
-    'CONSTRAINT `Seatingplan` FOREIGN KEY (`ID`) REFERENCES `Events` (`Seatingplan`) ON DELETE CASCADE ON UPDATE CASCADE' +
+    'FOREIGN KEY (`ID`) REFERENCES `Events` (`Seatingplan`) ON DELETE CASCADE ON UPDATE CASCADE' +
     ')', (err) => {
     if (err) return console.log('Seatingplan: ' + err.message);
     console.log('Table Seatingplan created or exists');

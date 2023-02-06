@@ -79,7 +79,7 @@ router.delete('/guests/:id', urlencodedParser, function (req, res, next) {
 router.post('/guests/update/:id', urlencodedParser, function (req, res, next) {
   // Update Guest from Form
   const requestBody = req.body;
-  const statement = 'UPDATE Guests SET (Invitationstatus = ?) WHERE (ID = ?)';
+  const statement = 'UPDATE Guests SET Invitationstatus = ? WHERE ID = ?';
   database.run(statement, [requestBody.invitationstatus, requestBody.id], function (err, result) {
     if (err) throw err;
     console.log('User was updated successfully');

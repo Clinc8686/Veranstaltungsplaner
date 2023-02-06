@@ -30,6 +30,7 @@ const databaseDeleteID = (statement, res, id) => {
   function handle (err) {
     if (err) {
       res.json({ success: false });
+      console.log(err.message);
     } else {
       res.status(200).json({ success: true });
       console.log('Element with id ' + id + ' was deleted successfully');
