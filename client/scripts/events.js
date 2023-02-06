@@ -283,7 +283,6 @@ function editListener (id) {
   const button = document.getElementById('edit-button'.concat(id));
   button.addEventListener('click', function () {
     currentEvent.id = this.id.replace('edit-button', '');
-    console.log(currentEvent.id + ' ' + this.id);
     const home = document.getElementById('home');
     deleteContent(home);
     displayTableConfiguration();
