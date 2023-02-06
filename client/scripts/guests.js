@@ -177,8 +177,8 @@ function selectGuests () {
 
     try {
       const response = await sent.json();
-      if (response.persons) {
-        displayGuests(response.persons);
+      if (response.data) {
+        displayGuests(response.data);
       } else {
         printError();
       }

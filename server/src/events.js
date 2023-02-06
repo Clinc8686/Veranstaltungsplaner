@@ -1,3 +1,4 @@
+const { databaseAll, databaseDeleteID } = require('./global');
 const express = require('express');
 const database = require('./database');
 const bodyParser = require('body-parser');
@@ -8,15 +9,7 @@ const router = express.Router();
 router.get('/events/select', urlencodedParser, function (req, res, next) {
   // Select Events from database
   const statement = 'SELECT ID, Name, Category, Datetime FROM Events';
-  database.all(statement, function (err, rows) {
-    if (err) {
-      res.status(200).json({ error: 'true' });
-    } else {
-      console.log('Events was selected successfully');
-      // send events as json data to client
-      res.status(200).json({ events: rows });
-    }
-  });
+  databaseAll(statement, res);
 });
 
 // Receive Post-Requests from index.html
@@ -42,22 +35,10 @@ router.post('/events/insert', urlencodedParser, function (req, res, next) {
 
 // Receive Delete-Requests from index.html
 router.delete('/events/:id', urlencodedParser, function (req, res, next) {
-  // Delete Events from Form into database
+  // Delete Events from Form in database
   const id = req.params.id;
   const statement = 'DELETE FROM Events WHERE (ID = ?)';
-  database.run(statement, [id], function (err, result) {
-    if (err) {
-      const check = 'CHECK constraint failed';
-      if (err.message.includes(check)) {
-        res.json({ success: false, errorMessage: 'notNull' });
-      } else {
-        res.json({ success: false });
-      }
-    } else {
-      res.json({ success: true });
-      console.log('Event with id ' + id + ' was deleted successfully');
-    }
-  });
+  databaseDeleteID(statement, res, id);
 });
 
 module.exports = router;

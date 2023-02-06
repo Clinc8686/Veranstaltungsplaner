@@ -18,8 +18,8 @@ function loadEvents () {
 
     try {
       const response = await sent.json();
-      if (response.events) {
-        printEvents(response.events);
+      if (response.data) {
+        printEvents(response.data);
       } else {
         printError();
       }
@@ -447,8 +447,8 @@ function insertNewEvent () {
 
             try {
               const response = await sent.json();
-              if (response.events) {
-                const events = response.events;
+              if (response.data) {
+                const events = response.data;
                 const ids = events.map(event => {
                   return event.ID;
                 });

@@ -1,6 +1,7 @@
 const express = require('express');
 const database = require('./database');
 const bodyParser = require('body-parser');
+const { databaseAll, databaseDeleteID } = require('./global');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const router = express.Router();
 
@@ -72,17 +73,7 @@ router.delete('/guests/:id', urlencodedParser, function (req, res, next) {
   console.log('guests!');
   const id = req.params.id;
   const statement = 'DELETE FROM Guests WHERE (ID = ?)';
-  database.run(statement, [id], function (err, result) {
-    if (err) {
-      throw err;
-    } else {
-      res.status(200).json({ success: true });
-      console.log('Guest with id ' + id + ' was deleted successfully');
-    }
-  });
-
-  // Redirect to index.html
-  res.redirect('/');
+  databaseDeleteID(statement, res, id);
 });
 
 router.post('/guests/update/:id', urlencodedParser, function (req, res, next) {
@@ -102,32 +93,15 @@ router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
   // Get Guests with specific EventID
   const eventID = req.params.id;
   const statement = 'SELECT Guests.Name FROM `Guests` INNER JOIN Guestlist ON (Guestlist.Guests = Guests.ID) WHERE Guestlist.Events = ?;';
-  database.all(statement, [eventID], function (err, rows) {
-    if (err) {
-      res.status(200).json({ error: 'true' });
-    } else {
-      console.log('Users with EventID selected successfully');
-
-      // send persons as json data to client
-      res.status(200).json({ persons: rows });
-    }
-  });
+  const params = [eventID];
+  databaseAll(statement, res, params);
 });
 
 // Select all persons and send to client
 router.get('/guests/select', urlencodedParser, function (req, res, next) {
   // Select Guest from Form into database
   const statement = 'SELECT * FROM Guests';
-  database.all(statement, function (err, rows) {
-    if (err) {
-      res.status(200).json({ error: 'true' });
-    } else {
-      console.log('Users selected successfully');
-
-      // send persons as json data to client
-      res.status(200).json({ persons: rows });
-    }
-  });
+  databaseAll(statement, res);
 });
 
 module.exports = router;
