@@ -7,13 +7,17 @@ const databaseAll = (statement, res, params) => {
     } else {
       console.log('Selected successfully');
       // send data as json data to client
-      res.status(200).json({ data: rows });
+      if (rows.length < 1) {
+        res.status(200).json({ success: true });
+      } else {
+        res.status(200).json({ success: true, data: rows });
+      }
     }
   }
 
   if (params) {
-    database.all(statement, params, function (err, rows) {
-      handle(err);
+    database.all(statement, [params], function (err, rows) {
+      handle(err, rows);
     });
   } else {
     database.all(statement, function (err, rows) {

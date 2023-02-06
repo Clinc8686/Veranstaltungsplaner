@@ -177,17 +177,14 @@ function selectGuests () {
 
     try {
       const response = await sent.json();
-      if (response.data) {
+      if (response.data && response.success === true) {
         displayGuests(response.data);
-      } else {
-        printError();
+      } else if (response.success === true) {
+        // no users found
       }
     } catch (error) {
-      if (error instanceof TypeError) {
-        // no users found
-      } else {
-        console.log('guests.js, selectGuests, response error: ' + error);
-      }
+      printError();
+      console.log('guests.js, selectGuests, response error: ' + error);
     }
   };
   handleSelect();

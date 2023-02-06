@@ -227,7 +227,6 @@ function displayEvents (pageNum, pages) {
       buttonContainer.appendChild(editButton);
       buttonContainer.style.display = 'none';
       li.addEventListener('click', function () {
-        currentEvent.id = element.id;
         deleteAndEditButton(element.id);
       });
       currentEvent.id = element.id;
@@ -280,9 +279,11 @@ function deleteListener (id) {
   });
 }
 
-function editListener () {
-  const button = document.getElementById('edit-button'.concat(currentEvent.id));
+function editListener (id) {
+  const button = document.getElementById('edit-button'.concat(id));
   button.addEventListener('click', function () {
+    currentEvent.id = this.id.replace('edit-button', '');
+    console.log(currentEvent.id + ' ' + this.id);
     const home = document.getElementById('home');
     deleteContent(home);
     displayTableConfiguration();

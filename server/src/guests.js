@@ -93,8 +93,7 @@ router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
   // Get Guests with specific EventID
   const eventID = req.params.id;
   const statement = 'SELECT Guests.Name FROM `Guests` INNER JOIN Guestlist ON (Guestlist.Guests = Guests.ID) WHERE Guestlist.Events = ?;';
-  const params = [eventID];
-  databaseAll(statement, res, params);
+  databaseAll(statement, res, eventID);
 });
 
 // Select all persons and send to client

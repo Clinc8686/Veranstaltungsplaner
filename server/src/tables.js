@@ -21,6 +21,7 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
   const statement = 'INSERT INTO Seatingplan (Tables, Seats, Onesided) VALUES (?,?,?)';
   database.run(statement, [requestBody.numberOfTables, requestBody.seatsPerTable, requestBody.twoSides], function (err, result) {
     if (err) {
+      console.log(err.message);
       const check = 'CHECK constraint failed';
       if (err.message.includes(check)) {
         res.json({ success: false, errorMessage: 'notNull' });
@@ -46,8 +47,7 @@ router.get('/tables/select/:id', urlencodedParser, function (req, res, next) {
   // Get Tables from specific EventID
   const eventID = req.params.id;
   const statement = 'SELECT Seatingplan.ID, Seatingplan.Tables, Seatingplan.Seats, Seatingplan.Onesided FROM `Seatingplan` INNER JOIN Events ON (Seatingplan.ID = Events.Seatingplan) WHERE Events.ID = ?;';
-  const params = [eventID];
-  databaseAll(statement, res, params);
+  databaseAll(statement, res, eventID);
 });
 
 router.post('/tables/update/:id', urlencodedParser, function (req, res, next) {

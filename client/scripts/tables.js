@@ -39,7 +39,6 @@ export function displayTableConfiguration () {
 
     try {
       const response = await sent.json();
-      console.log(JSON.stringify(response));
       if (response.data) {
         return response.data[0];
       }

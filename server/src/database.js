@@ -26,8 +26,8 @@ db.serialize(function () {
     '`Events` INTEGER NOT NULL CHECK(length(Events) > 0),' +
     '`Seat`   INTEGER,' +
     '`Bench`  INTEGER,' +
-    'CONSTRAINT `Guestlist` FOREIGN KEY (`Events`) REFERENCES `Events` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,' +
-    'CONSTRAINT `Guestlist` FOREIGN KEY (`Guests`) REFERENCES `Guests` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,' +
+    'CONSTRAINT `Guestlist_Events` FOREIGN KEY (`Events`) REFERENCES `Events` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,' +
+    'CONSTRAINT `Guestlist_Guests` FOREIGN KEY (`Guests`) REFERENCES `Guests` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,' +
     'CONSTRAINT `Guestlist` UNIQUE(Guests, Events)' +
     ')', (err) => {
     if (err) return console.log('Guestlist: ' + err.message);
