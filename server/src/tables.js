@@ -19,7 +19,6 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
   const requestBody = req.body;
   let statement;
   let params;
-  console.log(JSON.stringify(requestBody));
   if (requestBody.eventID) {
     statement = 'INSERT INTO Seatingplan (ID, Tables, Seats, Onesided) VALUES (?,?,?,?)';
     params = [requestBody.eventID, requestBody.numberOfTables, requestBody.seatsPerTable, requestBody.twoSides];
@@ -29,13 +28,13 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
   }
   database.run(statement, params, function (err, result) {
     if (err) {
-      const check = 'CHECK constraint failed';
+      const check = 'CHECK constraint failed: length(Tables) > 0';
       if (err.message.includes(check)) {
         res.json({ success: false, errorMessage: 'notNull' });
       } else {
         res.json({ success: false });
       }
-      console.log('handle wrong insert! \n' + err.message + '\n' + statement + ' ' + [requestBody.eventID, requestBody.numberOfTables, requestBody.seatsPerTable, requestBody.twoSides]);
+      console.log('handle wrong insert: ' + err.message);
     } else {
       try {
         updateEvent(this.lastID, requestBody.eventID);

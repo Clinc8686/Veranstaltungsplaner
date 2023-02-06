@@ -102,10 +102,10 @@ function buttonListener (button) {
 
       try {
         const response = await sent.json();
-        if (response.success === false) {
+        if (response.errorMessage === 'notNull') {
+          printError('Es müssen alle Textfelder ausgefüllt werden!');
+        } else if (response.success === false) {
           printError();
-        } else if (response.success === true) {
-          // hier weiter bei erfolgreich
         }
       } catch (error) {
         if (error instanceof SyntaxError) {

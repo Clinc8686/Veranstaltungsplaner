@@ -57,6 +57,24 @@ db.serialize(function () {
     if (err) return console.log('Seatingplan: ' + err.message);
     console.log('Table Seatingplan created or exists');
   });
+
+  db.run('CREATE TRIGGER IF NOT EXISTS Guestlist_Delete ' +
+    'AFTER DELETE ON Guestlist ' +
+    'BEGIN ' +
+    'DELETE FROM Guests' +
+    '  WHERE ID IN (' +
+    '    SELECT ID' +
+    '    FROM Guests' +
+    '    WHERE NOT EXISTS (' +
+    '      SELECT *' +
+    '      FROM Guestlist' +
+    '      WHERE Guests = Guests.ID )' +
+    '    AND ID = OLD.Guests' +
+    '  );' +
+    'END;', (err) => {
+    if (err) return console.log('Trigger: ' + err.message);
+    console.log('Trigger created or exists');
+  });
 });
 
 module.exports = db;
