@@ -5,14 +5,6 @@ const { databaseAll } = require('./global');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const router = express.Router();
 
-function updateEvent (SeatingplanID, eventID) {
-  const statement = 'UPDATE Events SET Seatingplan = ? WHERE ID = ?';
-  database.run(statement, [SeatingplanID, eventID], function (err, result) {
-    if (err) throw err;
-    console.log('Event was updated successfully with Seatingplan');
-  });
-}
-
 // Receive Post-Requests from index.html
 router.post('/tables/insert', urlencodedParser, function (req, res, next) {
   // Insert Tables from Form into database
@@ -26,6 +18,9 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
     statement = 'INSERT INTO Seatingplan (Tables, Seats, Onesided) VALUES (?,?,?)';
     params = [requestBody.numberOfTables, requestBody.seatsPerTable, requestBody.twoSides];
   }
+  console.log(statement + ' ' + JSON.stringify(requestBody));
+  params = params.map(Number);
+
   database.run(statement, params, function (err, result) {
     if (err) {
       const check = 'CHECK constraint failed: length(Tables) > 0';
@@ -37,7 +32,6 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
       console.log('handle wrong insert: ' + err.message);
     } else {
       try {
-        updateEvent(this.lastID, requestBody.eventID);
         console.log('Table was inserted successfully');
       } catch (e) {
         res.json({ success: false });
@@ -52,7 +46,7 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
 router.get('/tables/select/:id', urlencodedParser, function (req, res, next) {
   // Get Tables from specific EventID
   const eventID = req.params.id;
-  const statement = 'SELECT Seatingplan.ID, Seatingplan.Tables, Seatingplan.Seats, Seatingplan.Onesided FROM `Seatingplan` INNER JOIN Events ON (Seatingplan.ID = Events.Seatingplan) WHERE Events.ID = ?;';
+  const statement = 'SELECT Seatingplan.ID, Seatingplan.Tables, Seatingplan.Seats, Seatingplan.Onesided FROM `Seatingplan` INNER JOIN Events ON (Seatingplan.ID = Events.ID) WHERE Events.ID = ?;';
   databaseAll(statement, res, eventID);
 });
 

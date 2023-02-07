@@ -16,7 +16,6 @@ db.serialize(function () {
     '`Name` TEXT NOT NULL CHECK(length(Name) > 0),' +
     '`Category` TEXT NOT NULL CHECK(length(Name) > 0),' +
     '`Datetime` DATETIME NOT NULL CHECK(length(Datetime) > 0),' +
-    '`Seatingplan` INTEGER UNIQUE CHECK(length(Seatingplan) > 0),' +
     '`Place` TEXT CHECK(length(Place) > 0)' +
     ')', (err) => {
     if (err) return console.log('Events: ' + err.message);
@@ -52,7 +51,7 @@ db.serialize(function () {
     '`Tables` INTEGER NOT NULL CHECK(length(Tables) > 0),' +
     '`Seats` INTEGER NOT NULL CHECK(length(Seats) > 0),' +
     '`Onesided` BOOLEAN NOT NULL CHECK(length(Onesided) > 0),' +
-    'FOREIGN KEY (`ID`) REFERENCES `Events` (`Seatingplan`) ON DELETE CASCADE ON UPDATE CASCADE' +
+    'FOREIGN KEY (`ID`) REFERENCES `Events` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE' +
     ')', (err) => {
     if (err) return console.log('Seatingplan: ' + err.message);
     console.log('Table Seatingplan created or exists');
