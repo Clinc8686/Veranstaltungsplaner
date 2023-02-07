@@ -34,7 +34,7 @@ router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
   database.run(statement, [requestBody.name, requestBody.children, requestBody.invitationStatus], function (err, result) {
     if (err) {
       const check = 'CHECK constraint failed';
-      const unique = 'UNIQUE constraint failed: Guests.Name';
+      const unique = 'UNIQUE constraint failed: Guests.Name, Guests.Children';
       if (err.message.includes(check)) {
         res.status(200).json({ success: false, errorMessage: 'notNull' });
       } else if (err.message.includes(unique)) {
