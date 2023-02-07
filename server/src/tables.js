@@ -18,8 +18,6 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
     statement = 'INSERT INTO Seatingplan (Tables, Seats, Onesided) VALUES (?,?,?)';
     params = [requestBody.numberOfTables, requestBody.seatsPerTable, requestBody.twoSides];
   }
-  console.log(statement + ' ' + JSON.stringify(requestBody));
-  params = params.map(Number);
 
   database.run(statement, params, function (err, result) {
     if (err) {
