@@ -26,6 +26,26 @@ function createSelectRow (id, labelText) {
   return div;
 }
 
+function guestsForm (id = 'inputName') {
+  const form = document.createElement('form');
+  const inputFirstName = createInputRow(id, 'text', 'Max Mustermann', 'inputName', 'Name:');
+  const selectInvitation = createSelectRow('selectInvitation', 'Einladungsstatus:');
+  const optUnknown = createOptions('unbekannt');
+  const optInvited = createOptions('eingeladen');
+  const optAccepted = createOptions('zugesagt');
+  const optCanceled = createOptions('abgesagt');
+  const childCheckbox = createInputRow('checkboxChild', 'checkbox', 'Nein', 'checkboxChild', 'Ist die Person ein Kind?:');
+  form.id = 'insertGuestsForm';
+  selectInvitation.lastChild.appendChild(optUnknown);
+  selectInvitation.lastChild.appendChild(optInvited);
+  selectInvitation.lastChild.appendChild(optAccepted);
+  selectInvitation.lastChild.appendChild(optCanceled);
+  form.appendChild(inputFirstName);
+  form.appendChild(selectInvitation);
+  form.appendChild(childCheckbox);
+  return form;
+}
+
 export function insertNewGuests () {
   console.log('Gäste der Veranstaltung '.concat(currentEvent.id).concat(' sollen geändert werden.'));
   const main = document.getElementById('main');
@@ -33,24 +53,12 @@ export function insertNewGuests () {
   const h2 = document.createElement('h2');
   const div = document.createElement('div');
   const h3 = document.createElement('h3');
-  const form = document.createElement('form');
-  const inputFirstName = createInputRow('inputName', 'text', 'Max Mustermann', 'inputName', 'Name:');
-  const selectInvitation = createSelectRow('selectInvitation', 'Einladungsstatus:');
-  const optUnknown = createOptions('unbekannt');
-  const optInvited = createOptions('eingeladen');
-  const optAccepted = createOptions('zugesagt');
-  const optCanceled = createOptions('abgesagt');
-  const childCheckbox = createInputRow('checkboxChild', 'checkbox', 'Nein', 'checkboxChild', 'Ist die Person ein Kind?:');
   const addButton = document.createElement('button');
   const divSelect = document.createElement('div');
   const divSelectPages = document.createElement('div');
+  const form = guestsForm();
   divSelectPages.id = 'selectedGuestsPages';
   divSelect.id = 'selectGuestsDiv';
-  form.id = 'insertGuestsForm';
-  selectInvitation.lastChild.appendChild(optUnknown);
-  selectInvitation.lastChild.appendChild(optInvited);
-  selectInvitation.lastChild.appendChild(optAccepted);
-  selectInvitation.lastChild.appendChild(optCanceled);
   h2.innerHTML = 'Gästeliste:';
   div.id = 'insertGuestsDiv';
   div.className = 'box';
@@ -65,9 +73,6 @@ export function insertNewGuests () {
   section.appendChild(div);
   div.appendChild(h3);
   div.appendChild(form);
-  form.appendChild(inputFirstName);
-  form.appendChild(selectInvitation);
-  form.appendChild(childCheckbox);
   div.appendChild(addButton);
   div.appendChild(divSelect);
   divSelect.appendChild(divSelectPages);
