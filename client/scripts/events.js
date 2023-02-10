@@ -123,7 +123,9 @@ function printEvents (events) {
 
   displayPages();
   displayEvents(currentPage, pages);
-  displayEvents(currentPage + 1, pages);
+  if (pages[currentPage + 1]) {
+    displayEvents(currentPage + 1, pages);
+  }
   displayPaginationButtons();
   buttonClick();
   document.getElementById('prev-button').disabled = true;
@@ -139,12 +141,24 @@ function getPageContent (events, rowLimit) {
   let categories = [];
   let pageCount = 0;
   let countEvents = 0;
-  if (events.length < rowLimit) {
-    rowLimit = events.length;
+  const eventsLength = events.length;
+  let categoryCount = 0;
+  if (eventsLength < rowLimit) {
+    for (const event of events) {
+      if (!categories.includes(event.Category)) {
+        categories.push(event.Category);
+        categoryCount++;
+      }
+    }
+    categories = [];
   }
-
-  for (let index = 0; index < events.length; index++) {
+  const pageElementCount = eventsLength + categoryCount; // + categoryCount because of the headlines (categories)
+  if (pageElementCount < rowLimit) {
+    rowLimit = pageElementCount;
+  }
+  for (let index = 0; index < eventsLength; index++) {
     let element;
+    // if space on page and category isn't there
     if (!categories.includes(events[index].Category) && elements.length < rowLimit - 1) {
       categories.push(events[index].Category);
       element = {
@@ -160,6 +174,7 @@ function getPageContent (events, rowLimit) {
       };
       countEvents++;
       elements.push(element);
+      // if space on page and category already there
     } else if (categories.includes(events[index].Category) && elements.length < rowLimit) {
       element = {
         type: 'item',
@@ -168,6 +183,7 @@ function getPageContent (events, rowLimit) {
       };
       countEvents++;
       elements.push(element);
+      // if no space on page
     } else if (!elements.length < rowLimit) {
       pages[pageCount] = elements;
       pageCount++;
@@ -175,6 +191,7 @@ function getPageContent (events, rowLimit) {
       categories = [];
       index--;
     }
+    // are all events in pages?
     if (countEvents === events.length) {
       pages[pageCount] = elements;
     }
