@@ -30,8 +30,10 @@ function loadEvents () {
   handleSelect();
 }
 export function deleteContent (parent) {
-  while (parent.lastChild) {
-    parent.removeChild(parent.lastChild);
+  if (parent.hasChildNodes()) {
+    while (parent.lastChild) {
+      parent.removeChild(parent.lastChild);
+    }
   }
   parent.remove();
 }

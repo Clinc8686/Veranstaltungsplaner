@@ -42,6 +42,10 @@ export function insertNewGuests () {
   const optCanceled = createOptions('abgesagt');
   const childCheckbox = createInputRow('checkboxChild', 'checkbox', 'Nein', 'checkboxChild', 'Ist die Person ein Kind?:');
   const addButton = document.createElement('button');
+  const divSelect = document.createElement('div');
+  const divSelectPages = document.createElement('div');
+  divSelectPages.id = 'selectedGuestsPages';
+  divSelect.id = 'selectGuestsDiv';
   form.id = 'insertGuestsForm';
   selectInvitation.lastChild.appendChild(optUnknown);
   selectInvitation.lastChild.appendChild(optInvited);
@@ -65,6 +69,8 @@ export function insertNewGuests () {
   form.appendChild(selectInvitation);
   form.appendChild(childCheckbox);
   div.appendChild(addButton);
+  div.appendChild(divSelect);
+  divSelect.appendChild(divSelectPages);
   buttonListenerInsert();
   selectGuests();
   nextButton();
@@ -89,19 +95,16 @@ function nextButton () {
 function displayGuests (guests) {
   let currPage = 0;
   // Adding Headline
-  const div = document.getElementById('insertGuestsDiv');
   const h3 = document.createElement('h3');
   h3.innerHTML = 'Eingetragene Gäste';
-  const divSelect = document.createElement('div');
-  divSelect.id = 'selectGuestsDiv';
+  const div = document.getElementById('selectedGuestsPages');
   const displayPage = () => {
     const page = document.createElement('div');
     const ul = document.createElement('ul');
     page.id = 'page'.concat(currPage);
     page.className = 'guests-page';
     ul.id = 'ul'.concat(currPage);
-    div.appendChild(divSelect);
-    divSelect.appendChild(page);
+    div.appendChild(page);
     page.appendChild(h3);
     page.appendChild(ul);
   };
@@ -180,7 +183,7 @@ function selectGuests () {
       if (response.data && response.success === true) {
         displayGuests(response.data);
       } else if (response.success === true) {
-        // no users found
+        console.log('no users found');
       }
     } catch (error) {
       printError();
@@ -258,7 +261,6 @@ function buttonListenerInsert () {
     // prevent forwarding
     e.preventDefault();
 
-    const page = document.getElementById('selectGuestsDiv');
     const name = document.getElementById('inputName').value;
     let children = 0;
     if (document.getElementById('checkboxChild').checked) {
@@ -276,7 +278,7 @@ function buttonListenerInsert () {
         },
         body: JSON.stringify(data)
       });
-
+      // const divSelectPages = document.getElementById('selectedGuestsPages');
       try {
         const response = await sent.json();
         if (response.success === false) {
@@ -291,7 +293,7 @@ function buttonListenerInsert () {
       } catch (error) {
         if (error instanceof SyntaxError) {
           form.reset();
-          deleteContent(page);
+          // deleteContent(divSelectPages);
           selectGuests();
         } else {
           printError();
