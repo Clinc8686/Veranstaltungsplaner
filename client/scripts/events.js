@@ -268,6 +268,7 @@ function deleteAndEditButton (id) {
 
 function deleteListener (id) {
   const button = document.getElementById('delete-button'.concat(id));
+  const event = document.getElementById(id);
   button.addEventListener('click', (e) => {
     // prevent forwarding
     e.preventDefault();
@@ -287,6 +288,7 @@ function deleteListener (id) {
         } else if (response.success === true) {
           // Refresh Events or delete id with dom-manipulation
           // Hier entweder ein refresh der webseite verursachen oder per dom-manipulation die id des gelöschten events raus löschen (2. variante würde ich empfehlen da besser & einfacher)
+          deleteContent(event);
           console.log('Erfolgreich gelöscht!');
         }
       } catch (error) {
