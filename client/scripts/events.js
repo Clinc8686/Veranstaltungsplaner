@@ -286,8 +286,6 @@ function deleteListener (id) {
         if (response.success === false) {
           printError('Das Event konnte nicht gelöscht werden');
         } else if (response.success === true) {
-          // Refresh Events or delete id with dom-manipulation
-          // Hier entweder ein refresh der webseite verursachen oder per dom-manipulation die id des gelöschten events raus löschen (2. variante würde ich empfehlen da besser & einfacher)
           deleteContent(event);
           console.log('Erfolgreich gelöscht!');
         }
