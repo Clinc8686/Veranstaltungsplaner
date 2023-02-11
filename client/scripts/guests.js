@@ -232,7 +232,6 @@ function getPageContent (guests, rowLimit) {
     rowLimit = guests.length;
   }
 
-  console.log(guests);
   for (let index = 0; index < guests.length; index++) {
     if (items.length < rowLimit) {
       countGuests++;
@@ -354,13 +353,23 @@ function editListener (guest) {
   if (button) {
     button.addEventListener('click', function () {
       // currentEvent.id = this.id.replace('edit-button', '');
-      console.log('buttonlistener funktioniert');
       const home = document.getElementById('insertGuestsSection');
       deleteContent(home);
       displayEditGuestPage(guest);
     });
   }
   console.log(guest.id);
+}
+
+function saveListener (id) {
+  const button = document.getElementById('saveGuestButton');
+  const section = document.getElementById('insertGuestsSection');
+  button.addEventListener('click', function () {
+    // update function DB entry of guest with id
+    console.log('Gast mit ID '.concat(id).concat(' sollte geupdated werden'));
+    deleteContent(section);
+    insertNewGuests();
+  });
 }
 
 function displayEditGuestPage (guest) {
@@ -379,7 +388,7 @@ function displayEditGuestPage (guest) {
   section.id = 'insertGuestsSection';
   saveButton.type = 'button';
   saveButton.className = 'site-button';
-  saveButton.id = 'editGuestsButton';
+  saveButton.id = 'saveGuestButton';
   saveButton.innerHTML = 'Speichern & zurück';
   main.appendChild(section);
   section.appendChild(h2);
@@ -387,5 +396,5 @@ function displayEditGuestPage (guest) {
   div.appendChild(h3);
   div.appendChild(form);
   div.appendChild(saveButton);
-  // saveListener();
+  saveListener(guest.id);
 }
