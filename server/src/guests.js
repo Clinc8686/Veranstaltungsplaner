@@ -92,7 +92,7 @@ router.post('/guests/update/:id', urlencodedParser, function (req, res, next) {
 router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
   // Get Guests with specific EventID
   const eventID = req.params.id;
-  const statement = 'SELECT Guests.Name FROM `Guests` INNER JOIN Guestlist ON (Guestlist.Guests = Guests.ID) WHERE Guestlist.Events = ?;';
+  const statement = 'SELECT Guests.Name, Guests.ID FROM `Guests` INNER JOIN Guestlist ON (Guestlist.Guests = Guests.ID) WHERE Guestlist.Events = ?;';
   databaseAll(statement, res, eventID);
 });
 

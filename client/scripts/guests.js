@@ -26,9 +26,9 @@ function createSelectRow (id, labelText) {
   return div;
 }
 
-function guestsForm (id = 'inputName') {
+function guestsForm (guest = { id: 'inputName', name: 'Max Mustermann' }) {
   const form = document.createElement('form');
-  const inputFirstName = createInputRow(id, 'text', 'Max Mustermann', 'inputName', 'Name:');
+  const inputFirstName = createInputRow(guest.id, 'text', guest.name, 'inputName', 'Name:');
   const selectInvitation = createSelectRow('selectInvitation', 'Einladungsstatus:');
   const optUnknown = createOptions('unbekannt');
   const optInvited = createOptions('eingeladen');
@@ -55,9 +55,7 @@ export function insertNewGuests () {
   const h3 = document.createElement('h3');
   const addButton = document.createElement('button');
   const divSelect = document.createElement('div');
-  const divSelectPages = document.createElement('div');
   const form = guestsForm();
-  divSelectPages.id = 'selectedGuestsPages';
   divSelect.id = 'selectGuestsDiv';
   h2.innerHTML = 'Gästeliste:';
   div.id = 'insertGuestsDiv';
@@ -75,7 +73,6 @@ export function insertNewGuests () {
   div.appendChild(form);
   div.appendChild(addButton);
   div.appendChild(divSelect);
-  divSelect.appendChild(divSelectPages);
   buttonListenerInsert();
   selectGuests();
   nextButton();
@@ -99,17 +96,19 @@ function nextButton () {
 
 function displayGuests (guests) {
   let currPage = 0;
-  // Adding Headline
+  const div = document.getElementById('selectGuestsDiv');
+  const divSelectedPages = document.createElement('div');
   const h3 = document.createElement('h3');
   h3.innerHTML = 'Eingetragene Gäste';
-  const div = document.getElementById('selectedGuestsPages');
+  divSelectedPages.id = 'selectedGuestsPages';
   const displayPage = () => {
     const page = document.createElement('div');
     const ul = document.createElement('ul');
     page.id = 'page'.concat(currPage);
     page.className = 'guests-page';
     ul.id = 'ul'.concat(currPage);
-    div.appendChild(page);
+    div.appendChild(divSelectedPages);
+    divSelectedPages.appendChild(page);
     page.appendChild(h3);
     page.appendChild(ul);
   };
@@ -226,16 +225,22 @@ function displayPaginationButtons (currPage) {
 function getPageContent (guests, rowLimit) {
   const p = [];
   let items = [];
+  let guest = [];
   let pageCount = 0;
   let countGuests = 0;
   if (guests.length < rowLimit) {
     rowLimit = guests.length;
   }
 
+  console.log(guests);
   for (let index = 0; index < guests.length; index++) {
     if (items.length < rowLimit) {
       countGuests++;
-      items.push(guests[index].Name);
+      guest = {
+        id: guests[index].ID,
+        name: guests[index].Name
+      };
+      items.push(guest);
     } else {
       p[pageCount] = items;
       pageCount++;
@@ -255,7 +260,29 @@ function displayGuestsPage (pageNum, pages) {
   p.appendChild(ul);
   for (let i = 0; i < pages[pageNum].length; i++) {
     const li = document.createElement('li');
-    li.innerHTML = pages[pageNum][i];
+    const guest = pages[pageNum][i];
+    li.innerHTML = guest.name;
+    li.id = guest.id;
+
+    // Button
+    const button = document.createElement('div');
+    button.id = 'button-container-edit'.concat(guest.id);
+    button.className = 'container';
+    const editBtn = document.createElement('button');
+    editBtn.className = 'site-button';
+    editBtn.id = 'edit-button'.concat(guest.id);
+    editBtn.title = 'bearbeiten';
+    editBtn.ariaLabel = 'Veranstaltung bearbeiten';
+    editBtn.innerHTML = 'bearbeiten';
+    editBtn.type = 'button';
+    li.appendChild(button);
+    button.appendChild(editBtn);
+    button.style.display = 'none';
+    li.addEventListener('click', function () {
+      editButton(guest.id);
+      editListener(guest);
+    });
+    // currentEvent.id = guest.id; guest.id wird hier nicht mehr stimmen, weil das jetzt die ID des Gastes ist
     ul.appendChild(li);
   }
 }
@@ -275,6 +302,8 @@ function buttonListenerInsert () {
     const invitationStatus = document.getElementById('selectInvitation').value;
     const data = { name, children, invitationStatus };
     const form = document.getElementById('insertGuestsForm');
+    const divSelectPages = document.getElementById('selectedGuestsPages');
+    console.log(divSelectPages);
     const handleInsert = async () => {
       const sent = await fetch('/guests/insert/' + currentEvent.id, {
         method: 'POST',
@@ -283,7 +312,6 @@ function buttonListenerInsert () {
         },
         body: JSON.stringify(data)
       });
-      // const divSelectPages = document.getElementById('selectedGuestsPages');
       try {
         const response = await sent.json();
         if (response.success === false) {
@@ -298,7 +326,7 @@ function buttonListenerInsert () {
       } catch (error) {
         if (error instanceof SyntaxError) {
           form.reset();
-          // deleteContent(divSelectPages);
+          deleteContent(divSelectPages);
           selectGuests();
         } else {
           printError();
@@ -308,4 +336,56 @@ function buttonListenerInsert () {
     };
     handleInsert();
   });
+}
+
+function editButton (id) {
+  const buttonContainer = document.getElementById('button-container-edit'.concat(id));
+  if (buttonContainer) {
+    if (buttonContainer.style.display === 'none') {
+      buttonContainer.style.display = 'flex';
+    } else {
+      buttonContainer.style.display = 'none';
+    }
+  }
+}
+
+function editListener (guest) {
+  const button = document.getElementById('edit-button'.concat(guest.id));
+  if (button) {
+    button.addEventListener('click', function () {
+      // currentEvent.id = this.id.replace('edit-button', '');
+      console.log('buttonlistener funktioniert');
+      const home = document.getElementById('insertGuestsSection');
+      deleteContent(home);
+      displayEditGuestPage(guest);
+    });
+  }
+  console.log(guest.id);
+}
+
+function displayEditGuestPage (guest) {
+  console.log('Gast '.concat(guest.id).concat(' der Veranstaltung ').concat(currentEvent.id).concat(' sollen geändert werden.'));
+  const form = guestsForm(guest);
+  const main = document.getElementById('main');
+  const section = document.createElement('section');
+  const h2 = document.createElement('h2');
+  const div = document.createElement('div');
+  const h3 = document.createElement('h3');
+  const saveButton = document.createElement('button');
+  h2.innerHTML = 'Gästeliste:';
+  div.id = 'insertGuestsDiv';
+  div.className = 'box';
+  h3.innerHTML = 'Neue Gäste eintragen';
+  section.id = 'insertGuestsSection';
+  saveButton.type = 'button';
+  saveButton.className = 'site-button';
+  saveButton.id = 'editGuestsButton';
+  saveButton.innerHTML = 'Speichern & zurück';
+  main.appendChild(section);
+  section.appendChild(h2);
+  section.appendChild(div);
+  div.appendChild(h3);
+  div.appendChild(form);
+  div.appendChild(saveButton);
+  // saveListener();
 }
