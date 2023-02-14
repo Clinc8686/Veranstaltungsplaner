@@ -12,7 +12,7 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
   let statement;
   let params;
   if (requestBody.eventID) {
-    statement = 'INSERT INTO Seatingplan (ID, Tables, Seats, Onesided) VALUES (?,?,?,?)';
+    statement = 'INSERT INTO Seatingplan (ID, Tables, Seats, Onesided) VALUES (?,?,?,?);';
     params = [requestBody.eventID, requestBody.numberOfTables, requestBody.seatsPerTable, requestBody.twoSides];
   } else {
     statement = 'INSERT INTO Seatingplan (Tables, Seats, Onesided) VALUES (?,?,?)';
@@ -52,7 +52,7 @@ router.post('/tables/update/:id', urlencodedParser, function (req, res, next) {
   // Update Seatingplan with specific ID
   const tableID = req.params.id;
   const requestBody = req.body;
-  const statement = 'UPDATE Seatingplan SET Tables = ?, Seats = ?, Onesided = ? WHERE ID = ?';
+  const statement = 'UPDATE Seatingplan SET Tables = ?, Seats = ?, Onesided = ? WHERE ID = ?;';
   database.run(statement, [requestBody.numberOfTables, requestBody.seatsPerTable, requestBody.twoSides, tableID], function (err, result) {
     if (err) {
       throw err;
@@ -62,6 +62,24 @@ router.post('/tables/update/:id', urlencodedParser, function (req, res, next) {
 
   // Redirect to index.html
   res.redirect('/');
+});
+
+router.post('/seats/select/:id', urlencodedParser, function (req, res, next) {
+  const statement = 'SELECT G.Name, GL.Seat, GL.Bench FROM Events E INNER JOIN Guestlist GL ON GL.Events = E.ID INNER JOIN Guests G ON G.ID = GL.Guests WHERE Events = ?;'
+  const eventID = req.params.id;
+  databaseAll(statement, res, eventID);
+});
+
+router.post('/seats/update', urlencodedParser, function (req, res, next) {
+  const statement = 'UPDATE `Guestlist` AS g1 SET `Seat` = g2.`Seat`, `Bench` = g2.`Bench` FROM `Guestlist` AS g2 WHERE g1.`Guests` = 2 AND g2.`Guests` = 4 AND g1.`Events` = g2.`Events` OR g1.`Guests` = 4 AND g2.`Guests` = 2 AND g1.`Events` = g2.`Events`;'
+  const requestBody = req.body;
+  database.run(statement, [requestBody.userID_1, requestBody.userID_2], function (err, result) {
+    if (err) {
+      throw err;
+    } else {
+      console.log('Seat succesfully updated');
+    }
+  })
 });
 
 module.exports = router;
