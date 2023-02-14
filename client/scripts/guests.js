@@ -73,7 +73,10 @@ export function insertNewGuests () {
   div.appendChild(form);
   div.appendChild(addButton);
   div.appendChild(divSelect);
-  buttonListenerInsert();
+  // buttonListenerInsert();
+  document.getElementById('insertGuestsButton').addEventListener('click', (e) => {
+    buttonListenerInsert(e);
+  });
   selectGuests();
   nextButton();
 }
@@ -287,54 +290,66 @@ function displayGuestsPage (pageNum, pages) {
 }
 
 // Button listener for insert guests
-function buttonListenerInsert () {
-  document.getElementById('insertGuestsButton').addEventListener('click', (e) => {
-    // prevent forwarding
-    e.preventDefault();
+function buttonListenerInsert (e, id) {
+  // prevent forwarding
+  e.preventDefault();
 
-    const name = document.getElementById('inputName').value;
-    let children = 0;
-    if (document.getElementById('checkboxChild').checked) {
-      children = 1;
-    }
+  // const name = document.getElementById('inputName').value;
+  const name = document.getElementsByName('inputName')[0].value;
+  console.log('name ' + name);
+  let children = 0;
+  if (document.getElementById('checkboxChild').checked) {
+    children = 1;
+  }
+  const invitationStatus = document.getElementById('selectInvitation').value;
+  console.log('status ' + invitationStatus);
 
-    const invitationStatus = document.getElementById('selectInvitation').value;
-    const data = { name, children, invitationStatus };
-    const form = document.getElementById('insertGuestsForm');
-    const divSelectPages = document.getElementById('selectedGuestsPages');
-    console.log(divSelectPages);
-    const handleInsert = async () => {
-      const sent = await fetch('/guests/insert/' + currentEvent.id, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-      try {
-        const response = await sent.json();
-        if (response.success === false) {
-          if (response.errorMessage === 'notNull') {
-            printError('Es müssen alle Felder ausgefüllt werden!');
-          } else if (response.errorMessage === 'exists') {
-            printError('Die Person ist schon in dem Event eingetragen!');
-          } else {
-            printError();
-          }
-        }
-      } catch (error) {
-        if (error instanceof SyntaxError) {
-          form.reset();
-          deleteContent(divSelectPages);
-          selectGuests();
+  let data;
+  let url;
+  const eventID = currentEvent.id;
+  if (id) {
+    url = '/guests/update/' + id;
+    data = { name, children, invitationStatus, eventID };
+  } else {
+    url = '/guests/insert/' + currentEvent.id;
+    data = { name, children, invitationStatus };
+  }
+
+  const form = document.getElementById('insertGuestsForm');
+  const divSelectPages = document.getElementById('selectedGuestsPages');
+  console.log(divSelectPages);
+  console.log(url + ' ' + JSON.stringify(data));
+  const handleInsert = async () => {
+    const sent = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    try {
+      const response = await sent.json();
+      if (response.success === false) {
+        if (response.errorMessage === 'notNull') {
+          printError('Es müssen alle Felder ausgefüllt werden!');
+        } else if (response.errorMessage === 'exists') {
+          printError('Die Person ist schon in dem Event eingetragen!');
         } else {
           printError();
-          console.log('response error: \n' + error);
         }
       }
-    };
-    handleInsert();
-  });
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        form.reset();
+        deleteContent(divSelectPages);
+        selectGuests();
+      } else {
+        printError();
+        console.log('response error: \n' + error);
+      }
+    }
+  };
+  handleInsert();
 }
 
 function editButton (id) {
@@ -364,8 +379,10 @@ function editListener (guest) {
 function saveListener (id) {
   const button = document.getElementById('saveGuestButton');
   const section = document.getElementById('insertGuestsSection');
-  button.addEventListener('click', function () {
+  button.addEventListener('click', function (e) {
     // update function DB entry of guest with id
+    buttonListenerInsert(e, id);
+
     console.log('Gast mit ID '.concat(id).concat(' sollte geupdated werden'));
     deleteContent(section);
     insertNewGuests();

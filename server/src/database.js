@@ -25,12 +25,13 @@ db.serialize(function () {
   db.run('CREATE TABLE IF NOT EXISTS `Guestlist` (' +
     '`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE CHECK(length(ID) > 0),' +
     '`Guests` INTEGER NOT NULL CHECK(length(Guests) > 0),' +
+    '`Invitationstatus` VARCHAR(10) NOT NULL CHECK(length(Invitationstatus) > 0),' +
     '`Events` INTEGER NOT NULL CHECK(length(Events) > 0),' +
     '`Seat`   INTEGER,' +
     '`Bench`  INTEGER,' +
     'FOREIGN KEY (`Events`) REFERENCES `Events` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,' +
     'FOREIGN KEY (`Guests`) REFERENCES `Guests` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,' +
-    'CONSTRAINT `Guestlist` UNIQUE(Guests, Events)' +
+    'CONSTRAINT `Guestlist` UNIQUE(Guests, Invitationstatus, Events)' +
     ')', (err) => {
     if (err) return console.log('Guestlist: ' + err.message);
     console.log('Table Guestlist created or exists');
@@ -40,7 +41,6 @@ db.serialize(function () {
     '`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE CHECK(length(ID) > 0),' +
     '`Name` TEXT NOT NULL CHECK(length(Name) > 0),' +
     '`Children` INTEGER NOT NULL CHECK(Children > -1 AND Children < 2),' +
-    '`Invitationstatus` VARCHAR(10) NOT NULL CHECK(length(Invitationstatus) > 0),' +
     'CONSTRAINT `Guests` UNIQUE(Name, Children)' +
     ')', (err) => {
     if (err) return console.log('Guests: ' + err.message);
