@@ -296,13 +296,11 @@ function buttonListenerInsert (e, id) {
 
   // const name = document.getElementById('inputName').value;
   const name = document.getElementsByName('inputName')[0].value;
-  console.log('name ' + name);
   let children = 0;
   if (document.getElementById('checkboxChild').checked) {
     children = 1;
   }
   const invitationStatus = document.getElementById('selectInvitation').value;
-  console.log('status ' + invitationStatus);
 
   let data;
   let url;
@@ -318,7 +316,6 @@ function buttonListenerInsert (e, id) {
   const form = document.getElementById('insertGuestsForm');
   const divSelectPages = document.getElementById('selectedGuestsPages');
   console.log(divSelectPages);
-  console.log(url + ' ' + JSON.stringify(data));
   const handleInsert = async () => {
     const sent = await fetch(url, {
       method: 'POST',
