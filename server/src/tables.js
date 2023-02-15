@@ -71,7 +71,7 @@ router.post('/seats/select/:id', urlencodedParser, function (req, res, next) {
 });
 
 router.post('/seats/update', urlencodedParser, function (req, res, next) {
-  const statement = 'UPDATE `Guestlist` AS g1 SET `Seat` = g2.`Seat`, `Bench` = g2.`Bench` FROM `Guestlist` AS g2 WHERE g1.`Guests` = 2 AND g2.`Guests` = 4 AND g1.`Events` = g2.`Events` OR g1.`Guests` = 4 AND g2.`Guests` = 2 AND g1.`Events` = g2.`Events`;'
+  const statement = 'UPDATE `Guestlist` AS g1 SET `Seat` = g2.`Seat`, `Bench` = g2.`Bench` FROM `Guestlist` AS g2 WHERE g1.`Guests` = ? AND g2.`Guests` = ? AND g1.`Events` = g2.`Events` OR g1.`Guests` = ? AND g2.`Guests` = ? AND g1.`Events` = g2.`Events`;'
   const requestBody = req.body;
   database.run(statement, [requestBody.userID_1, requestBody.userID_2], function (err, result) {
     if (err) {
