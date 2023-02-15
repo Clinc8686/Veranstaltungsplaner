@@ -137,21 +137,34 @@ export function displaySeatinplan () {
   section.appendChild(div);
 }
 
-// Send post-request to change guest seats
-function selectListener (guestID1, guestID2, seat, bench, eventID /* button */) {
+// build json for sending changed guest data
+function selectListenerAddGuest (guestID, seat, bench, eventID) {
+  const url = '/seats/update/' + guestID;
+  const data = { seat, bench, eventID };
+  sendRequest(url, data);
+}
+
+// build json for sending changed guests data
+function selectListenerChangeGuests (guestID1, guestID2 /* button */) {
   // button.addEventListener('click', (e) => {
   // e.preventDefault();
 
-  let url;
-  let data;
-  if (guestID2) {
-    url = '/seats/update/';
-    data = { guestID1, guestID2 };
-  } else {
-    url = '/seats/update/' + guestID1;
-    data = { seat, bench, eventID };
-  }
+  const url = '/seats/update/';
+  const data = { guestID1, guestID2 };
+  sendRequest(url, data);
+  // });
+}
 
+// Nur eine funktion, damit semistandard nicht meckert für unused function
+tmp();
+function tmp () {
+  selectListenerAddGuest();
+  selectListenerChangeGuests();
+  loadSeats();
+}
+
+// Send post-request
+function sendRequest (url, data) {
   const handleInsert = async () => {
     const sent = await fetch(url, {
       method: 'POST',
@@ -176,8 +189,6 @@ function selectListener (guestID1, guestID2, seat, bench, eventID /* button */) 
     }
   };
   handleInsert();
-  // });
-  loadSeats(); // nur temporär damit semistandard nicht wegen unused function meckert
 }
 
 // load all seats from specific eventID
@@ -202,5 +213,4 @@ function loadSeats (eventID) {
     }
   };
   handleSelect();
-  selectListener(); // nur temporär damit semistandard nicht wegen unused function meckert
 }
