@@ -132,9 +132,62 @@ export function displaySeatinplan () {
   section.id = 'sectionSeatingplan';
   h2.innerHTML = 'Sitzplan:';
   div.className = 'box container';
+  div.id = 'seatingPlanDiv';
   main.appendChild(section);
   section.appendChild(h2);
   section.appendChild(div);
+  selectTableConfiguration();
+}
+
+function displayTables (config) {
+  // const oneSided = config.Onesided;
+  const tableCount = config.Tables;
+  const seatCount = config.Seats;
+  const div = document.getElementById('seatingPlanDiv');
+  const seatPlan = document.createElement('TABLE');
+  const headline = document.createElement('tr');
+  const empty = document.createElement('th');
+  headline.appendChild(empty);
+  for (let h = 1; h <= seatCount; h++) {
+    const seat = document.createElement('th');
+    seat.innerHTML = 'Stuhl '.concat(h);
+    headline.appendChild(seat);
+  }
+  seatPlan.appendChild(headline);
+  for (let i = 1; i <= tableCount; i++) {
+    const tableRow = document.createElement('tr');
+    tableRow.id = i;
+    const head = document.createElement('th');
+    head.id = 'table'.concat(i);
+    head.innerHTML = 'Tisch '.concat(i);
+    tableRow.appendChild(head);
+    for (let k = 1; k <= seatCount; k++) {
+      const guest = document.createElement('td');
+      tableRow.appendChild(guest);
+    }
+    seatPlan.appendChild(tableRow);
+  }
+  div.appendChild(seatPlan);
+}
+function selectTableConfiguration () {
+  const handleSelect = async () => {
+    const sent = await fetch('/tables/select/' + currentEvent.id, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    try {
+      const response = await sent.json();
+      if (response.data) {
+        displayTables(response.data[0]);
+      }
+    } catch (error) {
+      console.log('tables.js, getTableInfo, response error: ' + error);
+    }
+  };
+  handleSelect();
 }
 
 // build json for sending changed guest data
