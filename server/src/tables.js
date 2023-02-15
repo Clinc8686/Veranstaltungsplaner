@@ -64,14 +64,14 @@ router.post('/tables/update/:id', urlencodedParser, function (req, res, next) {
   res.redirect('/');
 });
 
-router.post('/seats/select/:id', urlencodedParser, function (req, res, next) {
-  const statement = 'SELECT G.Name, GL.Seat, GL.Bench FROM Events E INNER JOIN Guestlist GL ON GL.Events = E.ID INNER JOIN Guests G ON G.ID = GL.Guests WHERE Events = ?;'
+router.get('/seats/select/:id', urlencodedParser, function (req, res, next) {
+  const statement = 'SELECT G.Name, GL.Seat, GL.Bench, GL.Guests FROM Events E INNER JOIN Guestlist GL ON GL.Events = E.ID INNER JOIN Guests G ON G.ID = GL.Guests WHERE Events = ?;';
   const eventID = req.params.id;
   databaseAll(statement, res, eventID);
 });
 
 router.post('/seats/update', urlencodedParser, function (req, res, next) {
-  const statement = 'UPDATE `Guestlist` AS g1 SET `Seat` = g2.`Seat`, `Bench` = g2.`Bench` FROM `Guestlist` AS g2 WHERE g1.`Guests` = ? AND g2.`Guests` = ? AND g1.`Events` = g2.`Events` OR g1.`Guests` = ? AND g2.`Guests` = ? AND g1.`Events` = g2.`Events`;'
+  const statement = 'UPDATE `Guestlist` AS g1 SET `Seat` = g2.`Seat`, `Bench` = g2.`Bench` FROM `Guestlist` AS g2 WHERE g1.`Guests` = ? AND g2.`Guests` = ? AND g1.`Events` = g2.`Events` OR g1.`Guests` = ? AND g2.`Guests` = ? AND g1.`Events` = g2.`Events`;';
   const requestBody = req.body;
   database.run(statement, [requestBody.userID_1, requestBody.userID_2], function (err, result) {
     if (err) {
@@ -79,7 +79,20 @@ router.post('/seats/update', urlencodedParser, function (req, res, next) {
     } else {
       console.log('Seat succesfully updated');
     }
-  })
+  });
+});
+
+router.post('/seats/update/:id', urlencodedParser, function (req, res, next) {
+  const statement = 'UPDATE Guestlist SET Seat = ?, Bench = ? WHERE Guests = ? AND Events = ?;';
+  const requestBody = req.body;
+  const userID = req.params.id;
+  database.run(statement, [requestBody.seat, requestBody.bench, userID, requestBody.eventID], function (err, result) {
+    if (err) {
+      throw err;
+    } else {
+      console.log('Seat succesfully updated');
+    }
+  });
 });
 
 module.exports = router;

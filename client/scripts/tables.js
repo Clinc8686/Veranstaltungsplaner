@@ -136,3 +136,71 @@ export function displaySeatinplan () {
   section.appendChild(h2);
   section.appendChild(div);
 }
+
+// Send post-request to change guest seats
+function selectListener (guestID1, guestID2, seat, bench, eventID /* button */) {
+  // button.addEventListener('click', (e) => {
+  // e.preventDefault();
+
+  let url;
+  let data;
+  if (guestID2) {
+    url = '/seats/update/';
+    data = { guestID1, guestID2 };
+  } else {
+    url = '/seats/update/' + guestID1;
+    data = { seat, bench, eventID };
+  }
+
+  const handleInsert = async () => {
+    const sent = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    try {
+      const response = await sent.json();
+      if (response.success === false) {
+        printError();
+      }
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        // erfolgreich
+      } else {
+        printError();
+        console.log('tables.js, selectListener, response error: \n' + error);
+      }
+    }
+  };
+  handleInsert();
+  // });
+  loadSeats(); // nur temporär damit semistandard nicht wegen unused function meckert
+}
+
+// load all seats from specific eventID
+function loadSeats (eventID) {
+  const handleSelect = async () => {
+    const sent = await fetch('/seats/select/' + eventID, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    try {
+      const response = await sent.json();
+      if (response.data) {
+        // erfolgreich
+      } else {
+        printError();
+      }
+    } catch (error) {
+      console.log('tables.js, loadSeats, response error: \n' + error);
+    }
+  };
+  handleSelect();
+  selectListener(); // nur temporär damit semistandard nicht wegen unused function meckert
+}
