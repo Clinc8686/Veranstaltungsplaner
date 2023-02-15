@@ -21,7 +21,7 @@ function loadEvents () {
       if (response.data) {
         printEvents(response.data);
       } else {
-        printError();
+        printError('1');
       }
     } catch (error) {
       console.log('events.js, loadEvents, response error: ' + error);
@@ -450,7 +450,7 @@ function insertNewEvent () {
         if (response.success === false && response.errorMessage === 'notNull') {
           printError('Es müssen alle Felder ausgefüllt werden!');
         } else if (response.success === false) {
-          printError();
+          printError('2');
         }
       } catch (error) {
         if (error instanceof SyntaxError) {
@@ -473,7 +473,7 @@ function insertNewEvent () {
                 deleteContent(section);
                 displayTableConfiguration();
               } else {
-                printError();
+                printError('3');
               }
             } catch (error) {
               console.log('events.js, insertNewEvent(1), response error: ' + error);
@@ -481,7 +481,7 @@ function insertNewEvent () {
           };
           handleSelect();
         } else {
-          printError();
+          printError('4');
           console.log('events.js, insertNewEvent(2), response error: \n' + error);
         }
       }

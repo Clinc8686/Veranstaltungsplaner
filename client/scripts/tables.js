@@ -156,7 +156,6 @@ function selectListenerChangeGuests (guestID1, guestID2 /* button */) {
 }
 
 // Nur eine funktion, damit semistandard nicht meckert für unused function
-tmp();
 function tmp () {
   selectListenerAddGuest();
   selectListenerChangeGuests();
@@ -189,6 +188,7 @@ function sendRequest (url, data) {
     }
   };
   handleInsert();
+  tmp(); // tpm
 }
 
 // load all seats from specific eventID
@@ -213,4 +213,5 @@ function loadSeats (eventID) {
     }
   };
   handleSelect();
+  tmp(); // tmp
 }
