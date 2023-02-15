@@ -267,22 +267,29 @@ function displayGuestsPage (pageNum, pages) {
     li.id = guest.id;
 
     // Button
-    const button = document.createElement('div');
-    button.id = 'button-container-edit'.concat(guest.id);
-    button.className = 'container';
+    const buttons = document.createElement('div');
+    buttons.id = 'button-container-edit'.concat(guest.id);
+    buttons.className = 'container';
     const editBtn = document.createElement('button');
+    const deleteBtn = document.createElement('button');
     editBtn.className = 'site-button';
     editBtn.id = 'edit-button'.concat(guest.id);
     editBtn.title = 'bearbeiten';
     editBtn.ariaLabel = 'Veranstaltung bearbeiten';
     editBtn.innerHTML = 'bearbeiten';
     editBtn.type = 'button';
-    li.appendChild(button);
-    button.appendChild(editBtn);
-    button.style.display = 'none';
+    deleteBtn.className = 'site-button';
+    deleteBtn.id = 'delete-button'.concat(guest.id);
+    deleteBtn.title = 'loeschen';
+    deleteBtn.innerHTML = 'löschen';
+    li.appendChild(buttons);
+    buttons.appendChild(editBtn);
+    buttons.appendChild(deleteBtn);
+    buttons.style.display = 'none';
     li.addEventListener('click', function () {
-      editButton(guest.id);
+      displayButtons(guest.id);
       editListener(guest);
+      deleteListener(guest.id);
     });
     // currentEvent.id = guest.id; guest.id wird hier nicht mehr stimmen, weil das jetzt die ID des Gastes ist
     ul.appendChild(li);
@@ -349,7 +356,7 @@ function buttonListenerInsert (e, id) {
   handleInsert();
 }
 
-function editButton (id) {
+function displayButtons (id) {
   const buttonContainer = document.getElementById('button-container-edit'.concat(id));
   if (buttonContainer) {
     if (buttonContainer.style.display === 'none') {
@@ -370,7 +377,39 @@ function editListener (guest) {
       displayEditGuestPage(guest);
     });
   }
-  console.log(guest.id);
+}
+
+function deleteListener (id) {
+  const button = document.getElementById('delete-button'.concat(id));
+  const guest = document.getElementById(id);
+  if (button) {
+    button.addEventListener('click', (e) => {
+      // prevent forwarding
+      e.preventDefault();
+      const handleDelete = async () => {
+        const sent = await fetch('/guests/' + id, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        try {
+          const response = await sent.json();
+          if (response.success === false) {
+            printError('Der Gast konnte nicht gelöscht werden');
+          } else if (response.success === true) {
+            deleteContent(guest);
+            console.log('Erfolgreich gelöscht!');
+          }
+        } catch (error) {
+          printError('Der Gast konnte nicht gelöscht werden');
+          console.log('response error: \n' + error);
+        }
+      };
+      handleDelete();
+    });
+  }
 }
 
 function saveListener (id) {
