@@ -47,7 +47,6 @@ function guestsForm (guest = { id: 'inputName', name: 'Max Mustermann' }) {
 }
 
 export function insertNewGuests () {
-  console.log('Gäste der Veranstaltung '.concat(currentEvent.id).concat(' sollen geändert werden.'));
   const main = document.getElementById('main');
   const section = document.createElement('section');
   const h2 = document.createElement('h2');
@@ -234,13 +233,14 @@ function getPageContent (guests, rowLimit) {
   if (guests.length < rowLimit) {
     rowLimit = guests.length;
   }
-
   for (let index = 0; index < guests.length; index++) {
     if (items.length < rowLimit) {
       countGuests++;
       guest = {
         id: guests[index].ID,
-        name: guests[index].Name
+        name: guests[index].Name,
+        children: guests[index].Children,
+        invitationstatus: guests[index].Invitationstatus
       };
       items.push(guest);
     } else {
@@ -322,7 +322,6 @@ function buttonListenerInsert (e, id) {
 
   const form = document.getElementById('insertGuestsForm');
   const divSelectPages = document.getElementById('selectedGuestsPages');
-  console.log(divSelectPages);
   const handleInsert = async () => {
     const sent = await fetch(url, {
       method: 'POST',
@@ -372,8 +371,8 @@ function editListener (guest) {
   if (button) {
     button.addEventListener('click', function () {
       // currentEvent.id = this.id.replace('edit-button', '');
-      const home = document.getElementById('insertGuestsSection');
-      deleteContent(home);
+      const section = document.getElementById('insertGuestsSection');
+      deleteContent(section);
       displayEditGuestPage(guest);
     });
   }
@@ -419,14 +418,12 @@ function saveListener (id) {
     // update function DB entry of guest with id
     buttonListenerInsert(e, id);
 
-    console.log('Gast mit ID '.concat(id).concat(' sollte geupdated werden'));
     deleteContent(section);
     insertNewGuests();
   });
 }
 
 function displayEditGuestPage (guest) {
-  console.log('Gast '.concat(guest.id).concat(' der Veranstaltung ').concat(currentEvent.id).concat(' sollen geändert werden.'));
   const form = guestsForm(guest);
   const main = document.getElementById('main');
   const section = document.createElement('section');
@@ -449,5 +446,17 @@ function displayEditGuestPage (guest) {
   div.appendChild(h3);
   div.appendChild(form);
   div.appendChild(saveButton);
+  fillValues(guest);
   saveListener(guest.id);
+}
+
+function fillValues (guest) {
+  const input = document.getElementById(guest.id);
+  const selection = document.getElementById('selectInvitation');
+  const checkbox = document.getElementById('checkboxChild');
+  input.value = guest.name;
+  selection.value = guest.invitationstatus;
+  if (guest.children) {
+    checkbox.checked = true;
+  }
 }
