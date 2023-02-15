@@ -111,15 +111,8 @@ router.post('/guests/update/:id', urlencodedParser, function (req, res, next) {
 router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
   // Get Guests with specific EventID
   const eventID = req.params.id;
-  const statement = 'SELECT Guests.Name, Guests.ID FROM `Guests` INNER JOIN Guestlist ON (Guestlist.Guests = Guests.ID) WHERE Guestlist.Events = ?;';
+  const statement = 'SELECT Guests.ID, Guests.Name, Guests.Children, Guestlist.Invitationstatus FROM `Guests` INNER JOIN Guestlist ON (Guestlist.Guests = Guests.ID) WHERE Guestlist.Events = ?;';
   databaseAll(statement, res, eventID);
-});
-
-// Select all persons and send to client
-router.get('/guests/select', urlencodedParser, function (req, res, next) {
-  // Select Guest from Form into database
-  const statement = 'SELECT * FROM Guests';
-  databaseAll(statement, res);
 });
 
 module.exports = router;
