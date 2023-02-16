@@ -4,6 +4,7 @@ const databaseAll = (statement, res, params) => {
   function handle (err, rows) {
     if (err) {
       res.status(200).json({ error: 'true' });
+      console.log(err.message);
     } else {
       console.log('Selected successfully');
       // send data as json data to client

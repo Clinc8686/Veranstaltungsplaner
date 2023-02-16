@@ -168,8 +168,8 @@ function displayTables (config) {
     seatPlan.appendChild(tableRow);
   }
   div.appendChild(seatPlan);
-  console.log(currentEvent);
-  loadSeats(currentEvent);
+  console.log(currentEvent.id);
+  loadSeats(currentEvent.id);
 }
 function selectTableConfiguration () {
   const handleSelect = async () => {
@@ -210,12 +210,6 @@ function selectListenerChangeGuests (guestID1, guestID2 /* button */) {
   // });
 }
 
-// Nur eine funktion, damit semistandard nicht meckert für unused function
-function tmp () {
-  selectListenerAddGuest();
-  selectListenerChangeGuests();
-}
-
 // Send post-request
 function sendRequest (url, data) {
   const handleInsert = async () => {
@@ -242,7 +236,6 @@ function sendRequest (url, data) {
     }
   };
   handleInsert();
-  tmp(); // tpm
 }
 
 // load all seats from specific eventID

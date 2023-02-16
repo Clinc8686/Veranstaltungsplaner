@@ -70,7 +70,6 @@ router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
 
 router.delete('/guests/:id', urlencodedParser, function (req, res, next) {
   // Delete Guest from Form into database
-  console.log('guests!');
   const id = req.params.id;
   const statement = 'DELETE FROM Guests WHERE (ID = ?)';
   databaseDeleteID(statement, res, id);
