@@ -168,6 +168,8 @@ function displayTables (config) {
     seatPlan.appendChild(tableRow);
   }
   div.appendChild(seatPlan);
+  console.log(currentEvent);
+  loadSeats(currentEvent);
 }
 function selectTableConfiguration () {
   const handleSelect = async () => {
@@ -212,7 +214,6 @@ function selectListenerChangeGuests (guestID1, guestID2 /* button */) {
 function tmp () {
   selectListenerAddGuest();
   selectListenerChangeGuests();
-  loadSeats();
 }
 
 // Send post-request
@@ -258,6 +259,8 @@ function loadSeats (eventID) {
       const response = await sent.json();
       if (response.data) {
         // erfolgreich
+        console.log('select funktionierte');
+        fillTableConfiguration(response.data);
       } else {
         printError();
       }
@@ -266,5 +269,8 @@ function loadSeats (eventID) {
     }
   };
   handleSelect();
-  tmp(); // tmp
+}
+
+function fillTableConfiguration (seatPlan) {
+  console.log(seatPlan);
 }
