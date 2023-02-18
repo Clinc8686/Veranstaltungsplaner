@@ -144,9 +144,10 @@ function displayTables (config) {
   const tableCount = config.Tables;
   const seatCount = config.Seats;
   const div = document.getElementById('seatingPlanDiv');
-  const seatPlan = document.createElement('TABLE');
+  const seatPlan = document.createElement('table');
   const headline = document.createElement('tr');
   const empty = document.createElement('th');
+  seatPlan.id = 'table';
   headline.appendChild(empty);
   for (let h = 1; h <= seatCount; h++) {
     const seat = document.createElement('th');
@@ -162,13 +163,17 @@ function displayTables (config) {
     head.innerHTML = 'Tisch '.concat(i);
     tableRow.appendChild(head);
     for (let k = 1; k <= seatCount; k++) {
-      const guest = document.createElement('td');
-      guest.id = 'table'.concat(i).concat('seat').concat(k);
-      tableRow.appendChild(guest);
+      const cell = document.createElement('td');
+      const div = document.createElement('div');
+      div.id = 'table'.concat(i).concat('seat').concat(k);
+      div.className = 'dropzone';
+      tableRow.appendChild(cell);
+      cell.appendChild(div);
     }
     seatPlan.appendChild(tableRow);
   }
   div.appendChild(seatPlan);
+  drop();
   console.log(currentEvent.id);
   loadSeats(currentEvent.id, tableCount, seatCount);
 }
@@ -347,8 +352,33 @@ function displaySeats (plan) {
         const p = document.createElement('p');
         p.id = guest.id;
         p.innerHTML = guest.name;
+        p.draggable = true;
+        drag(p);
         seat.appendChild(p);
       }
     }
   }
+}
+// Drag and Drop
+
+function drop () {
+  const divs = document.getElementsByClassName('dropzone');
+  for (const div of divs) {
+    div.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+    });
+    div.addEventListener('drop', (event) => {
+      event.preventDefault();
+      const data = event.dataTransfer.getData('text');
+      div.appendChild(document.getElementById(data));
+    });
+  }
+}
+
+function drag (p) {
+  p.addEventListener('dragstart', (event) => {
+    console.log('Drag start');
+    event.dataTransfer.setData('text', event.target.id);
+  });
 }
