@@ -337,6 +337,8 @@ function buttonListenerInsert (e, id) {
           printError('Es müssen alle Felder ausgefüllt werden!');
         } else if (response.errorMessage === 'exists') {
           printError('Die Person ist schon in dem Event eingetragen!');
+        } else if (response.errorMessage === 'allSeatsTaken') {
+          printError('Es sind alle Sitzplätze belegt.');
         } else {
           printError();
         }

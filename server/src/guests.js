@@ -30,6 +30,24 @@ router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
     requestBody.children = 0;
   }
 
+  // Checks if all seats were taken
+  let statement = 'SELECT CASE WHEN Onesided = 1 THEN Tables * Seats ELSE Tables * Seats * 2 END AS Result FROM Seatingplan WHERE ID = ?;';
+  database.get(statement, [eventID], function (err, result) {
+    if (err) throw err;
+    const seats = result.Result;
+    statement = 'SELECT COUNT(Guestlist.Guests) AS TotalGuests FROM Guestlist WHERE Guestlist.Events = ?;';
+    database.get(statement, [eventID], function (err, result) {
+      if (err) throw err;
+      if (seats >= result.TotalGuests) {
+        insertGuests(requestBody, eventID, res);
+      } else {
+        res.status(200).json({ success: false, errorMessage: 'allSeatsTaken' });
+      }
+    });
+  });
+});
+
+function insertGuests (requestBody, eventID, res) {
   const statement = 'INSERT INTO Guests (Name, Children) VALUES (?,?)';
   database.run(statement, [requestBody.name, requestBody.children], function (err, result) {
     if (err) {
@@ -66,7 +84,7 @@ router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
       res.redirect('/');
     }
   });
-});
+}
 
 router.delete('/guests/:id', urlencodedParser, function (req, res, next) {
   // Delete Guest from Form into database
