@@ -163,13 +163,14 @@ function displayTables (config) {
     tableRow.appendChild(head);
     for (let k = 1; k <= seatCount; k++) {
       const guest = document.createElement('td');
+      guest.id = 'table'.concat(i).concat('seat').concat(k);
       tableRow.appendChild(guest);
     }
     seatPlan.appendChild(tableRow);
   }
   div.appendChild(seatPlan);
   console.log(currentEvent.id);
-  loadSeats(currentEvent.id);
+  loadSeats(currentEvent.id, tableCount, seatCount);
 }
 function selectTableConfiguration () {
   const handleSelect = async () => {
@@ -245,7 +246,7 @@ function sendRequest (url, data) {
 }
 
 // load all seats from specific eventID
-function loadSeats (eventID) {
+function loadSeats (eventID, tableCount, seatCount) {
   const handleSelect = async () => {
     const sent = await fetch('/seats/select/' + eventID, {
       method: 'GET',
@@ -259,7 +260,7 @@ function loadSeats (eventID) {
       if (response.data) {
         // erfolgreich
         console.log('select funktionierte');
-        fillTableConfiguration(response.data);
+        fillTableConfiguration(response.data, tableCount, seatCount);
       } else {
         printError();
       }
@@ -270,6 +271,84 @@ function loadSeats (eventID) {
   handleSelect();
 }
 
-function fillTableConfiguration (seatPlan) {
+function fillTableConfiguration (seatPlan, tableCount, seatCount) {
   console.log(seatPlan);
+  console.log(tableCount);
+  console.log(seatCount);
+  let plan = new Array(tableCount);
+  for (let t = 0; t < tableCount; t++) {
+    plan[t] = new Array(seatCount);
+  }
+  plan = alreadySeated(seatPlan, plan);
+  plan = newSeating(seatPlan, plan);
+  displaySeats(plan);
+}
+
+function alreadySeated (seatPlan, plan) {
+  let seat = [];
+  for (const guest of seatPlan) {
+    const s = guest.Seat;
+    const t = guest.Bench;
+    if (s && t && !plan[t - 1][s - 1]) {
+      seat = {
+        id: guest.Guests,
+        name: guest.Name
+      };
+      plan[t - 1][s - 1] = seat;
+    }
+  }
+  console.log(plan);
+  return plan;
+}
+
+function newSeating (seatPlan, plan) {
+  for (const guest of seatPlan) {
+    if (!alreadyInPlan(guest, plan)) {
+      plan = addToPlan(guest, plan);
+    }
+  }
+  return plan;
+}
+
+function alreadyInPlan (guest, plan) {
+  for (let t = 0; t < plan.length; t++) {
+    for (let s = 0; s < plan[t].length; s++) {
+      if (plan[t][s]) {
+        if (plan[t][s].id === guest.Guests) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+function addToPlan (guest, plan) {
+  for (let t = 0; t < plan.length; t++) {
+    for (let s = 0; s < plan[t].length; s++) {
+      if (!plan[t][s]) {
+        plan[t][s] = {
+          id: guest.Guests,
+          name: guest.Name
+        };
+        return plan;
+      }
+    }
+  }
+  return plan;
+}
+
+function displaySeats (plan) {
+  for (let t = 0; t < plan.length; t++) {
+    for (let s = 0; s < plan[t].length; s++) {
+      const guest = plan[t][s];
+      if (guest) {
+        const seat = document.getElementById('table'.concat(t + 1).concat('seat').concat(s + 1));
+        const p = document.createElement('p');
+        p.id = guest.id;
+        p.innerHTML = guest.name;
+        seat.appendChild(p);
+      }
+    }
+  }
 }

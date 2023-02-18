@@ -1,7 +1,6 @@
 import { printError, currentEvent } from './global';
-// import { insertNewGuests } from './guests';
-import { displayTableConfiguration } from './tables';
 import { insertNewGuests } from './guests';
+import { displayTableConfiguration } from './tables';
 // Fires on Page load
 window.addEventListener('load', function () {
   loadEvents();
