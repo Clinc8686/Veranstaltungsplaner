@@ -75,8 +75,9 @@ router.post('/seats/update', urlencodedParser, function (req, res, next) {
   const requestBody = req.body;
   database.run(statement, [requestBody.userID_1, requestBody.userID_2], function (err, result) {
     if (err) {
-      throw err;
+      res.json({ success: false });
     } else {
+      res.redirect('/');
       console.log('Seat succesfully updated');
     }
   });
@@ -88,9 +89,9 @@ router.post('/seats/update/:id', urlencodedParser, function (req, res, next) {
   const userID = req.params.id;
   database.run(statement, [requestBody.seat, requestBody.bench, userID, requestBody.eventID], function (err, result) {
     if (err) {
-      throw err;
+      res.json({ success: false });
     } else {
-      console.log('Seat succesfully updated');
+      res.redirect('/');
     }
   });
 });

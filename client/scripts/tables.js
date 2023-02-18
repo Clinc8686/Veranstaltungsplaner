@@ -234,6 +234,7 @@ function sendRequest (url, data) {
     } catch (error) {
       if (error instanceof SyntaxError) {
         // erfolgreich
+        console.log('sendRequest hat geklappt');
       } else {
         printError();
         console.log('tables.js, selectListener, response error: \n' + error);
@@ -329,7 +330,7 @@ function addToPlan (guest, plan) {
           id: guest.Guests,
           name: guest.Name
         };
-        selectListenerAddGuest(guest.Guests, s + 1, t + 1, currentEvent);
+        selectListenerAddGuest(guest.Guests, s + 1, t + 1, currentEvent.id);
         return plan;
       }
     }
