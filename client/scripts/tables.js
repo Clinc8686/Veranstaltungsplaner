@@ -199,22 +199,21 @@ function selectListenerAddGuest (guestID, seat, bench, eventID) {
   const data = { seat, bench, eventID };
   sendRequest(url, data);
 }
-
+/*
 function tmp () {
-  selectListenerAddGuest();
   selectListenerChangeGuests();
 }
-
+*/
 // build json for sending changed guests data
-function selectListenerChangeGuests (guestID1, guestID2 /* button */) {
-  // button.addEventListener('click', (e) => {
-  // e.preventDefault();
-
+// function selectListenerChangeGuests (guestID1, guestID2 /* button */) {
+// button.addEventListener('click', (e) => {
+// e.preventDefault();
+/*
   const url = '/seats/update/';
   const data = { guestID1, guestID2 };
   sendRequest(url, data);
   // });
-}
+} */
 
 // Send post-request
 function sendRequest (url, data) {
@@ -242,7 +241,6 @@ function sendRequest (url, data) {
     }
   };
   handleInsert();
-  tmp(); // tpm
 }
 
 // load all seats from specific eventID
@@ -331,6 +329,7 @@ function addToPlan (guest, plan) {
           id: guest.Guests,
           name: guest.Name
         };
+        selectListenerAddGuest(guest.Guests, s + 1, t + 1, currentEvent);
         return plan;
       }
     }
