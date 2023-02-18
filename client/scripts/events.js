@@ -1,6 +1,7 @@
 import { printError, currentEvent } from './global';
 // import { insertNewGuests } from './guests';
 import { displayTableConfiguration } from './tables';
+import { insertNewGuests } from './guests';
 // Fires on Page load
 window.addEventListener('load', function () {
   loadEvents();
@@ -302,7 +303,7 @@ function editListener (id) {
     currentEvent.id = this.id.replace('edit-button', '');
     const home = document.getElementById('home');
     deleteContent(home);
-    displayTableConfiguration();
+    insertNewGuests();
   });
 }
 
