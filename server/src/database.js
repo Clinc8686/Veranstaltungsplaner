@@ -73,7 +73,17 @@ db.serialize(function () {
     '  );' +
     'END;', (err) => {
     if (err) return console.log('Trigger: ' + err.message);
-    console.log('Trigger created or exists');
+    console.log('Trigger Guestlist_Delete created or exists');
+  });
+
+  db.run('CREATE TRIGGER IF NOT EXISTS Delete_Old_Events ' +
+    'BEFORE INSERT ON Events ' +
+    'BEGIN ' +
+    'DELETE FROM Events ' +
+    'WHERE Datetime < datetime(\'now\');' +
+    'END;', (err) => {
+    if (err) return console.log('Trigger: ' + err.message);
+    console.log('Trigger Delete_Old_Events created or exists');
   });
 });
 
