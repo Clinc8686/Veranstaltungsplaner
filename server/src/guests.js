@@ -6,7 +6,7 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const router = express.Router();
 
 function addGuestlist (lastID, eventID, invitationStatus, res) {
-  const statement = 'INSERT INTO Guestlist (Guests, Invitationstatus, Events) VALUES (?, ?,?)';
+  const statement = database.prepare('INSERT INTO Guestlist (Guests, Invitationstatus, Events) VALUES (?, ?, ?)');
   database.run(statement, [lastID, invitationStatus, eventID], function (err, result) {
     const uniquetwo = 'UNIQUE constraint failed: Guestlist.Guests, Guestlist.Events';
     if (err && err.message.includes(uniquetwo)) {
@@ -31,11 +31,11 @@ router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
   }
 
   // Checks if all seats were taken
-  let statement = 'SELECT Tables * Seats AS Result FROM Seatingplan WHERE ID = ?;';
+  let statement = database.prepare('SELECT Tables * Seats AS Result FROM Seatingplan WHERE ID = ?;');
   database.get(statement, [eventID], function (err, result) {
     if (err) throw err;
     const seats = result.Result;
-    statement = 'SELECT COUNT(Guestlist.Guests) AS TotalGuests FROM Guestlist WHERE Guestlist.Events = ? AND Guestlist.Invitationstatus IS NOT \'abgesagt\';';
+    statement = database.prepare('SELECT COUNT(Guestlist.Guests) AS TotalGuests FROM Guestlist WHERE Guestlist.Events = ? AND Guestlist.Invitationstatus IS NOT \'abgesagt\';');
     database.get(statement, [eventID], function (err, result) {
       if (err) throw err;
       if (seats > result.TotalGuests) {
@@ -48,7 +48,7 @@ router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
 });
 
 function insertGuests (requestBody, eventID, res) {
-  const statement = 'INSERT INTO Guests (Name, Children) VALUES (?,?)';
+  const statement = database.prepare('INSERT INTO Guests (Name, Children) VALUES (?,?)');
   database.run(statement, [requestBody.name, requestBody.children], function (err, result) {
     if (err) {
       const check = 'CHECK constraint failed';
@@ -57,7 +57,7 @@ function insertGuests (requestBody, eventID, res) {
         res.status(200).json({ success: false, errorMessage: 'notNull' });
       } else if (err.message.includes(unique)) {
         try {
-          const statement = 'SELECT ID FROM Guests WHERE Name = ? AND Children = ?';
+          const statement = database.prepare('SELECT ID FROM Guests WHERE Name = ? AND Children = ?');
           database.get(statement, [requestBody.name, requestBody.children], function (err, result) {
             if (err) {
               throw err;
@@ -89,12 +89,12 @@ function insertGuests (requestBody, eventID, res) {
 router.delete('/guests/:id', urlencodedParser, function (req, res, next) {
   // Delete Guest from Form into database
   const id = req.params.id;
-  const statement = 'DELETE FROM Guests WHERE (ID = ?)';
+  const statement = database.prepare('DELETE FROM Guests WHERE (ID = ?)');
   databaseDeleteID(statement, res, id);
 });
 
 function updateGuestlist (guestID, eventID, invitationStatus, res) {
-  const statement = 'UPDATE Guestlist SET Invitationstatus = ? WHERE Guestlist.Guests = ? AND Guestlist.Events = ?';
+  const statement = database.prepare('UPDATE Guestlist SET Invitationstatus = ? WHERE Guestlist.Guests = ? AND Guestlist.Events = ?');
   database.run(statement, [invitationStatus, guestID, eventID], function (err, result) {
     if (err) {
       res.status(200).json({ success: false });
@@ -110,7 +110,7 @@ router.post('/guests/update/:id', urlencodedParser, function (req, res, next) {
   // Update Guest from Form
   const requestBody = req.body;
   const userID = req.params.id;
-  const statement = 'UPDATE Guests SET Name = ?, Children = ? WHERE ID = ?';
+  const statement = database.prepare('UPDATE Guests SET Name = ?, Children = ? WHERE ID = ?');
   database.run(statement, [requestBody.name, requestBody.children, userID], function (err, result) {
     if (err) {
       if (err.message.includes('CHECK constraint failed: length(Name) > 0')) {
@@ -128,7 +128,7 @@ router.post('/guests/update/:id', urlencodedParser, function (req, res, next) {
 router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
   // Get Guests with specific EventID
   const eventID = req.params.id;
-  const statement = 'SELECT Guests.ID, Guests.Name, Guests.Children, Guestlist.Invitationstatus FROM `Guests` INNER JOIN Guestlist ON (Guestlist.Guests = Guests.ID) WHERE Guestlist.Events = ?;';
+  const statement = database.prepare('SELECT Guests.ID, Guests.Name, Guests.Children, Guestlist.Invitationstatus FROM `Guests` INNER JOIN Guestlist ON (Guestlist.Guests = Guests.ID) WHERE Guestlist.Events = ?;');
   databaseAll(statement, res, eventID);
 });
 
