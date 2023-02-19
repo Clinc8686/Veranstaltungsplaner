@@ -1,6 +1,6 @@
 import { currentEvent, printError } from './global';
 import { createInputRow, insertNewGuests } from './guests.js';
-import { deleteContent } from './events';
+import { deleteContent, loadEvents } from './events';
 
 let seatingTableID;
 
@@ -143,10 +143,18 @@ function displayTables (config) {
   // const oneSided = config.Onesided;
   const tableCount = config.Tables;
   const seatCount = config.Seats;
+  const section = document.getElementById('sectionSeatingplan');
   const div = document.getElementById('seatingPlanDiv');
   const seatPlan = document.createElement('table');
   const headline = document.createElement('tr');
   const empty = document.createElement('th');
+  const containerButton = document.createElement('div');
+  const button = document.createElement('button');
+  containerButton.id = 'startpageButtonContainer';
+  button.id = 'startpageButton';
+  button.innerHTML = 'Startseite';
+  button.type = 'button';
+  button.className = 'site-button';
   seatPlan.id = 'table';
   headline.appendChild(empty);
   for (let h = 1; h <= seatCount; h++) {
@@ -171,6 +179,12 @@ function displayTables (config) {
     seatPlan.appendChild(tableRow);
   }
   div.appendChild(seatPlan);
+  section.appendChild(containerButton);
+  containerButton.appendChild(button);
+  button.addEventListener('click', () => {
+    deleteContent(section);
+    loadEvents();
+  });
   dropFunctions();
   loadSeats(currentEvent.id, tableCount, seatCount);
 }

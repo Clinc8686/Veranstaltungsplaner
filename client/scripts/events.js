@@ -7,7 +7,7 @@ window.addEventListener('load', function () {
 });
 
 // Receives on page load all events
-function loadEvents () {
+export function loadEvents () {
   const handleSelect = async () => {
     const sent = await fetch('/events/select', {
       method: 'GET',
