@@ -164,7 +164,7 @@ function displayTables (config) {
     tableRow.appendChild(head);
     for (let k = 1; k <= seatCount; k++) {
       const cell = document.createElement('td');
-      cell.id = 'table'.concat(i).concat('seat').concat(k);
+      cell.id = 'table,'.concat(i).concat(',seat,').concat(k);
       cell.className = 'dropzone';
       tableRow.appendChild(cell);
     }
@@ -201,21 +201,16 @@ function selectListenerAddGuest (guestID, seat, bench, eventID) {
   const data = { seat, bench, eventID };
   sendRequest(url, data);
 }
-/*
-function tmp () {
-  selectListenerChangeGuests();
-}
-*/
 // build json for sending changed guests data
-// function selectListenerChangeGuests (guestID1, guestID2 /* button */) {
-// button.addEventListener('click', (e) => {
-// e.preventDefault();
-/*
+function selectListenerChangeGuests (guestID1, guestID2 /* button */) {
+  // button.addEventListener('click', (e) => {
+  // e.preventDefault();
+
   const url = '/seats/update/';
   const data = { guestID1, guestID2 };
   sendRequest(url, data);
   // });
-} */
+}
 
 // Send post-request
 function sendRequest (url, data) {
@@ -344,7 +339,7 @@ function displaySeats (plan) {
     for (let s = 0; s < plan[t].length; s++) {
       const guest = plan[t][s];
       if (guest) {
-        const seat = document.getElementById('table'.concat(t + 1).concat('seat').concat(s + 1));
+        const seat = document.getElementById('table,'.concat(t + 1).concat(',seat,').concat(s + 1));
         const p = document.createElement('p');
         p.id = guest.id;
         p.innerHTML = guest.name;
@@ -376,8 +371,14 @@ function dropFunctions () {
         drag(dragElementClone);
         dragElement.replaceWith(targetElementContentClone);
         targetElementContent.replaceWith(dragElementClone);
+        selectListenerChangeGuests(targetElementContent.id, dragElement.id);
       } else {
         td.appendChild(document.getElementById(data));
+        const id = targetElement.id;
+        const places = id.split(',');
+        const bench = places[1];
+        const seat = places[3];
+        selectListenerAddGuest(data, seat, bench, currentEvent.id);
       }
     });
   }
