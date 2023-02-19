@@ -155,7 +155,7 @@ function displayTables (config) {
   const button = document.createElement('button');
   containerButton.id = 'startpageButtonContainer';
   button.id = 'startpageButton';
-  button.innerHTML = 'Startseite';
+  button.innerHTML = 'speichern & zurück';
   button.type = 'button';
   button.className = 'site-button';
   seatPlan.id = 'table';
