@@ -216,14 +216,10 @@ function selectListenerAddGuest (guestID, seat, bench, eventID) {
   sendRequest(url, data);
 }
 // build json for sending changed guests data
-function selectListenerChangeGuests (guestID1, guestID2 /* button */) {
-  // button.addEventListener('click', (e) => {
-  // e.preventDefault();
-
+function selectListenerChangeGuests (guestID1, guestID2) {
   const url = '/seats/update/';
   const data = { guestID1, guestID2 };
   sendRequest(url, data);
-  // });
 }
 
 // Send post-request
