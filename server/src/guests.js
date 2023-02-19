@@ -31,14 +31,14 @@ router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
   }
 
   // Checks if all seats were taken
-  let statement = 'SELECT CASE WHEN Onesided = 1 THEN Tables * Seats ELSE Tables * Seats * 2 END AS Result FROM Seatingplan WHERE ID = ?;';
+  let statement = 'SELECT Tables * Seats AS Result FROM Seatingplan WHERE ID = ?;';
   database.get(statement, [eventID], function (err, result) {
     if (err) throw err;
     const seats = result.Result;
-    statement = 'SELECT COUNT(Guestlist.Guests) AS TotalGuests FROM Guestlist WHERE Guestlist.Events = ?;';
+    statement = 'SELECT COUNT(Guestlist.Guests) AS TotalGuests FROM Guestlist WHERE Guestlist.Events = ? AND Guestlist.Invitationstatus IS NOT \'abgesagt\';';
     database.get(statement, [eventID], function (err, result) {
       if (err) throw err;
-      if (seats >= result.TotalGuests) {
+      if (seats > result.TotalGuests) {
         insertGuests(requestBody, eventID, res);
       } else {
         res.status(200).json({ success: false, errorMessage: 'allSeatsTaken' });
