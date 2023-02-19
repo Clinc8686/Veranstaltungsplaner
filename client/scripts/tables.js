@@ -128,13 +128,16 @@ export function displaySeatinplan () {
   const main = document.getElementById('main');
   const section = document.createElement('section');
   const h2 = document.createElement('h2');
+  const explanation = document.createElement('p');
   const div = document.createElement('div');
   section.id = 'sectionSeatingplan';
   h2.innerHTML = 'Sitzplan:';
+  explanation.innerHTML = 'Der Sitzplan kann mit festhalten und loslassen (drag and drop) geändert werden.';
   div.className = 'box container';
   div.id = 'seatingPlanDiv';
   main.appendChild(section);
   section.appendChild(h2);
+  section.appendChild(explanation);
   section.appendChild(div);
   selectTableConfiguration();
 }
