@@ -144,9 +144,10 @@ function displayTables (config) {
   const tableCount = config.Tables;
   const seatCount = config.Seats;
   const div = document.getElementById('seatingPlanDiv');
-  const seatPlan = document.createElement('TABLE');
+  const seatPlan = document.createElement('table');
   const headline = document.createElement('tr');
   const empty = document.createElement('th');
+  seatPlan.id = 'table';
   headline.appendChild(empty);
   for (let h = 1; h <= seatCount; h++) {
     const seat = document.createElement('th');
@@ -162,14 +163,15 @@ function displayTables (config) {
     head.innerHTML = 'Tisch '.concat(i);
     tableRow.appendChild(head);
     for (let k = 1; k <= seatCount; k++) {
-      const guest = document.createElement('td');
-      guest.id = 'table'.concat(i).concat('seat').concat(k);
-      tableRow.appendChild(guest);
+      const cell = document.createElement('td');
+      cell.id = 'table'.concat(i).concat('seat').concat(k);
+      cell.className = 'dropzone';
+      tableRow.appendChild(cell);
     }
     seatPlan.appendChild(tableRow);
   }
   div.appendChild(seatPlan);
-  console.log(currentEvent.id);
+  dropFunctions();
   loadSeats(currentEvent.id, tableCount, seatCount);
 }
 function selectTableConfiguration () {
@@ -258,7 +260,6 @@ function loadSeats (eventID, tableCount, seatCount) {
       const response = await sent.json();
       if (response.data) {
         // erfolgreich
-        console.log('select funktionierte');
         fillTableConfiguration(response.data, tableCount, seatCount);
       } else {
         printError();
@@ -347,8 +348,43 @@ function displaySeats (plan) {
         const p = document.createElement('p');
         p.id = guest.id;
         p.innerHTML = guest.name;
+        p.draggable = true;
+        drag(p);
         seat.appendChild(p);
       }
     }
   }
+}
+// Drag and Drop
+
+function dropFunctions () {
+  const tds = document.getElementsByClassName('dropzone');
+  for (const td of tds) {
+    td.addEventListener('dragover', (event) => {
+      event.preventDefault();
+    });
+    td.addEventListener('drop', (event) => {
+      event.preventDefault();
+      const data = event.dataTransfer.getData('text');
+      const dragElement = document.getElementById(data);
+      const dragElementClone = dragElement.cloneNode(true);
+      const targetElement = event.currentTarget;
+      const targetElementContent = targetElement.firstChild;
+      if (targetElementContent) {
+        const targetElementContentClone = targetElementContent.cloneNode(true);
+        drag(targetElementContentClone);
+        drag(dragElementClone);
+        dragElement.replaceWith(targetElementContentClone);
+        targetElementContent.replaceWith(dragElementClone);
+      } else {
+        td.appendChild(document.getElementById(data));
+      }
+    });
+  }
+}
+
+function drag (p) {
+  p.addEventListener('dragstart', (event) => {
+    event.dataTransfer.setData('text', event.target.id);
+  });
 }
