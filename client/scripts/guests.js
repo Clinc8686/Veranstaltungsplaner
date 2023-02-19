@@ -346,7 +346,9 @@ function buttonListenerInsert (e, id) {
     } catch (error) {
       if (error instanceof SyntaxError) {
         form.reset();
-        deleteContent(divSelectPages);
+        if (divSelectPages) {
+          deleteContent(divSelectPages);
+        }
         selectGuests();
       } else {
         printError();

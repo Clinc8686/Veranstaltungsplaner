@@ -6,6 +6,11 @@ window.addEventListener('load', function () {
   loadEvents();
 });
 
+window.addEventListener('resize', () => {
+  const section = document.getElementById('home');
+  deleteContent(section);
+  loadEvents();
+});
 // Receives on page load all events
 export function loadEvents () {
   const handleSelect = async () => {
@@ -69,9 +74,13 @@ function printEvents (events) {
     } else if (height > 2000) {
       limit = 18;
     } else if (height > 1000) {
-      limit = 15;
-    } else if (height > 700) {
+      limit = 14;
+    } else if (height > 900) {
+      limit = 12;
+    } else if (height > 800) {
       limit = 10;
+    } else if (height > 700) {
+      limit = 8;
     } else {
       limit = 6;
     }
@@ -121,11 +130,29 @@ function printEvents (events) {
     });
   };
 
+  const section = document.getElementById('home');
+  const div = document.createElement('div');
+  const p = document.createElement('p');
+  const pageNum1 = document.createElement('p');
+  const pageNum2 = document.createElement('p');
+  pageNum1.innerHTML = currentPage + 1;
+  pageNum2.innerHTML = currentPage + 2;
+  const pagesNum = pages.length;
+  div.id = 'pageNumberDiv';
+  p.innerHTML = 'maximale Seitenanzahl: '.concat(pagesNum);
+
   displayPages();
+  section.appendChild(div);
   displayEvents(currentPage, pages);
+  div.appendChild(pageNum1);
+  div.appendChild(p);
+  div.appendChild(pageNum2);
   if (pages[currentPage + 1]) {
     displayEvents(currentPage + 1, pages);
   }
+  window.addEventListener('resize', () => {
+    console.log('resized');
+  });
   displayPaginationButtons();
   buttonClick();
   document.getElementById('prev-button').disabled = true;
