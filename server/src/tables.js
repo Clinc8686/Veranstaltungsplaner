@@ -73,7 +73,7 @@ router.get('/seats/select/:id', urlencodedParser, function (req, res, next) {
 router.post('/seats/update', urlencodedParser, function (req, res, next) {
   const statement = 'UPDATE `Guestlist` AS g1 SET `Seat` = g2.`Seat`, `Bench` = g2.`Bench` FROM `Guestlist` AS g2 WHERE g1.`Guests` = ? AND g2.`Guests` = ? AND g1.`Events` = g2.`Events` OR g1.`Guests` = ? AND g2.`Guests` = ? AND g1.`Events` = g2.`Events`;';
   const requestBody = req.body;
-  database.run(statement, [requestBody.userID_1, requestBody.userID_2], function (err, result) {
+  database.run(statement, [requestBody.guestID1, requestBody.guestID2, requestBody.guestID2, requestBody.guestID1], function (err, result) {
     if (err) {
       res.json({ success: false });
     } else {
