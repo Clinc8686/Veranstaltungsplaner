@@ -135,18 +135,24 @@ input[type=checkbox]{
 }
 
 #insertGuestsSection{
+  #insertGuestsButton{
+    float: right;
+    margin-top: @margin-1;
+  }
   button:hover,
   button:not(.disabled):hover{
     background-color: @bg-color-box2;
   }
-  button:disabled{
+  #prev-button:disabled, #next-button:disabled{
     color: @bg-color-box1;
   }
-}
-
-#insertGuestsButton{
-  float: right;
-  margin-top: @margin-1;
+  button:disabled{
+    color: @bg-color;
+  }
+  h3{
+    margin-top: -@margin-1;
+    margin-bottom: @margin-1;
+  }
 }
 
 .guests-page{
@@ -193,13 +199,6 @@ input[type=checkbox]{
   flex-grow: 2;
   border-radius: @border-radius;
   padding-right: @padding-2;
-}
-
-#insertGuestsSection{
-  h3{
-    margin-top: -@margin-1;
-    margin-bottom: @margin-1;
-  }
 }
 
 #seatingPlanDiv{

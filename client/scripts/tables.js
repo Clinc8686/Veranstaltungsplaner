@@ -5,7 +5,6 @@ import { deleteContent, loadEvents } from './events';
 let seatingTableID;
 
 export function displayTableConfiguration () {
-  console.log('Die Tischkonfiguration der Veranstaltung '.concat(currentEvent.id).concat(' soll geändert werden.'));
   const main = document.getElementById('main');
   const section = document.createElement('section');
   const h2 = document.createElement('h2');
@@ -124,7 +123,6 @@ function buttonListener (button) {
 }
 
 export function displaySeatinplan () {
-  console.log('Sitzplan von Veranstaltung '.concat(currentEvent.id).concat(' soll angezeigt werden.'));
   const main = document.getElementById('main');
   const section = document.createElement('section');
   const h2 = document.createElement('h2');
@@ -266,7 +264,6 @@ function sendRequest (url, data) {
     } catch (error) {
       if (error instanceof SyntaxError) {
         // erfolgreich
-        console.log('sendRequest hat geklappt');
       } else {
         printError();
         console.log('tables.js, selectListener, response error: \n' + error);
@@ -302,9 +299,6 @@ function loadSeats (eventID, tableCount, seatCount) {
 }
 
 function fillTableConfiguration (seatPlan, tableCount, seatCount) {
-  console.log(seatPlan);
-  console.log(tableCount);
-  console.log(seatCount);
   let plan = new Array(tableCount);
   for (let t = 0; t < tableCount; t++) {
     plan[t] = new Array(seatCount);
@@ -327,7 +321,6 @@ function alreadySeated (seatPlan, plan) {
       plan[t - 1][s - 1] = seat;
     }
   }
-  console.log(plan);
   return plan;
 }
 
