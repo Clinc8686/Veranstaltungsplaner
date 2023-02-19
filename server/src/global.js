@@ -17,11 +17,11 @@ const databaseAll = (statement, res, params) => {
   }
 
   if (params) {
-    database.all(statement, [params], function (err, rows) {
+    database.prepare(statement).all([params], function (err, rows) {
       handle(err, rows);
     });
   } else {
-    database.all(statement, function (err, rows) {
+    database.prepare(statement).all(function (err, rows) {
       handle(err, rows);
     });
   }
@@ -37,7 +37,7 @@ const databaseDeleteID = (statement, res, id) => {
       console.log('Element with id ' + id + ' was deleted successfully');
     }
   }
-  database.run(statement, [id], function (err, result) {
+  database.prepare(statement).run([id], function (err, result) {
     handle(err);
   });
 };

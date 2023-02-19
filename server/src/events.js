@@ -17,7 +17,7 @@ router.post('/events/insert', urlencodedParser, function (req, res, next) {
   // Insert Events from Form into database
   const requestBody = req.body;
   const statement = 'INSERT INTO Events (Name, Category, Datetime) VALUES (?,?,?)';
-  database.run(statement, [requestBody.name, requestBody.category, requestBody.datetime], function (err, result) {
+  database.prepare(statement).run([requestBody.name, requestBody.category, requestBody.datetime], function (err, result) {
     if (err) {
       const check = 'CHECK constraint failed';
       if (err.message.includes(check)) {

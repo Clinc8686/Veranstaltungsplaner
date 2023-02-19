@@ -7,7 +7,7 @@ const router = express.Router();
 
 function addGuestlist (lastID, eventID, invitationStatus, res) {
   const statement = 'INSERT INTO Guestlist (Guests, Invitationstatus, Events) VALUES (?, ?, ?)';
-  database.run(statement, [lastID, invitationStatus, eventID], function (err, result) {
+  database.prepare(statement).run([lastID, invitationStatus, eventID], function (err, result) {
     const uniquetwo = 'UNIQUE constraint failed: Guestlist.Guests, Guestlist.Events';
     if (err && err.message.includes(uniquetwo)) {
       res.status(200).json({ success: false, errorMessage: 'exists' });
@@ -32,11 +32,11 @@ router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
 
   // Checks if all seats were taken
   let statement = 'SELECT Tables * Seats AS Result FROM Seatingplan WHERE ID = ?;';
-  database.get(statement, [eventID], function (err, result) {
+  database.prepare(statement).get([eventID], function (err, result) {
     if (err) throw err;
     const seats = result.Result;
     statement = 'SELECT COUNT(Guestlist.Guests) AS TotalGuests FROM Guestlist WHERE Guestlist.Events = ? AND Guestlist.Invitationstatus IS NOT \'abgesagt\';';
-    database.get(statement, [eventID], function (err, result) {
+    database.prepare(statement).get([eventID], function (err, result) {
       if (err) throw err;
       if (seats > result.TotalGuests) {
         insertGuests(requestBody, eventID, res);
@@ -49,7 +49,7 @@ router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
 
 function insertGuests (requestBody, eventID, res) {
   const statement = 'INSERT INTO Guests (Name, Children) VALUES (?,?)';
-  database.run(statement, [requestBody.name, requestBody.children], function (err, result) {
+  database.prepare(statement).run([requestBody.name, requestBody.children], function (err, result) {
     if (err) {
       const check = 'CHECK constraint failed';
       const unique = 'UNIQUE constraint failed: Guests.Name, Guests.Children';
@@ -58,7 +58,7 @@ function insertGuests (requestBody, eventID, res) {
       } else if (err.message.includes(unique)) {
         try {
           const statement = 'SELECT ID FROM Guests WHERE Name = ? AND Children = ?';
-          database.get(statement, [requestBody.name, requestBody.children], function (err, result) {
+          database.prepare(statement).get([requestBody.name, requestBody.children], function (err, result) {
             if (err) {
               throw err;
             }
@@ -95,7 +95,7 @@ router.delete('/guests/:id', urlencodedParser, function (req, res, next) {
 
 function updateGuestlist (guestID, eventID, invitationStatus, res) {
   const statement = 'UPDATE Guestlist SET Invitationstatus = ? WHERE Guestlist.Guests = ? AND Guestlist.Events = ?';
-  database.run(statement, [invitationStatus, guestID, eventID], function (err, result) {
+  database.prepare(statement).run([invitationStatus, guestID, eventID], function (err, result) {
     if (err) {
       res.status(200).json({ success: false });
       console.log('Error on updating Guestlist');
@@ -111,7 +111,7 @@ router.post('/guests/update/:id', urlencodedParser, function (req, res, next) {
   const requestBody = req.body;
   const userID = req.params.id;
   const statement = 'UPDATE Guests SET Name = ?, Children = ? WHERE ID = ?';
-  database.run(statement, [requestBody.name, requestBody.children, userID], function (err, result) {
+  database.prepare(statement).run([requestBody.name, requestBody.children, userID], function (err, result) {
     if (err) {
       if (err.message.includes('CHECK constraint failed: length(Name) > 0')) {
         res.status(200).json({ success: false, errorMessage: 'notNull' });

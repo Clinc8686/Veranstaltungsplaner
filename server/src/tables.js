@@ -19,7 +19,7 @@ router.post('/tables/insert', urlencodedParser, function (req, res, next) {
     params = [requestBody.numberOfTables, requestBody.seatsPerTable, requestBody.twoSides];
   }
 
-  database.run(statement, params, function (err, result) {
+  database.prepare(statement).run(params, function (err, result) {
     if (err) {
       const check = 'CHECK constraint failed: length(Tables) > 0';
       if (err.message.includes(check)) {
@@ -53,7 +53,7 @@ router.post('/tables/update/:id', urlencodedParser, function (req, res, next) {
   const tableID = req.params.id;
   const requestBody = req.body;
   const statement = 'UPDATE Seatingplan SET Tables = ?, Seats = ?, Onesided = ? WHERE ID = ?;';
-  database.run(statement, [requestBody.numberOfTables, requestBody.seatsPerTable, requestBody.twoSides, tableID], function (err, result) {
+  database.prepare(statement).run([requestBody.numberOfTables, requestBody.seatsPerTable, requestBody.twoSides, tableID], function (err, result) {
     if (err) {
       throw err;
     }
@@ -73,7 +73,7 @@ router.get('/seats/select/:id', urlencodedParser, function (req, res, next) {
 router.post('/seats/update', urlencodedParser, function (req, res, next) {
   const statement = 'UPDATE `Guestlist` AS g1 SET `Seat` = g2.`Seat`, `Bench` = g2.`Bench` FROM `Guestlist` AS g2 WHERE g1.`Guests` = ? AND g2.`Guests` = ? AND g1.`Events` = g2.`Events` OR g1.`Guests` = ? AND g2.`Guests` = ? AND g1.`Events` = g2.`Events`;';
   const requestBody = req.body;
-  database.run(statement, [requestBody.guestID1, requestBody.guestID2, requestBody.guestID2, requestBody.guestID1], function (err, result) {
+  database.prepare(statement).run([requestBody.guestID1, requestBody.guestID2, requestBody.guestID2, requestBody.guestID1], function (err, result) {
     if (err) {
       res.json({ success: false });
     } else {
@@ -87,7 +87,7 @@ router.post('/seats/update/:id', urlencodedParser, function (req, res, next) {
   const statement = 'UPDATE Guestlist SET Seat = ?, Bench = ? WHERE Guests = ? AND Events = ?;';
   const requestBody = req.body;
   const userID = req.params.id;
-  database.run(statement, [requestBody.seat, requestBody.bench, userID, requestBody.eventID], function (err, result) {
+  database.prepare(statement).run([requestBody.seat, requestBody.bench, userID, requestBody.eventID], function (err, result) {
     if (err) {
       res.json({ success: false });
     } else {
