@@ -143,7 +143,7 @@ export function displaySeatinplan () {
 }
 
 function displayTables (config) {
-  // const oneSided = config.Onesided;
+  const oneSided = config.Onesided;
   const tableCount = config.Tables;
   const seatCount = config.Seats;
   const section = document.getElementById('sectionSeatingplan');
@@ -159,7 +159,29 @@ function displayTables (config) {
   button.type = 'button';
   button.className = 'site-button';
   seatPlan.id = 'table';
+  if (!oneSided) {
+    const emptyCount = Math.round((seatCount - 2) / 2);
+    const headln = document.createElement('tr');
+    const empty = document.createElement('th');
+    const front = document.createElement('th');
+    const back = document.createElement('th');
+    front.innerHTML = 'vorne';
+    back.innerHTML = 'hinten';
+    headln.appendChild(empty);
+    headln.appendChild(front);
+    for (let i = 0; i < emptyCount; i++) {
+      const empty = document.createElement('th');
+      headln.appendChild(empty);
+    }
+    headln.appendChild(back);
+    for (let i = 0; i < emptyCount; i++) {
+      const empty = document.createElement('th');
+      headln.appendChild(empty);
+    }
+    seatPlan.appendChild(headln);
+  }
   headline.appendChild(empty);
+
   for (let h = 1; h <= seatCount; h++) {
     const seat = document.createElement('th');
     seat.innerHTML = 'Stuhl '.concat(h);
