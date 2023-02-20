@@ -8,8 +8,10 @@ window.addEventListener('load', function () {
 
 window.addEventListener('resize', () => {
   const section = document.getElementById('home');
-  deleteContent(section);
-  loadEvents();
+  if (section) {
+    deleteContent(section);
+    loadEvents();
+  }
 });
 // Receives on page load all events
 export function loadEvents () {
@@ -150,9 +152,6 @@ function printEvents (events) {
   if (pages[currentPage + 1]) {
     displayEvents(currentPage + 1, pages);
   }
-  window.addEventListener('resize', () => {
-    console.log('resized');
-  });
   displayPaginationButtons();
   buttonClick();
   document.getElementById('prev-button').disabled = true;
@@ -312,7 +311,6 @@ function deleteListener (id) {
           printError('Das Event konnte nicht gelöscht werden');
         } else if (response.success === true) {
           deleteContent(event);
-          console.log('Erfolgreich gelöscht!');
         }
       } catch (error) {
         printError('Das Event konnte nicht gelöscht werden');

@@ -5,7 +5,6 @@ import { deleteContent, loadEvents } from './events';
 let seatingTableID;
 
 export function displayTableConfiguration () {
-  console.log('Die Tischkonfiguration der Veranstaltung '.concat(currentEvent.id).concat(' soll geändert werden.'));
   const main = document.getElementById('main');
   const section = document.createElement('section');
   const h2 = document.createElement('h2');
@@ -124,7 +123,6 @@ function buttonListener (button) {
 }
 
 export function displaySeatinplan () {
-  console.log('Sitzplan von Veranstaltung '.concat(currentEvent.id).concat(' soll angezeigt werden.'));
   const main = document.getElementById('main');
   const section = document.createElement('section');
   const h2 = document.createElement('h2');
@@ -143,7 +141,7 @@ export function displaySeatinplan () {
 }
 
 function displayTables (config) {
-  // const oneSided = config.Onesided;
+  const oneSided = config.Onesided;
   const tableCount = config.Tables;
   const seatCount = config.Seats;
   const section = document.getElementById('sectionSeatingplan');
@@ -159,7 +157,29 @@ function displayTables (config) {
   button.type = 'button';
   button.className = 'site-button';
   seatPlan.id = 'table';
+  if (!oneSided) {
+    const emptyCount = Math.round((seatCount - 2) / 2);
+    const headln = document.createElement('tr');
+    const empty = document.createElement('th');
+    const front = document.createElement('th');
+    const back = document.createElement('th');
+    front.innerHTML = 'vorne';
+    back.innerHTML = 'hinten';
+    headln.appendChild(empty);
+    headln.appendChild(front);
+    for (let i = 0; i < emptyCount; i++) {
+      const empty = document.createElement('th');
+      headln.appendChild(empty);
+    }
+    headln.appendChild(back);
+    for (let i = 0; i < emptyCount; i++) {
+      const empty = document.createElement('th');
+      headln.appendChild(empty);
+    }
+    seatPlan.appendChild(headln);
+  }
   headline.appendChild(empty);
+
   for (let h = 1; h <= seatCount; h++) {
     const seat = document.createElement('th');
     seat.innerHTML = 'Stuhl '.concat(h);
@@ -244,7 +264,6 @@ function sendRequest (url, data) {
     } catch (error) {
       if (error instanceof SyntaxError) {
         // erfolgreich
-        console.log('sendRequest hat geklappt');
       } else {
         printError();
         console.log('tables.js, selectListener, response error: \n' + error);
@@ -280,9 +299,6 @@ function loadSeats (eventID, tableCount, seatCount) {
 }
 
 function fillTableConfiguration (seatPlan, tableCount, seatCount) {
-  console.log(seatPlan);
-  console.log(tableCount);
-  console.log(seatCount);
   let plan = new Array(tableCount);
   for (let t = 0; t < tableCount; t++) {
     plan[t] = new Array(seatCount);
@@ -305,7 +321,6 @@ function alreadySeated (seatPlan, plan) {
       plan[t - 1][s - 1] = seat;
     }
   }
-  console.log(plan);
   return plan;
 }
 

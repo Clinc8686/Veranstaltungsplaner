@@ -1,5 +1,5 @@
 import { currentEvent, printError } from './global';
-import { createInput, createOptions, deleteContent } from './events';
+import { createInput, createOptions, deleteContent, loadEvents } from './events';
 import { displaySeatinplan } from './tables';
 
 export function createInputRow (id, type, placeholder, name, labelText) {
@@ -76,23 +76,35 @@ export function insertNewGuests () {
   document.getElementById('insertGuestsButton').addEventListener('click', (e) => {
     buttonListenerInsert(e);
   });
+  nextButtons();
   selectGuests();
-  nextButton();
 }
 
-function nextButton () {
+function nextButtons () {
   const section = document.getElementById('insertGuestsSection');
   const buttonDiv = document.createElement('div');
   const button = document.createElement('button');
-  button.type = 'button';
+  const startButton = document.createElement('button');
+  startButton.id = 'startpageButton';
+  startButton.innerHTML = 'speichern & zurück';
+  startButton.type = 'button';
+  startButton.className = 'site-button';
+  startButton.type = 'button';
   button.className = 'site-button';
   button.innerHTML = 'weiter';
+  button.id = 'tableConfigurationButton';
+  button.type = 'button';
   buttonDiv.id = 'divToTableConfigurationsButton';
   section.appendChild(buttonDiv);
+  buttonDiv.appendChild(startButton);
   buttonDiv.appendChild(button);
   button.addEventListener('click', function () {
     deleteContent(section);
     displaySeatinplan();
+  });
+  startButton.addEventListener('click', function () {
+    deleteContent(section);
+    loadEvents();
   });
 }
 
@@ -176,6 +188,7 @@ function displayGuests (guests) {
 }
 
 function selectGuests () {
+  const button = document.getElementById('tableConfigurationButton');
   const handleSelect = async () => {
     const sent = await fetch('/guests/select/' + currentEvent.id, {
       method: 'GET',
@@ -188,8 +201,10 @@ function selectGuests () {
       const response = await sent.json();
       if (response.data && response.success === true) {
         displayGuests(response.data);
+        button.disabled = false;
       } else if (response.success === true) {
         console.log('no users found');
+        button.disabled = true;
       }
     } catch (error) {
       printError();
@@ -263,7 +278,7 @@ function displayGuestsPage (pageNum, pages) {
   for (let i = 0; i < pages[pageNum].length; i++) {
     const li = document.createElement('li');
     const guest = pages[pageNum][i];
-    li.innerHTML = guest.name;
+    li.innerHTML = guest.name.concat('&emsp;').concat('- ').concat(guest.invitationstatus);
     li.id = guest.id;
 
     // Button
@@ -385,6 +400,7 @@ function editListener (guest) {
 function deleteListener (id) {
   const button = document.getElementById('delete-button'.concat(id));
   const guest = document.getElementById(id);
+  const nextButton = document.getElementById('tableConfigurationButton');
   if (button) {
     button.addEventListener('click', (e) => {
       // prevent forwarding
@@ -403,7 +419,10 @@ function deleteListener (id) {
             printError('Der Gast konnte nicht gelöscht werden');
           } else if (response.success === true) {
             deleteContent(guest);
-            console.log('Erfolgreich gelöscht!');
+            const ul = document.getElementsByTagName('ul');
+            if (!ul.firstChild) {
+              nextButton.disabled = true;
+            }
           }
         } catch (error) {
           printError('Der Gast konnte nicht gelöscht werden');
