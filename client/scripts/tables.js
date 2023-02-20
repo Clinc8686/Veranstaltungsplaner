@@ -301,7 +301,6 @@ function addToPlan (guest, plan) {
   return plan;
 }
 
-
 // build json for sending changed guest data
 function selectListenerAddGuest (guestID, seat, bench, eventID) {
   const url = '/seats/update/' + guestID;
@@ -342,7 +341,6 @@ function sendRequest (url, data) {
   };
   handleInsert();
 }
-
 
 function displaySeats (plan) {
   for (let t = 0; t < plan.length; t++) {
