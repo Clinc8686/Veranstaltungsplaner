@@ -75,21 +75,21 @@ function printEvents (events) {
     const height = window.innerHeight;
     let limit;
     if (height > 3000) {
-      limit = 25;
+      limit = 13;
     } else if (height > 2000) {
-      limit = 18;
+      limit = 9;
     } else if (height > 1000) {
-      limit = 14;
+      limit = 7;
     } else if (height > 900) {
-      limit = 12;
-    } else if (height > 800) {
-      limit = 10;
-    } else if (height > 700) {
-      limit = 8;
-    } else {
       limit = 6;
+    } else if (height > 800) {
+      limit = 5;
+    } else if (height > 700) {
+      limit = 4;
+    } else {
+      limit = 3;
     }
-    return limit;
+    return limit; // the date needs place too
   };
 
   displayPages();
@@ -137,7 +137,7 @@ function printEvents (events) {
         displayEvents(currentPage + 1, pages);
       }
       displayPaginationButtons();
-      if (!pages[currentPage + 3]) {
+      if (!pages[currentPage + 2]) {
         document.getElementById('prev-button').disabled = false;
         document.getElementById('next-button').disabled = true;
       }
@@ -189,7 +189,6 @@ function pageNumDisplay (currentPage, pages) {
 }
 function getPageContent (events, rowLimit) {
   const pages = [];
-
   let elements = [];
   let categories = [];
   let pageCount = 0;
@@ -211,19 +210,24 @@ function getPageContent (events, rowLimit) {
   }
   for (let index = 0; index < eventsLength; index++) {
     let element;
+    let date = events[index].Datetime;
+    date = new Date(date).toString();
+    date = date.split(' ');
     // if space on page and category isn't there
     if (!categories.includes(events[index].Category) && elements.length < rowLimit - 1) {
       categories.push(events[index].Category);
       element = {
         type: 'Category',
         content: events[index].Category,
-        id: ''
+        id: '',
+        date: ''
       };
       elements.push(element);
       element = {
         type: 'item',
         content: events[index].Name,
-        id: events[index].ID
+        id: events[index].ID,
+        date: date[2].concat('. ').concat(date[1]).concat(' ').concat(date[3]).concat(' ').concat(date[4])
       };
       countEvents++;
       elements.push(element);
@@ -232,7 +236,8 @@ function getPageContent (events, rowLimit) {
       element = {
         type: 'item',
         content: events[index].Name,
-        id: events[index].ID
+        id: events[index].ID,
+        date: date[2].concat('. ').concat(date[1]).concat(' ').concat(date[3]).concat(' ').concat(date[4])
       };
       countEvents++;
       elements.push(element);
@@ -270,8 +275,11 @@ function displayEvents (pageNum, pages) {
     } else if (element.type === 'item') {
       const ul = document.getElementById('ul-'.concat(category).concat(pageNum));
       const li = document.createElement('li');
+      const p = document.createElement('p');
       li.id = element.id;
       li.innerHTML = element.content;
+      p.innerHTML = element.date;
+      li.appendChild(p);
       ul.appendChild(li);
 
       // Buttons
