@@ -27,8 +27,10 @@ export function loadEvents () {
       const response = await sent.json();
       if (response.data) {
         printEvents(response.data);
+      } else if (response.success === true) {
+        // success
       } else {
-        printError('1');
+        printError();
       }
     } catch (error) {
       console.log('events.js, loadEvents, response error: ' + error);
