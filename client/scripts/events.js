@@ -28,6 +28,7 @@ export function loadEvents () {
       if (response.data) {
         printEvents(response.data);
       } else {
+        printEvents();
         printError('1');
       }
     } catch (error) {
@@ -89,11 +90,34 @@ function printEvents (events) {
     return limit;
   };
 
+  displayPages();
+  const p = document.createElement('p');
+  p.innerHTML = 'Es wurden noch keine Veranstaltungen erstellt.';
+  p.hidden = true;
+  home.appendChild(p);
+  displayPaginationButtons();
+
   // Adding events with pagination
   // Limit for the number of rows we display per page
-  const eventsSorted = events.sort((a, b) => a.Category.localeCompare(b.Category));
+  let eventsSorted;
   const rowLimit = determineRowLimit();
-  const pages = getPageContent(eventsSorted, rowLimit);
+  let pages;
+  if (events) {
+    eventsSorted = events.sort((a, b) => a.Category.localeCompare(b.Category));
+    pages = getPageContent(eventsSorted, rowLimit);
+    const container = document.getElementById('button-container');
+    deleteContent(container);
+    displayEvents(currentPage, pages);
+    pageNumDisplay(currentPage, pages);
+    displayPaginationButtons();
+
+    if (pages[currentPage + 1]) {
+      displayEvents(currentPage + 1, pages);
+    }
+  } else {
+    p.hidden = false;
+    document.getElementById('next-button').disabled = true;
+  }
 
   const buttonClick = () => {
     document.getElementById('next-button').addEventListener('click', function () {
@@ -138,14 +162,6 @@ function printEvents (events) {
     });
   };
 
-  displayPages();
-  displayEvents(currentPage, pages);
-  pageNumDisplay(currentPage, pages);
-
-  if (pages[currentPage + 1]) {
-    displayEvents(currentPage + 1, pages);
-  }
-  displayPaginationButtons();
   buttonClick();
   document.getElementById('prev-button').disabled = true;
   if (!pages[currentPage + 2]) {
