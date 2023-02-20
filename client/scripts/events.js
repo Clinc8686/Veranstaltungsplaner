@@ -13,6 +13,30 @@ window.addEventListener('resize', () => {
     loadEvents();
   }
 });
+
+// Form elements creating functions
+export function createInput (id, type, placeholder, name) {
+  const input = document.createElement('input');
+  input.id = id;
+  input.type = type;
+  input.placeholder = placeholder;
+  input.name = name;
+  return input;
+}
+
+export function createOptions (text) {
+  const option = document.createElement('option');
+  option.setAttribute(text, text);
+  option.innerHTML = text;
+  return option;
+}
+export function deleteContent (parent) {
+  while (parent.lastChild) {
+    parent.removeChild(parent.lastChild);
+  }
+  parent.remove();
+}
+
 // Receives on page load all events
 export function loadEvents () {
   const handleSelect = async () => {
@@ -38,12 +62,6 @@ export function loadEvents () {
     }
   };
   handleSelect();
-}
-export function deleteContent (parent) {
-  while (parent.lastChild) {
-    parent.removeChild(parent.lastChild);
-  }
-  parent.remove();
 }
 // Prints Events on Landing Page
 function printEvents (events) {
@@ -187,6 +205,176 @@ function pageNumDisplay (currentPage, pages) {
   div.appendChild(p);
   div.appendChild(pageNum2);
 }
+
+function displayPaginationButtons () {
+  // Adding Buttons
+  const home = document.getElementById('home');
+  const buttonContainer = document.createElement('div');
+  buttonContainer.id = 'button-container';
+  buttonContainer.className = 'container';
+  home.appendChild(buttonContainer);
+  const nextButton = document.createElement('button');
+  const previousButton = document.createElement('button');
+  const newEventButton = document.createElement('button');
+  nextButton.className = 'site-button';
+  previousButton.className = 'site-button';
+  newEventButton.className = 'site-button';
+  nextButton.id = 'next-button';
+  previousButton.id = 'prev-button';
+  newEventButton.id = 'newEvent-button';
+  nextButton.title = 'Nächste Seite';
+  previousButton.title = 'Vorherige Seite';
+  newEventButton.title = 'Neue Veranstaltung';
+  nextButton.ariaLabel = 'Nächste Seite';
+  previousButton.ariaLabel = 'Vorherige Seite';
+  newEventButton.ariaLabel = 'Neue Veranstaltung';
+  nextButton.innerHTML = 'Nächste Seite';
+  previousButton.innerHTML = 'Vorherige Seite';
+  newEventButton.innerHTML = 'Neue Veranstaltung';
+  nextButton.type = 'button';
+  newEventButton.type = 'button';
+  previousButton.type = 'button';
+  buttonContainer.appendChild(previousButton);
+  buttonContainer.appendChild(newEventButton);
+  buttonContainer.appendChild(nextButton);
+
+  newEventButton.addEventListener('click', function () {
+    const home = document.getElementById('home');
+    deleteContent(home);
+    displayInsertEventPage();
+  });
+}
+
+// insert-event page
+function displayInsertEventPage () {
+  const main = document.getElementById('main');
+  const sectionInsertEvent = document.createElement('section');
+  const h2 = document.createElement('h2');
+  const insertEventContainer = document.createElement('div');
+  const form = document.createElement('form');
+  const divName = document.createElement('div');
+  const labelName = document.createElement('label');
+  const inputName = createInput('insertEventInputName', 'text', 'Bezeichnung', 'insertEventInputName');
+  const divCategory = document.createElement('div');
+  const labelCategory = document.createElement('label');
+  const selectCategory = document.createElement('select');
+  const optionBirthday = createOptions('Geburtstag');
+  const optionMarriage = createOptions('Hochzeit');
+  const optionKirchlich = createOptions('Kirchlich'); // should be renamed... everywhere
+  const optionOther = createOptions('Sonstiges');
+  const divDate = document.createElement('div');
+  const labelDate = document.createElement('label');
+  const dateNTime = createInput('datetime', 'datetime-local', 'tt.mm.jjjj', 'datetime');
+  const divButton = document.createElement('div');
+  const nextButton = document.createElement('button');
+  sectionInsertEvent.id = 'insertEventSection';
+  h2.innerHTML = 'Veranstaltung erstellen';
+  insertEventContainer.className = 'box container';
+  insertEventContainer.id = 'insertEventContainer';
+  divName.id = 'insertEventDivName';
+  labelName.id = 'insertEventLabelName';
+  labelName.innerHTML = 'Veranstaltungsname:';
+  divCategory.id = 'selectDivCategory';
+  labelCategory.id = 'selectLabelCategory';
+  labelCategory.innerHTML = 'Kategorie:';
+  selectCategory.name = 'selectCategory';
+  selectCategory.id = 'selectCategory';
+  divDate.id = 'insertEventDivDate';
+  labelDate.id = 'insertEventLabelDate';
+  labelDate.innerHTML = 'Datum und Uhrzeit:';
+  divButton.id = 'divInsertEventButton';
+  nextButton.id = 'insertEvent';
+  nextButton.className = 'site-button';
+  nextButton.innerHTML = 'weiter';
+  nextButton.type = 'button';
+  // Allow only future dates on datetime form
+  main.appendChild(sectionInsertEvent);
+  sectionInsertEvent.appendChild(h2);
+  sectionInsertEvent.appendChild(insertEventContainer);
+  insertEventContainer.appendChild(form);
+  form.appendChild(divName);
+  divName.appendChild(labelName);
+  divName.appendChild(inputName);
+  form.appendChild(divCategory);
+  divCategory.appendChild(labelCategory);
+  dateNTime.min = new Date().toISOString().slice(0, new Date().toISOString().lastIndexOf(':'));
+  selectCategory.appendChild(optionBirthday);
+  selectCategory.appendChild(optionMarriage);
+  selectCategory.appendChild(optionKirchlich);
+  selectCategory.appendChild(optionOther);
+  divCategory.appendChild(selectCategory);
+  form.appendChild(divDate);
+  divDate.appendChild(labelDate);
+  divDate.appendChild(dateNTime);
+  sectionInsertEvent.appendChild(divButton);
+  divButton.appendChild(nextButton);
+  insertNewEvent();
+}
+
+// Button listener for insert events
+function insertNewEvent () {
+  const button = document.getElementById('insertEvent');
+  const section = document.getElementById('insertEventSection');
+  button.addEventListener('click', function (e) {
+    e.preventDefault();
+    const name = document.getElementById('insertEventInputName').value;
+    const category = document.getElementById('selectCategory').value;
+    const datetime = document.getElementById('datetime').value;
+    const data = { name, category, datetime };
+
+    const handleInsert = async () => {
+      const sent = await fetch('/events/insert/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      try {
+        const response = await sent.json();
+        if (response.success === false && response.errorMessage === 'notNull') {
+          printError('Es müssen alle Felder ausgefüllt werden!');
+        } else if (response.success === false) {
+          printError('2');
+        }
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          const handleSelect = async () => {
+            const sent = await fetch('/events/select', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            try {
+              const response = await sent.json();
+              if (response.data) {
+                const events = response.data;
+                const ids = events.map(event => {
+                  return event.ID;
+                });
+                currentEvent.id = Math.max(...ids);
+                deleteContent(section);
+                displayTableConfiguration();
+              } else {
+                printError('3');
+              }
+            } catch (error) {
+              console.log('events.js, insertNewEvent(1), response error: ' + error);
+            }
+          };
+          handleSelect();
+        } else {
+          printError('4');
+          console.log('events.js, insertNewEvent(2), response error: \n' + error);
+        }
+      }
+    };
+    handleInsert();
+  });
+}
+
 function getPageContent (events, rowLimit) {
   const pages = [];
   let elements = [];
@@ -363,189 +551,5 @@ function editListener (id) {
     const home = document.getElementById('home');
     deleteContent(home);
     insertNewGuests();
-  });
-}
-
-function displayPaginationButtons () {
-  // Adding Buttons
-  const home = document.getElementById('home');
-  const buttonContainer = document.createElement('div');
-  buttonContainer.id = 'button-container';
-  buttonContainer.className = 'container';
-  home.appendChild(buttonContainer);
-  const nextButton = document.createElement('button');
-  const previousButton = document.createElement('button');
-  const newEventButton = document.createElement('button');
-  nextButton.className = 'site-button';
-  previousButton.className = 'site-button';
-  newEventButton.className = 'site-button';
-  nextButton.id = 'next-button';
-  previousButton.id = 'prev-button';
-  newEventButton.id = 'newEvent-button';
-  nextButton.title = 'Nächste Seite';
-  previousButton.title = 'Vorherige Seite';
-  newEventButton.title = 'Neue Veranstaltung';
-  nextButton.ariaLabel = 'Nächste Seite';
-  previousButton.ariaLabel = 'Vorherige Seite';
-  newEventButton.ariaLabel = 'Neue Veranstaltung';
-  nextButton.innerHTML = 'Nächste Seite';
-  previousButton.innerHTML = 'Vorherige Seite';
-  newEventButton.innerHTML = 'Neue Veranstaltung';
-  nextButton.type = 'button';
-  newEventButton.type = 'button';
-  previousButton.type = 'button';
-  buttonContainer.appendChild(previousButton);
-  buttonContainer.appendChild(newEventButton);
-  buttonContainer.appendChild(nextButton);
-
-  newEventButton.addEventListener('click', function () {
-    const home = document.getElementById('home');
-    deleteContent(home);
-    displayInsertEventPage();
-  });
-}
-
-// insert-event page
-function displayInsertEventPage () {
-  const main = document.getElementById('main');
-  const sectionInsertEvent = document.createElement('section');
-  const h2 = document.createElement('h2');
-  const insertEventContainer = document.createElement('div');
-  const form = document.createElement('form');
-  const divName = document.createElement('div');
-  const labelName = document.createElement('label');
-  const inputName = createInput('insertEventInputName', 'text', 'Bezeichnung', 'insertEventInputName');
-  const divCategory = document.createElement('div');
-  const labelCategory = document.createElement('label');
-  const selectCategory = document.createElement('select');
-  const optionBirthday = createOptions('Geburtstag');
-  const optionMarriage = createOptions('Hochzeit');
-  const optionKirchlich = createOptions('Kirchlich'); // should be renamed... everywhere
-  const optionOther = createOptions('Sonstiges');
-  const divDate = document.createElement('div');
-  const labelDate = document.createElement('label');
-  const dateNTime = createInput('datetime', 'datetime-local', 'tt.mm.jjjj', 'datetime');
-  const divButton = document.createElement('div');
-  const nextButton = document.createElement('button');
-  sectionInsertEvent.id = 'insertEventSection';
-  h2.innerHTML = 'Veranstaltung erstellen';
-  insertEventContainer.className = 'box container';
-  insertEventContainer.id = 'insertEventContainer';
-  divName.id = 'insertEventDivName';
-  labelName.id = 'insertEventLabelName';
-  labelName.innerHTML = 'Veranstaltungsname:';
-  divCategory.id = 'selectDivCategory';
-  labelCategory.id = 'selectLabelCategory';
-  labelCategory.innerHTML = 'Kategorie:';
-  selectCategory.name = 'selectCategory';
-  selectCategory.id = 'selectCategory';
-  divDate.id = 'insertEventDivDate';
-  labelDate.id = 'insertEventLabelDate';
-  labelDate.innerHTML = 'Datum und Uhrzeit:';
-  divButton.id = 'divInsertEventButton';
-  nextButton.id = 'insertEvent';
-  nextButton.className = 'site-button';
-  nextButton.innerHTML = 'weiter';
-  nextButton.type = 'button';
-  // Allow only future dates on datetime form
-  main.appendChild(sectionInsertEvent);
-  sectionInsertEvent.appendChild(h2);
-  sectionInsertEvent.appendChild(insertEventContainer);
-  insertEventContainer.appendChild(form);
-  form.appendChild(divName);
-  divName.appendChild(labelName);
-  divName.appendChild(inputName);
-  form.appendChild(divCategory);
-  divCategory.appendChild(labelCategory);
-  dateNTime.min = new Date().toISOString().slice(0, new Date().toISOString().lastIndexOf(':'));
-  selectCategory.appendChild(optionBirthday);
-  selectCategory.appendChild(optionMarriage);
-  selectCategory.appendChild(optionKirchlich);
-  selectCategory.appendChild(optionOther);
-  divCategory.appendChild(selectCategory);
-  form.appendChild(divDate);
-  divDate.appendChild(labelDate);
-  divDate.appendChild(dateNTime);
-  sectionInsertEvent.appendChild(divButton);
-  divButton.appendChild(nextButton);
-  insertNewEvent();
-}
-
-export function createInput (id, type, placeholder, name) {
-  const input = document.createElement('input');
-  input.id = id;
-  input.type = type;
-  input.placeholder = placeholder;
-  input.name = name;
-  return input;
-}
-
-export function createOptions (text) {
-  const option = document.createElement('option');
-  option.setAttribute(text, text);
-  option.innerHTML = text;
-  return option;
-}
-// Button listener for insert events
-function insertNewEvent () {
-  const button = document.getElementById('insertEvent');
-  const section = document.getElementById('insertEventSection');
-  button.addEventListener('click', function (e) {
-    e.preventDefault();
-    const name = document.getElementById('insertEventInputName').value;
-    const category = document.getElementById('selectCategory').value;
-    const datetime = document.getElementById('datetime').value;
-    const data = { name, category, datetime };
-
-    const handleInsert = async () => {
-      const sent = await fetch('/events/insert/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-      try {
-        const response = await sent.json();
-        if (response.success === false && response.errorMessage === 'notNull') {
-          printError('Es müssen alle Felder ausgefüllt werden!');
-        } else if (response.success === false) {
-          printError('2');
-        }
-      } catch (error) {
-        if (error instanceof SyntaxError) {
-          const handleSelect = async () => {
-            const sent = await fetch('/events/select', {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            });
-
-            try {
-              const response = await sent.json();
-              if (response.data) {
-                const events = response.data;
-                const ids = events.map(event => {
-                  return event.ID;
-                });
-                currentEvent.id = Math.max(...ids);
-                deleteContent(section);
-                displayTableConfiguration();
-              } else {
-                printError('3');
-              }
-            } catch (error) {
-              console.log('events.js, insertNewEvent(1), response error: ' + error);
-            }
-          };
-          handleSelect();
-        } else {
-          printError('4');
-          console.log('events.js, insertNewEvent(2), response error: \n' + error);
-        }
-      }
-    };
-    handleInsert();
   });
 }
