@@ -278,7 +278,7 @@ function displayGuestsPage (pageNum, pages) {
   for (let i = 0; i < pages[pageNum].length; i++) {
     const li = document.createElement('li');
     const guest = pages[pageNum][i];
-    li.innerHTML = guest.name;
+    li.innerHTML = guest.name.concat('&emsp;').concat('- ').concat(guest.invitationstatus);
     li.id = guest.id;
 
     // Button
