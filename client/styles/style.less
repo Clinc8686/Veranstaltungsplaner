@@ -134,6 +134,7 @@ input[type=checkbox]{
 #startpageButtonContainer, #pageNumberDiv{
   display: flex;
   justify-content: space-around;
+  text-align: center;
 }
 
 #insertGuestsSection{
@@ -154,6 +155,9 @@ input[type=checkbox]{
   h3{
     margin-top: -@1;
     margin-bottom: @1;
+  }
+  ul{
+    margin-bottom: @0;
   }
 }
 
@@ -180,20 +184,20 @@ input[type=checkbox]{
 .events-page{
   width: 40%;
   margin-bottom: 0;
-  li {
-    list-style: none;
-    cursor: pointer;
+}
 
-    &:before {
-      content: '';
-      display: inline-block;
-      height: @1;
-      width: @1;
-      background-repeat: no-repeat;
-      background-position: left center;
-      background-size: 0.6rem;
-      background-image: url(https://mariolampert.de/projekte/veranstaltungsplaner/arrow.png);
-    }
+li {
+  list-style: none;
+  cursor: pointer;
+  &:before {
+    content: '';
+    display: inline-block;
+    height: @1;
+    width: @1;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 0.6rem;
+    background-image: url(https://mariolampert.de/projekte/veranstaltungsplaner/arrow.png);
   }
 }
 
