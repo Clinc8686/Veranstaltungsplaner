@@ -99,11 +99,14 @@ function printEvents (events) {
     document.getElementById('next-button').addEventListener('click', function () {
       const pageContainer = document.getElementById('page-container');
       const buttonContainer = document.getElementById('button-container');
+      const pageNumContainer = document.getElementById('pageNumberDiv');
       deleteContent(pageContainer);
       deleteContent(buttonContainer);
+      deleteContent(pageNumContainer);
       currentPage += 2;
       displayPages();
       displayEvents(currentPage, pages);
+      pageNumDisplay(currentPage, pages);
       if (pages[currentPage + 1]) {
         displayEvents(currentPage + 1, pages);
       }
@@ -118,11 +121,14 @@ function printEvents (events) {
     document.getElementById('prev-button').addEventListener('click', function () {
       const pageContainer = document.getElementById('page-container');
       const buttonContainer = document.getElementById('button-container');
+      const pageNumContainer = document.getElementById('pageNumberDiv');
       deleteContent(pageContainer);
       deleteContent(buttonContainer);
+      deleteContent(pageNumContainer);
       currentPage -= 2;
       displayPages();
       displayEvents(currentPage, pages);
+      pageNumDisplay(currentPage, pages);
       displayEvents(currentPage + 1, pages);
       displayPaginationButtons();
       if (!pages[currentPage - 1]) {
@@ -132,23 +138,10 @@ function printEvents (events) {
     });
   };
 
-  const section = document.getElementById('home');
-  const div = document.createElement('div');
-  const p = document.createElement('p');
-  const pageNum1 = document.createElement('p');
-  const pageNum2 = document.createElement('p');
-  pageNum1.innerHTML = currentPage + 1;
-  pageNum2.innerHTML = currentPage + 2;
-  const pagesNum = pages.length;
-  div.id = 'pageNumberDiv';
-  p.innerHTML = 'maximale Seitenanzahl: '.concat(pagesNum);
-
   displayPages();
-  section.appendChild(div);
   displayEvents(currentPage, pages);
-  div.appendChild(pageNum1);
-  div.appendChild(p);
-  div.appendChild(pageNum2);
+  pageNumDisplay(currentPage, pages);
+
   if (pages[currentPage + 1]) {
     displayEvents(currentPage + 1, pages);
   }
@@ -160,6 +153,22 @@ function printEvents (events) {
   }
 }
 
+function pageNumDisplay (currentPage, pages) {
+  const section = document.getElementById('home');
+  const div = document.createElement('div');
+  const p = document.createElement('p');
+  const pageNum1 = document.createElement('p');
+  const pageNum2 = document.createElement('p');
+  pageNum1.innerHTML = currentPage + 1;
+  pageNum2.innerHTML = currentPage + 2;
+  const pagesNum = pages.length;
+  div.id = 'pageNumberDiv';
+  p.innerHTML = 'maximale Seitenanzahl: '.concat(pagesNum);
+  section.appendChild(div);
+  div.appendChild(pageNum1);
+  div.appendChild(p);
+  div.appendChild(pageNum2);
+}
 function getPageContent (events, rowLimit) {
   const pages = [];
 
