@@ -52,7 +52,11 @@ export function loadEvents () {
       if (response.data) {
         printEvents(response.data);
       } else if (response.success === true) {
-        printEvents();
+        try {
+          printEvents();
+        } catch (error) {
+          // catched
+        }
       } else {
         printError();
       }
@@ -334,7 +338,7 @@ function insertNewEvent () {
         if (response.success === false && response.errorMessage === 'notNull') {
           printError('Es müssen alle Felder ausgefüllt werden!');
         } else if (response.success === false) {
-          printError('2');
+          printError();
         } else {
           const handleSelect = async () => {
             const sent = await fetch('/events/select', {
