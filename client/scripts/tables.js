@@ -27,33 +27,6 @@ export function displayTableConfiguration () {
   submitButton.id = 'tableConfigurationsButton';
   submitButton.innerHTML = 'weiter';
 
-  // Add Table values from database into form
-  const handleSelect = async () => {
-    const sent = await fetch('/tables/select/' + currentEvent.id, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    try {
-      const response = await sent.json();
-      if (response.data) {
-        return response.data[0];
-      }
-    } catch (error) {
-      console.log('tables.js, getTableInfo, response error: ' + error);
-    }
-  };
-  handleSelect().then((dataValue) => {
-    if (dataValue) {
-      document.getElementById('inputAmountTables').value = dataValue.Tables;
-      document.getElementById('inputAmountChairs').value = dataValue.Seats;
-      document.getElementById('checkboxOneSided').checked = dataValue.Onesided;
-      seatingTableID = dataValue.ID;
-    }
-  });
-
   main.appendChild(section);
   section.appendChild(h2);
   section.appendChild(div);
@@ -122,6 +95,8 @@ function buttonListener (button) {
   });
 }
 
+// displays the basic structur of seating plan page
+
 export function displaySeatinplan () {
   const main = document.getElementById('main');
   const section = document.createElement('section');
@@ -140,6 +115,28 @@ export function displaySeatinplan () {
   selectTableConfiguration();
 }
 
+function selectTableConfiguration () {
+  const handleSelect = async () => {
+    const sent = await fetch('/tables/select/' + currentEvent.id, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    try {
+      const response = await sent.json();
+      if (response.data) {
+        displayTables(response.data[0]);
+      }
+    } catch (error) {
+      console.log('tables.js, getTableInfo, response error: ' + error);
+    }
+  };
+  handleSelect();
+}
+
+// displays seating plan table
 function displayTables (config) {
   const oneSided = config.Onesided;
   const tableCount = config.Tables;
@@ -157,6 +154,8 @@ function displayTables (config) {
   button.type = 'button';
   button.className = 'site-button';
   seatPlan.id = 'table';
+
+  // table headline if both sided chairs
   if (!oneSided) {
     const emptyCount = Math.round((seatCount - 2) / 2);
     const headln = document.createElement('tr');
@@ -178,6 +177,7 @@ function displayTables (config) {
     }
     seatPlan.appendChild(headln);
   }
+
   headline.appendChild(empty);
 
   for (let h = 1; h <= seatCount; h++) {
@@ -210,67 +210,6 @@ function displayTables (config) {
   });
   dropFunctions();
   loadSeats(currentEvent.id, tableCount, seatCount);
-}
-function selectTableConfiguration () {
-  const handleSelect = async () => {
-    const sent = await fetch('/tables/select/' + currentEvent.id, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    try {
-      const response = await sent.json();
-      if (response.data) {
-        displayTables(response.data[0]);
-      }
-    } catch (error) {
-      console.log('tables.js, getTableInfo, response error: ' + error);
-    }
-  };
-  handleSelect();
-}
-
-// build json for sending changed guest data
-function selectListenerAddGuest (guestID, seat, bench, eventID) {
-  const url = '/seats/update/' + guestID;
-  const data = { seat, bench, eventID };
-  sendRequest(url, data);
-}
-// build json for sending changed guests data
-function selectListenerChangeGuests (guestID1, guestID2) {
-  const url = '/seats/update/';
-  const data = { guestID1, guestID2 };
-  sendRequest(url, data);
-}
-
-// Send post-request
-function sendRequest (url, data) {
-  const handleInsert = async () => {
-    const sent = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-
-    try {
-      const response = await sent.json();
-      if (response.success === false) {
-        printError();
-      }
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        // erfolgreich
-      } else {
-        printError();
-        console.log('tables.js, selectListener, response error: \n' + error);
-      }
-    }
-  };
-  handleInsert();
 }
 
 // load all seats from specific eventID
@@ -362,6 +301,47 @@ function addToPlan (guest, plan) {
   return plan;
 }
 
+// build json for sending changed guest data
+function selectListenerAddGuest (guestID, seat, bench, eventID) {
+  const url = '/seats/update/' + guestID;
+  const data = { seat, bench, eventID };
+  sendRequest(url, data);
+}
+// build json for sending changed guests data
+function selectListenerChangeGuests (guestID1, guestID2) {
+  const url = '/seats/update/';
+  const data = { guestID1, guestID2 };
+  sendRequest(url, data);
+}
+
+// Send post-request
+function sendRequest (url, data) {
+  const handleInsert = async () => {
+    const sent = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    try {
+      const response = await sent.json();
+      if (response.success === false) {
+        printError();
+      }
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        // erfolgreich
+      } else {
+        printError();
+        console.log('tables.js, selectListener, response error: \n' + error);
+      }
+    }
+  };
+  handleInsert();
+}
+
 function displaySeats (plan) {
   for (let t = 0; t < plan.length; t++) {
     for (let s = 0; s < plan[t].length; s++) {
@@ -378,8 +358,8 @@ function displaySeats (plan) {
     }
   }
 }
-// Drag and Drop
 
+// Drag and Drop functions
 function dropFunctions () {
   const tds = document.getElementsByClassName('dropzone');
   for (const td of tds) {

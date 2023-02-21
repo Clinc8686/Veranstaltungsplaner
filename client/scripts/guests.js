@@ -2,6 +2,7 @@ import { currentEvent, printError } from './global';
 import { createInput, createOptions, deleteContent, loadEvents } from './events';
 import { displaySeatinplan } from './tables';
 
+// Form elements creating functions
 export function createInputRow (id, type, placeholder, name, labelText) {
   const div = document.createElement('div');
   const label = document.createElement('label');
@@ -46,6 +47,7 @@ function guestsForm (guest = { id: 'inputName', name: 'Max Mustermann' }) {
   return form;
 }
 
+// displays new guests page
 export function insertNewGuests () {
   const main = document.getElementById('main');
   const section = document.createElement('section');
@@ -72,7 +74,6 @@ export function insertNewGuests () {
   div.appendChild(form);
   div.appendChild(addButton);
   div.appendChild(divSelect);
-  // buttonListenerInsert();
   document.getElementById('insertGuestsButton').addEventListener('click', (e) => {
     buttonListenerInsert(e);
   });
@@ -80,6 +81,70 @@ export function insertNewGuests () {
   selectGuests();
 }
 
+// Button listener for insert guests
+function buttonListenerInsert (e, id) {
+  // prevent forwarding
+  e.preventDefault();
+
+  // const name = document.getElementById('inputName').value;
+  const name = document.getElementsByName('inputName')[0].value;
+  let children = 0;
+  if (document.getElementById('checkboxChild').checked) {
+    children = 1;
+  }
+  const invitationStatus = document.getElementById('selectInvitation').value;
+
+  let data;
+  let url;
+  const eventID = currentEvent.id;
+  if (id) {
+    url = '/guests/update/' + id;
+    data = { name, children, invitationStatus, eventID };
+  } else {
+    url = '/guests/insert/' + currentEvent.id;
+    data = { name, children, invitationStatus };
+  }
+
+  const form = document.getElementById('insertGuestsForm');
+  const divSelectPages = document.getElementById('selectedGuestsPages');
+  const handleInsert = async () => {
+    const sent = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    try {
+      const response = await sent.json();
+      if (response.success === false) {
+        if (response.errorMessage === 'notNull') {
+          printError('Es müssen alle Felder ausgefüllt werden!');
+        } else if (response.errorMessage === 'exists') {
+          printError('Die Person ist schon in dem Event eingetragen!');
+        } else if (response.errorMessage === 'allSeatsTaken') {
+          printError('Es sind alle Sitzplätze belegt.');
+        } else {
+          printError();
+        }
+      }
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        form.reset();
+        if (divSelectPages) {
+          deleteContent(divSelectPages);
+        }
+        selectGuests();
+      } else {
+        printError();
+        console.log('response error: \n' + error);
+      }
+    }
+  };
+  handleInsert();
+}
+
+// navigation buttons
 function nextButtons () {
   const section = document.getElementById('insertGuestsSection');
   const buttonDiv = document.createElement('div');
@@ -106,6 +171,33 @@ function nextButtons () {
     deleteContent(section);
     loadEvents();
   });
+}
+
+function selectGuests () {
+  const button = document.getElementById('tableConfigurationButton');
+  const handleSelect = async () => {
+    const sent = await fetch('/guests/select/' + currentEvent.id, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    try {
+      const response = await sent.json();
+      if (response.data && response.success === true) {
+        displayGuests(response.data);
+        button.disabled = false;
+      } else if (response.success === true) {
+        console.log('no users found');
+        button.disabled = true;
+      }
+    } catch (error) {
+      printError();
+      console.log('guests.js, selectGuests, response error: ' + error);
+    }
+  };
+  handleSelect();
 }
 
 function displayGuests (guests) {
@@ -186,59 +278,6 @@ function displayGuests (guests) {
     document.getElementById('next-button').disabled = true;
   }
 }
-
-function selectGuests () {
-  const button = document.getElementById('tableConfigurationButton');
-  const handleSelect = async () => {
-    const sent = await fetch('/guests/select/' + currentEvent.id, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    try {
-      const response = await sent.json();
-      if (response.data && response.success === true) {
-        displayGuests(response.data);
-        button.disabled = false;
-      } else if (response.success === true) {
-        console.log('no users found');
-        button.disabled = true;
-      }
-    } catch (error) {
-      printError();
-      console.log('guests.js, selectGuests, response error: ' + error);
-    }
-  };
-  handleSelect();
-}
-
-function displayPaginationButtons (currPage) {
-  // Adding Buttons
-  const div = document.getElementById('page'.concat(currPage));
-  const buttonContainer = document.createElement('div');
-  buttonContainer.id = 'button-container';
-  buttonContainer.className = 'container';
-  const nButton = document.createElement('button');
-  const pButton = document.createElement('button');
-  nButton.className = 'site-button';
-  pButton.className = 'site-button';
-  nButton.id = 'next-button';
-  pButton.id = 'prev-button';
-  nButton.title = 'Nächste Seite';
-  pButton.title = 'Vorherige Seite';
-  nButton.ariaLabel = 'Nächste Seite';
-  pButton.ariaLabel = 'Vorherige Seite';
-  nButton.innerHTML = 'Nächste Seite';
-  pButton.innerHTML = 'Vorherige Seite';
-  nButton.type = 'button';
-  pButton.type = 'button';
-  div.appendChild(buttonContainer);
-  buttonContainer.appendChild(pButton);
-  buttonContainer.appendChild(nButton);
-}
-
 function getPageContent (guests, rowLimit) {
   const p = [];
   let items = [];
@@ -311,67 +350,29 @@ function displayGuestsPage (pageNum, pages) {
   }
 }
 
-// Button listener for insert guests
-function buttonListenerInsert (e, id) {
-  // prevent forwarding
-  e.preventDefault();
-
-  // const name = document.getElementById('inputName').value;
-  const name = document.getElementsByName('inputName')[0].value;
-  let children = 0;
-  if (document.getElementById('checkboxChild').checked) {
-    children = 1;
-  }
-  const invitationStatus = document.getElementById('selectInvitation').value;
-
-  let data;
-  let url;
-  const eventID = currentEvent.id;
-  if (id) {
-    url = '/guests/update/' + id;
-    data = { name, children, invitationStatus, eventID };
-  } else {
-    url = '/guests/insert/' + currentEvent.id;
-    data = { name, children, invitationStatus };
-  }
-
-  const form = document.getElementById('insertGuestsForm');
-  const divSelectPages = document.getElementById('selectedGuestsPages');
-  const handleInsert = async () => {
-    const sent = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-    try {
-      const response = await sent.json();
-      if (response.success === false) {
-        if (response.errorMessage === 'notNull') {
-          printError('Es müssen alle Felder ausgefüllt werden!');
-        } else if (response.errorMessage === 'exists') {
-          printError('Die Person ist schon in dem Event eingetragen!');
-        } else if (response.errorMessage === 'allSeatsTaken') {
-          printError('Es sind alle Sitzplätze belegt.');
-        } else {
-          printError();
-        }
-      }
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        form.reset();
-        if (divSelectPages) {
-          deleteContent(divSelectPages);
-        }
-        selectGuests();
-      } else {
-        printError();
-        console.log('response error: \n' + error);
-      }
-    }
-  };
-  handleInsert();
+function displayPaginationButtons (currPage) {
+  // Adding Buttons
+  const div = document.getElementById('page'.concat(currPage));
+  const buttonContainer = document.createElement('div');
+  buttonContainer.id = 'button-container';
+  buttonContainer.className = 'container';
+  const nButton = document.createElement('button');
+  const pButton = document.createElement('button');
+  nButton.className = 'site-button';
+  pButton.className = 'site-button';
+  nButton.id = 'next-button';
+  pButton.id = 'prev-button';
+  nButton.title = 'Nächste Seite';
+  pButton.title = 'Vorherige Seite';
+  nButton.ariaLabel = 'Nächste Seite';
+  pButton.ariaLabel = 'Vorherige Seite';
+  nButton.innerHTML = 'Nächste Seite';
+  pButton.innerHTML = 'Vorherige Seite';
+  nButton.type = 'button';
+  pButton.type = 'button';
+  div.appendChild(buttonContainer);
+  buttonContainer.appendChild(pButton);
+  buttonContainer.appendChild(nButton);
 }
 
 function displayButtons (id) {
@@ -434,18 +435,6 @@ function deleteListener (id) {
   }
 }
 
-function saveListener (id) {
-  const button = document.getElementById('saveGuestButton');
-  const section = document.getElementById('insertGuestsSection');
-  button.addEventListener('click', function (e) {
-    // update function DB entry of guest with id
-    buttonListenerInsert(e, id);
-
-    deleteContent(section);
-    insertNewGuests();
-  });
-}
-
 function displayEditGuestPage (guest) {
   const form = guestsForm(guest);
   const main = document.getElementById('main');
@@ -482,4 +471,16 @@ function fillValues (guest) {
   if (guest.children) {
     checkbox.checked = true;
   }
+}
+
+function saveListener (id) {
+  const button = document.getElementById('saveGuestButton');
+  const section = document.getElementById('insertGuestsSection');
+  button.addEventListener('click', function (e) {
+    // update function DB entry of guest with id
+    buttonListenerInsert(e, id);
+
+    deleteContent(section);
+    insertNewGuests();
+  });
 }
