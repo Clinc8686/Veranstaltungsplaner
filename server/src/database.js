@@ -4,7 +4,6 @@ const path = './server/src/Veranstaltungsplaner.db';
 // Create database file
 const db = new sqlite3.Database(path, (err) => {
   if (err) return console.error('Connection Database: ' + err.message);
-  console.log('Connected to the in-memory SQlite database.');
 });
 
 // Initialise database
@@ -17,10 +16,9 @@ db.serialize(function () {
     '`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE CHECK(length(ID) > 0),' +
     '`Name` TEXT NOT NULL CHECK(length(Name) > 0),' +
     '`Category` TEXT NOT NULL CHECK(length(Name) > 0),' +
-    '`Datetime` DATETIME NOT NULL CHECK(length(Datetime) > 0),' +
+    '`Datetime` DATETIME NOT NULL CHECK(length(Datetime) > 0)' +
     ')', (err) => {
     if (err) return console.log('Events: ' + err.message);
-    console.log('Table Events created or exists');
   });
 
   // Create table Guestlist
@@ -36,7 +34,6 @@ db.serialize(function () {
     'CONSTRAINT `Guestlist` UNIQUE(Guests, Invitationstatus, Events)' +
     ')', (err) => {
     if (err) return console.log('Guestlist: ' + err.message);
-    console.log('Table Guestlist created or exists');
   });
 
   // Create table Guests
@@ -47,7 +44,6 @@ db.serialize(function () {
     'CONSTRAINT `Guests` UNIQUE(Name, Children)' +
     ')', (err) => {
     if (err) return console.log('Guests: ' + err.message);
-    console.log('Table Guests created or exists');
   });
 
   // Create table Seatingplan
@@ -59,7 +55,6 @@ db.serialize(function () {
     'FOREIGN KEY (`ID`) REFERENCES `Events` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE' +
     ')', (err) => {
     if (err) return console.log('Seatingplan: ' + err.message);
-    console.log('Table Seatingplan created or exists');
   });
 
   // Create trigger Guestlist_Delete
@@ -78,7 +73,6 @@ db.serialize(function () {
     '  );' +
     'END;', (err) => {
     if (err) return console.log('Trigger Guestlist_Delete: ' + err.message);
-    console.log('Trigger Guestlist_Delete created or exists');
   });
 
   // Create trigger Delete_Old_Events
@@ -89,7 +83,6 @@ db.serialize(function () {
     'WHERE Datetime < datetime(\'now\');' +
     'END;', (err) => {
     if (err) return console.log('Trigger Delete_Old_Events: ' + err.message);
-    console.log('Trigger Delete_Old_Events created or exists');
   });
 });
 
