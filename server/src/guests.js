@@ -1,27 +1,20 @@
 const express = require('express');
 const database = require('./database');
 const bodyParser = require('body-parser');
-const { databaseAll, databaseDeleteID } = require('./global');
+const { databaseAll, databaseDeleteID, handle } = require('./global');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const router = express.Router();
 
+// Insert guest in guestlist with event linking
 function addGuestlist (lastID, eventID, invitationStatus, res) {
   const statement = 'INSERT INTO Guestlist (Guests, Invitationstatus, Events) VALUES (?, ?, ?)';
   database.prepare(statement).run([lastID, invitationStatus, eventID], function (err, result) {
-    const uniquetwo = 'UNIQUE constraint failed: Guestlist.Guests, Guestlist.Events';
-    if (err && err.message.includes(uniquetwo)) {
-      res.status(200).json({ success: false, errorMessage: 'exists' });
-    } else if (err) {
-      res.status(200).json({ success: false });
-    } else {
-      console.log('Guestlist was inserted successfully');
-    }
+    handle(err, res);
   });
 }
 
-// Receive Post-Requests from index.html
+// Receives data from form and checks conditions before inserting new guest
 router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
-  // Insert Guest from Form into database
   const requestBody = req.body;
   const eventID = req.params.id;
   if (requestBody.children === 'on' || requestBody.children === 1) {
@@ -47,6 +40,7 @@ router.post('/guests/insert/:id', urlencodedParser, function (req, res, next) {
   });
 });
 
+// Insert new guest into database from form
 function insertGuests (requestBody, eventID, res) {
   const statement = 'INSERT INTO Guests (Name, Children) VALUES (?,?)';
   database.prepare(statement).run([requestBody.name, requestBody.children], function (err, result) {
@@ -69,45 +63,34 @@ function insertGuests (requestBody, eventID, res) {
         }
       } else {
         res.status(200).json({ success: false });
-        console.log('check error ' + err.message);
       }
     } else {
       try {
         addGuestlist(this.lastID, eventID, requestBody.invitationStatus, res);
-        console.log('User was inserted successfully');
       } catch (e) {
         res.status(200).json({ success: false });
-        console.log('addguest error');
       }
-
-      // Redirect to index.html
-      res.redirect('/');
     }
   });
 }
 
+// Delete Guest from Form into database
 router.delete('/guests/:id', urlencodedParser, function (req, res, next) {
-  // Delete Guest from Form into database
   const id = req.params.id;
   const statement = 'DELETE FROM Guests WHERE (ID = ?)';
   databaseDeleteID(statement, res, id);
 });
 
+// Change invitationstatus from guest
 function updateGuestlist (guestID, eventID, invitationStatus, res) {
   const statement = 'UPDATE Guestlist SET Invitationstatus = ? WHERE Guestlist.Guests = ? AND Guestlist.Events = ?';
   database.prepare(statement).run([invitationStatus, guestID, eventID], function (err, result) {
-    if (err) {
-      res.status(200).json({ success: false });
-      console.log('Error on updating Guestlist');
-    } else {
-      res.status(200).json({ success: true });
-      console.log('Guestlist and Guests was updated successfully');
-    }
+    handle(err, res);
   });
 }
 
+// Update Guest from Form
 router.post('/guests/update/:id', urlencodedParser, function (req, res, next) {
-  // Update Guest from Form
   const requestBody = req.body;
   const userID = req.params.id;
   const statement = 'UPDATE Guests SET Name = ?, Children = ? WHERE ID = ?';
@@ -118,15 +101,14 @@ router.post('/guests/update/:id', urlencodedParser, function (req, res, next) {
       } else {
         res.status(200).json({ success: false });
       }
-      console.log('Error on updating Guests');
     } else {
       updateGuestlist(userID, requestBody.eventID, requestBody.invitationStatus, res);
     }
   });
 });
 
+// Get Guests from specific EventID
 router.get('/guests/select/:id', urlencodedParser, function (req, res, next) {
-  // Get Guests with specific EventID
   const eventID = req.params.id;
   const statement = 'SELECT Guests.ID, Guests.Name, Guests.Children, Guestlist.Invitationstatus FROM `Guests` INNER JOIN Guestlist ON (Guestlist.Guests = Guests.ID) WHERE Guestlist.Events = ?;';
   databaseAll(statement, res, eventID);

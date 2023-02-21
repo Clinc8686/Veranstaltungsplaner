@@ -81,12 +81,11 @@ export function insertNewGuests () {
   selectGuests();
 }
 
-// Button listener for insert guests
+// Sending guest data to server and handle response
 function buttonListenerInsert (e, id) {
   // prevent forwarding
   e.preventDefault();
 
-  // const name = document.getElementById('inputName').value;
   const name = document.getElementsByName('inputName')[0].value;
   let children = 0;
   if (document.getElementById('checkboxChild').checked) {
@@ -127,18 +126,15 @@ function buttonListenerInsert (e, id) {
         } else {
           printError();
         }
-      }
-    } catch (error) {
-      if (error instanceof SyntaxError) {
+      } else {
         form.reset();
         if (divSelectPages) {
           deleteContent(divSelectPages);
         }
         selectGuests();
-      } else {
-        printError();
-        console.log('response error: \n' + error);
       }
+    } catch (error) {
+      printError();
     }
   };
   handleInsert();
@@ -173,6 +169,7 @@ function nextButtons () {
   });
 }
 
+// Sending guest id to server and handle response
 function selectGuests () {
   const button = document.getElementById('tableConfigurationButton');
   const handleSelect = async () => {
@@ -189,12 +186,10 @@ function selectGuests () {
         displayGuests(response.data);
         button.disabled = false;
       } else if (response.success === true) {
-        console.log('no users found');
         button.disabled = true;
       }
     } catch (error) {
       printError();
-      console.log('guests.js, selectGuests, response error: ' + error);
     }
   };
   handleSelect();
@@ -345,7 +340,6 @@ function displayGuestsPage (pageNum, pages) {
       editListener(guest);
       deleteListener(guest.id);
     });
-    // currentEvent.id = guest.id; guest.id wird hier nicht mehr stimmen, weil das jetzt die ID des Gastes ist
     ul.appendChild(li);
   }
 }
@@ -398,6 +392,7 @@ function editListener (guest) {
   }
 }
 
+// Sending guest id to server which should be deleted and handle response
 function deleteListener (id) {
   const button = document.getElementById('delete-button'.concat(id));
   const guest = document.getElementById(id);
@@ -427,7 +422,6 @@ function deleteListener (id) {
           }
         } catch (error) {
           printError('Der Gast konnte nicht gelöscht werden');
-          console.log('response error: \n' + error);
         }
       };
       handleDelete();

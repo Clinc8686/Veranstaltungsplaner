@@ -52,13 +52,12 @@ export function loadEvents () {
       if (response.data) {
         printEvents(response.data);
       } else if (response.success === true) {
-        // success
         printEvents();
       } else {
         printError();
       }
     } catch (error) {
-      console.log('events.js, loadEvents, response error: ' + error);
+      printError();
     }
   };
   handleSelect();
@@ -311,7 +310,7 @@ function displayInsertEventPage () {
   insertNewEvent();
 }
 
-// Button listener for insert events
+// Sending event to server and handle response
 function insertNewEvent () {
   const button = document.getElementById('insertEvent');
   const section = document.getElementById('insertEventSection');
@@ -336,9 +335,7 @@ function insertNewEvent () {
           printError('Es müssen alle Felder ausgefüllt werden!');
         } else if (response.success === false) {
           printError('2');
-        }
-      } catch (error) {
-        if (error instanceof SyntaxError) {
+        } else {
           const handleSelect = async () => {
             const sent = await fetch('/events/select', {
               method: 'GET',
@@ -358,17 +355,16 @@ function insertNewEvent () {
                 deleteContent(section);
                 displayTableConfiguration();
               } else {
-                printError('3');
+                printError();
               }
             } catch (error) {
-              console.log('events.js, insertNewEvent(1), response error: ' + error);
+              printError();
             }
           };
           handleSelect();
-        } else {
-          printError('4');
-          console.log('events.js, insertNewEvent(2), response error: \n' + error);
         }
+      } catch (error) {
+        printError();
       }
     };
     handleInsert();
@@ -513,6 +509,7 @@ function deleteAndEditButton (id) {
   }
 }
 
+// Sending event id to server which should be deleted and handle response
 function deleteListener (id) {
   const button = document.getElementById('delete-button'.concat(id));
   const event = document.getElementById(id);
@@ -537,7 +534,6 @@ function deleteListener (id) {
         }
       } catch (error) {
         printError('Das Event konnte nicht gelöscht werden');
-        console.log('response error: \n' + error);
       }
     };
     handleDelete();

@@ -2,8 +2,6 @@ import { currentEvent, printError } from './global';
 import { createInputRow, insertNewGuests } from './guests.js';
 import { deleteContent, loadEvents } from './events';
 
-let seatingTableID;
-
 export function displayTableConfiguration () {
   const main = document.getElementById('main');
   const section = document.createElement('section');
@@ -39,6 +37,7 @@ export function displayTableConfiguration () {
   buttonListener(submitButton);
 }
 
+// button listener and sending table data to server and handle response
 function buttonListener (button) {
   button.addEventListener('click', (e) => {
     e.preventDefault();
@@ -53,24 +52,13 @@ function buttonListener (button) {
     const data = { numberOfTables, seatsPerTable, twoSides, eventID };
 
     const handleInsert = async () => {
-      let sent;
-      if (seatingTableID) {
-        sent = await fetch('/tables/update/' + seatingTableID, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-      } else {
-        sent = await fetch('/tables/insert/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-      }
+      const sent = await fetch('/tables/insert/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
 
       try {
         const response = await sent.json();
@@ -78,16 +66,13 @@ function buttonListener (button) {
           printError('Es müssen alle Textfelder ausgefüllt werden!');
         } else if (response.success === false) {
           printError();
-        }
-      } catch (error) {
-        if (error instanceof SyntaxError) {
+        } else if (response.success === true) {
           const section = document.getElementById('sectionTableConfigurations');
           deleteContent(section);
           insertNewGuests();
-        } else {
-          printError();
-          console.log('tables.js, buttonListener, response error: \n' + error);
         }
+      } catch (error) {
+        printError();
       }
     };
 
@@ -115,6 +100,7 @@ export function displaySeatinplan () {
   selectTableConfiguration();
 }
 
+// Sending event id to sever to get all table data and handle response
 function selectTableConfiguration () {
   const handleSelect = async () => {
     const sent = await fetch('/tables/select/' + currentEvent.id, {
@@ -130,7 +116,7 @@ function selectTableConfiguration () {
         displayTables(response.data[0]);
       }
     } catch (error) {
-      console.log('tables.js, getTableInfo, response error: ' + error);
+      printError();
     }
   };
   handleSelect();
@@ -225,13 +211,12 @@ function loadSeats (eventID, tableCount, seatCount) {
     try {
       const response = await sent.json();
       if (response.data) {
-        // erfolgreich
         fillTableConfiguration(response.data, tableCount, seatCount);
       } else {
         printError();
       }
     } catch (error) {
-      console.log('tables.js, loadSeats, response error: \n' + error);
+      printError();
     }
   };
   handleSelect();
@@ -314,7 +299,7 @@ function selectListenerChangeGuests (guestID1, guestID2) {
   sendRequest(url, data);
 }
 
-// Send post-request
+// Sending data to server and handle response
 function sendRequest (url, data) {
   const handleInsert = async () => {
     const sent = await fetch(url, {
@@ -331,12 +316,7 @@ function sendRequest (url, data) {
         printError();
       }
     } catch (error) {
-      if (error instanceof SyntaxError) {
-        // erfolgreich
-      } else {
-        printError();
-        console.log('tables.js, selectListener, response error: \n' + error);
-      }
+      printError();
     }
   };
   handleInsert();

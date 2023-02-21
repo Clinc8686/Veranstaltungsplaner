@@ -1,45 +1,49 @@
 const database = require('./database');
 
-const databaseAll = (statement, res, params) => {
-  function handle (err, rows) {
-    if (err) {
-      res.status(200).json({ error: 'true' });
-      console.log(err.message);
+// handle errors from database changes
+const handle = (err, res, rows) => {
+  const check = 'CHECK constraint failed';
+  const uniquetwo = 'UNIQUE constraint failed: Guestlist.Guests, Guestlist.Events';
+
+  if (err) {
+    if (err.message.includes(check)) {
+      res.json({ success: false, errorMessage: 'notNull' });
+    } else if (err.message.includes(uniquetwo)) {
+      res.status(200).json({ success: false, errorMessage: 'exists' });
     } else {
-      console.log('Selected successfully');
-      // send data as json data to client
+      res.status(200).json({ success: false });
+    }
+  } else {
+    if (rows) {
       if (rows.length < 1) {
         res.status(200).json({ success: true });
-      } else {
+      } else if (rows) {
         res.status(200).json({ success: true, data: rows });
       }
+    } else {
+      res.status(200).json({ success: true });
     }
   }
+};
 
+// run given statement on database
+const databaseAll = (statement, res, params) => {
   if (params) {
     database.prepare(statement).all([params], function (err, rows) {
-      handle(err, rows);
+      handle(err, res, rows);
     });
   } else {
     database.prepare(statement).all(function (err, rows) {
-      handle(err, rows);
+      handle(err, res, rows);
     });
   }
 };
 
+// delete given id from database
 const databaseDeleteID = (statement, res, id) => {
-  function handle (err) {
-    if (err) {
-      res.json({ success: false });
-      console.log(err.message);
-    } else {
-      res.status(200).json({ success: true });
-      console.log('Element with id ' + id + ' was deleted successfully');
-    }
-  }
   database.prepare(statement).run([id], function (err, result) {
-    handle(err);
+    handle(err, res);
   });
 };
 
-module.exports = { databaseAll, databaseDeleteID };
+module.exports = { databaseAll, databaseDeleteID, handle };
