@@ -104,8 +104,6 @@ function buttonListenerInsert (e, id) {
     data = { name, children, invitationStatus };
   }
 
-  const form = document.getElementById('insertGuestsForm');
-  const divSelectPages = document.getElementById('selectedGuestsPages');
   const handleInsert = async () => {
     const sent = await fetch(url, {
       method: 'POST',
@@ -127,6 +125,8 @@ function buttonListenerInsert (e, id) {
           printError();
         }
       } else {
+        const form = document.getElementById('insertGuestsForm');
+        const divSelectPages = document.getElementById('selectedGuestsPages');
         form.reset();
         if (divSelectPages) {
           deleteContent(divSelectPages);
